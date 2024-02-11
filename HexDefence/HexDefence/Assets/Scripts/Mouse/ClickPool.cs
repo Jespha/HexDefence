@@ -1,8 +1,11 @@
+using System;
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
 
 public class ClickPool : MonoBehaviour
 {
+    [SerializeField] private ClickManager _clickManager;
 
     public PooledObject[] _prefab;
     public int[] _poolSize;
@@ -10,7 +13,18 @@ public class ClickPool : MonoBehaviour
 
     void Start()
     {
-        _pools = new List<PooledObject>[_prefab.Length];
+        if (_clickManager == null){
+        
+            _clickManager = FindObjectOfType<ClickManager>();
+
+            if (_clickManager == null){
+                Debug.Log("ClickPool not found");
+                gameObject.SetActive(false);
+            }
+
+        } 
+
+        SetPools();
 
         for (int j = 0; j < _pools.Length; j++)
         {
@@ -55,6 +69,22 @@ public class ClickPool : MonoBehaviour
         PooledObject obj = Instantiate(_prefab[_specifiedPool]) as PooledObject;
         obj.gameObject.SetActive(true);
         _pools[_specifiedPool].Add(obj);
+    }
+
+    private void SetPools()
+    {
+        ClickType[] _clickTypes = _clickManager.clickTypes;
+
+        _prefab = new PooledObject[_clickTypes.Length];
+        _poolSize = new int[_clickTypes.Length];
+        _pools = new List<PooledObject>[_clickTypes.Length];
+
+        for (int i = 0; i < _clickTypes.Length; i++)
+        {
+            _prefab[i] = _clickTypes[i].pooledObject;
+            _poolSize[i] = _clickTypes[i].poolSize;
+            _pools[i] = new List<PooledObject>(_poolSize[i]);
+        }
     }
 
 }

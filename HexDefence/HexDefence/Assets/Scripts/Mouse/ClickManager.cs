@@ -1,11 +1,24 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class ClickManager : MonoBehaviour
 {
-    public ClickPool pool;
+    [SerializeField]private ClickPool _pool;
+    public ClickType[] clickTypes;
 
-    [SerializeField] private PooledObject _clickPrefab;
-    // [SerializeField] private ClickPrefabs clickPrefabs;
+    private void Start()
+    {
+        if (_pool == null){
+        
+            _pool = FindObjectOfType<ClickPool>();
+
+            if (_pool == null){
+                Debug.Log("ClickPool not found");
+                gameObject.SetActive(false);
+            }
+
+        } 
+    }
 
     private void OnEnable()
     {
@@ -19,23 +32,31 @@ public class ClickManager : MonoBehaviour
        MouseController.Instance.OnRightMouseClick -= OnRightMouseClick;
     }
 
+    private ClickType GetScriptableObjectByLayerMask(ClickType[] array, int layer)
+    {
+        int layerMask = 1 << layer;
 
+        for (int i = 0; i < array.Length; i++)
+        {
+            if ((array[i].layerMask.value & layerMask) != 0)
+            {
+                return array[i];
+            }        
+        }
+
+        return null;
+    }
 
     private void OnLeftMouseClick(RaycastHit hit)
     {
-        float localX = hit.point.x - transform.position.x;
-        float localZ = hit.point.z - transform.position.z;
-
-        PooledObject obj = pool.Get(_clickPrefab);
-        obj.transform.position =  hit.point;
-        Debug.Log("Lclick");
+        LayerMask layerMaskHit = hit.transform.gameObject.layer;
+        ClickType type = GetScriptableObjectByLayerMask(clickTypes, layerMaskHit);
+        PooledObject obj = _pool.Get(type.pooledObject);
+        obj.transform.position = hit.point;
     }
 
     private void OnRightMouseClick(RaycastHit hit)
     {
-        // Debug.Log("L HitObject: " + hit.transform.name + " at position " + hit.point);
-        float localX = hit.point.x - transform.position.x;
-        float localZ = hit.point.z - transform.position.z;
         Debug.Log("Rclick");
     }
 

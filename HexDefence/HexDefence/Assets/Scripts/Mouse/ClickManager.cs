@@ -3,7 +3,9 @@ using UnityEngine;
 
 public class ClickManager : MonoBehaviour
 {
-    [SerializeField]private ClickPool _pool;
+    [SerializeField] private ClickPool _pool;
+    [SerializeField] private HexGridManager _hexGridManager;
+
     public ClickType[] clickTypes;
 
     private void Start()
@@ -16,8 +18,14 @@ public class ClickManager : MonoBehaviour
                 Debug.Log("ClickPool not found");
                 gameObject.SetActive(false);
             }
-
         } 
+        if (HexGridManager.Instance == null){
+            _hexGridManager = FindObjectOfType<HexGridManager>();
+            if (_hexGridManager != null)
+            return;
+            Debug.Log("HexGridManager not found");
+            gameObject.SetActive(false);
+        }
     }
 
     private void OnEnable()
@@ -53,6 +61,11 @@ public class ClickManager : MonoBehaviour
         ClickType type = GetScriptableObjectByLayerMask(clickTypes, layerMaskHit);
         PooledObject obj = _pool.Get(type.pooledObject);
         obj.transform.position = hit.point;
+
+        if (hit.transform.gameObject.TryGetComponent<HexCell>(out HexCell hexCell))
+        {
+            _hexGridManager.SelectHexCell(hexCell);
+        }
     }
 
     private void OnRightMouseClick(RaycastHit hit)

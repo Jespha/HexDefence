@@ -31,7 +31,7 @@ public class ClickPool : MonoBehaviour
             _pools[j] = new List<PooledObject>();
             for (int i = 0; i < _poolSize[j]; i++)
             {
-                PooledObject obj = Instantiate(_prefab[j]) as PooledObject;
+                PooledObject obj = Instantiate(_prefab[j],this.transform) as PooledObject;
                 obj.gameObject.SetActive(false);
                 _pools[j].Add(obj);
             }

@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HexTerrainType: 0
   Name: Grass
-  Prefab: {fileID: 0}
-  Icon: {fileID: 0}
+  Material: {fileID: 2100000, guid: 3061daf219b64e94ab04bf90401fad46, type: 2}
+  Icon: {fileID: -2413806693520163455, guid: 0ae0bf6ca12e6a541a6c6f2e79984b9b, type: 3}

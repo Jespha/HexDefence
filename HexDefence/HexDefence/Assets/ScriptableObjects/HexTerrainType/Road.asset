@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HexTerrain
   HexTerrainType: 5
   Name: Road
-  Prefab: {fileID: 0}
+  Material: {fileID: 2100000, guid: 5febc145c9ee56046aae0972fe289a53, type: 2}
   Icon: {fileID: 0}

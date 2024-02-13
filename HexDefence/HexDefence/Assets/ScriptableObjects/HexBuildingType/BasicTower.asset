@@ -9,10 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: f34fcaba9f449864fa0ea8328403a7a9, type: 3}
   m_Name: BasicTower
   m_EditorClassIdentifier: Assembly-CSharp::HexBuilding
   HexBuildingType: 2
-  Name: Tower 1
+  Name: 
   Prefab: {fileID: 0}
   Icon: {fileID: 0}

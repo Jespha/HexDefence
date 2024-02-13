@@ -8,6 +8,6 @@ public class HexTerrain : ScriptableObject
 {
     public HexTerrainType HexTerrainType;
     public string Name;
-    public GameObject Prefab;
+    public Material Material;
     public Sprite Icon;
 }

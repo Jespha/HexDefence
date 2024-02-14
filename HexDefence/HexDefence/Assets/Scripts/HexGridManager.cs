@@ -4,6 +4,7 @@ using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class HexGridManager : MonoBehaviour
 {
@@ -16,11 +17,11 @@ public class HexGridManager : MonoBehaviour
     [field:SerializeField][field:Range(1, 4)] public int  StartRoads { get; private set; } = 1;
     [field:SerializeField][field:Range(0, 4)] public int  Depth { get; private set; } = 1;
     [field:SerializeField] public List<HexCell> HexCells { get; private set; } = new List<HexCell>();
-    [field:SerializeField] private HexTerrain _hexTerrain;
-    [field:SerializeField] private HexBuilding _hexBuilding;
-    [field:SerializeField] private HexBuilding _baseTowerPrefab;
 
-    [field:SerializeField] private HexCell _selected;
+    [SerializeField] private HexTerrain _hexTerrain;
+    [SerializeField] private HexBuilding _hexBuilding;
+    [SerializeField] private HexBuilding _baseTowerPrefab;
+    [SerializeField] private HexCell _selected;
 
     private Vector3 _baseTowerVector;
 
@@ -29,6 +30,7 @@ public class HexGridManager : MonoBehaviour
     void Start()
     {
         _baseTowerVector = transform.position;
+        MakeHexGrid();
     }
 
     public void MakeHexGrid()
@@ -120,12 +122,21 @@ public class HexGridManager : MonoBehaviour
     {
         if (_selected != null)
         {
-            _selected.GetComponent<MeshRenderer>().materials[1].color = Color.white;
+            _selected.GetComponent<MeshRenderer>().material.SetFloat("_selected", 0);
         }
         
         _selected = hexCell;
-        _selected.RandomizeHeight();
-        _selected.GetComponent<MeshRenderer>().materials[1].color = Color.red;
+        _selected.Selected();
+        _selected.GetComponent<MeshRenderer>().material.SetFloat("_selected", 1);
+    }
+
+    public void DeselectHexCell()
+    {
+        if (_selected != null)
+        {
+            _selected.GetComponent<MeshRenderer>().material.SetFloat("_selected", 0);
+            _selected = null;
+        }
     }
 
 }

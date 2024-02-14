@@ -1,13 +1,19 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class ClickManager : MonoBehaviour
 {
     [SerializeField] private ClickPool _pool;
     [SerializeField] private HexGridManager _hexGridManager;
+    [SerializeField] private GraphicRaycaster graphicRaycaster;
+    [SerializeField] private EventSystem eventSystem;
 
     public ClickType[] clickTypes;
-
+    public static event Action<HexCell> OnHexSelected;
+    
     private void Start()
     {
         if (_pool == null){
@@ -55,7 +61,53 @@ public class ClickManager : MonoBehaviour
         return null;
     }
 
-    private void OnLeftMouseClick(RaycastHit hit)
+    private void OnLeftMouseClick()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+
+        PointerEventData pointerData = new PointerEventData(eventSystem);
+        pointerData.position = Input.mousePosition;
+
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity))
+        {
+            List<RaycastResult> results = new List<RaycastResult>();
+
+            graphicRaycaster.Raycast(pointerData, results);
+
+            if (results.Count > 0)
+            {
+                OnLeftUIClick();
+            }
+            else
+            {
+                OnLeft3DClick(hit);
+            }        
+        }
+        // PointerEventData pointerData = new PointerEventData(eventSystem);
+        // pointerData.position = Input.mousePosition;
+
+        // List<RaycastResult> results = new List<RaycastResult>();
+
+        // graphicRaycaster.Raycast(pointerData, results);
+
+        // if (results.Count > 0)
+        // {
+        //     OnLeftUIClick();
+        // }
+        // else
+        // {
+        //     OnLeft3DClick(hit);
+        // }        
+
+    }
+
+    private void OnLeftUIClick()
+    {
+        Debug.Log("UIClick");
+    }
+
+    private void OnLeft3DClick(RaycastHit hit)
     {
         LayerMask layerMaskHit = hit.transform.gameObject.layer;
         ClickType type = GetScriptableObjectByLayerMask(clickTypes, layerMaskHit);
@@ -65,10 +117,18 @@ public class ClickManager : MonoBehaviour
         if (hit.transform.gameObject.TryGetComponent<HexCell>(out HexCell hexCell))
         {
             _hexGridManager.SelectHexCell(hexCell);
+            OnHexSelected?.Invoke(hexCell);
+
         }
+        else
+        {
+            _hexGridManager.DeselectHexCell();
+            OnHexSelected?.Invoke(null);
+        }     
+        Debug.Log("3DClick");
     }
 
-    private void OnRightMouseClick(RaycastHit hit)
+    private void OnRightMouseClick()
     {
         Debug.Log("Rclick");
     }

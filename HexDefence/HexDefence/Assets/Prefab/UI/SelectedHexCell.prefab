@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 6742427594019497965}
   - component: {fileID: 486844093074956463}
   - component: {fileID: 8915054505945693967}
+  - component: {fileID: 969483707851446489}
   m_Layer: 5
   m_Name: SelectedHexCell
   m_TagString: Untagged
@@ -40,7 +41,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 247, y: 4.4000244}
-  m_SizeDelta: {x: 202.4325, y: 104.8976}
+  m_SizeDelta: {x: 202.4325, y: 104.89758}
   m_Pivot: {x: 0, y: 0}
 --- !u!222 &6742427594019497965
 CanvasRenderer:
@@ -92,6 +93,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7cd16f5e63308db41abd22c3a566a53a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <_selectedHexCell>k__BackingField: {fileID: 0}
+  _hexIcon: {fileID: 5439389831924844421}
+  _towerIcon: {fileID: 785191965259850146}
+  _name: {fileID: 7072575729041317887}
+--- !u!225 &969483707851446489
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 387581342718904682}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &3969485072510050326
 GameObject:
   m_ObjectHideFlags: 0
@@ -248,8 +265,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -2413806693520163455, guid: 0ae0bf6ca12e6a541a6c6f2e79984b9b,
-    type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -293,7 +309,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: -0.0000000023555506, y: -0.0028596094}
   m_AnchorMax: {x: 1, y: 0.99714005}
-  m_AnchoredPosition: {x: 0, y: -0.0000038146973}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: -0.000001907265}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &153232497952352333
@@ -368,8 +384,8 @@ RectTransform:
   - {fileID: 3791092647742881097}
   m_Father: {fileID: 7583451704051017591}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5464921, y: 0.0423221}
-  m_AnchorMax: {x: 0.9848928, y: 0.6006175}
+  m_AnchorMin: {x: 0.5346362, y: 0.0423221}
+  m_AnchorMax: {x: 0.9730369, y: 0.6006175}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -481,7 +497,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 4e8e83c1d043aa24bac3eade2dffecaf, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -502,14 +518,12 @@ PrefabInstance:
     - target: {fileID: 2392713991140805472, guid: af4669157868690418198ee09d1841c9,
         type: 3}
       propertyPath: m_text
-      value: 'Upgrade
-
-'
+      value: ...
       objectReference: {fileID: 0}
     - target: {fileID: 2392713991140805472, guid: af4669157868690418198ee09d1841c9,
         type: 3}
       propertyPath: m_fontSize
-      value: 20.75
+      value: 24
       objectReference: {fileID: 0}
     - target: {fileID: 2392713991140805472, guid: af4669157868690418198ee09d1841c9,
         type: 3}
@@ -544,7 +558,7 @@ PrefabInstance:
     - target: {fileID: 4281125383873519246, guid: af4669157868690418198ee09d1841c9,
         type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.9848931
+      value: 0.9730373
       objectReference: {fileID: 0}
     - target: {fileID: 4281125383873519246, guid: af4669157868690418198ee09d1841c9,
         type: 3}
@@ -554,7 +568,7 @@ PrefabInstance:
     - target: {fileID: 4281125383873519246, guid: af4669157868690418198ee09d1841c9,
         type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.546492
+      value: 0.5346362
       objectReference: {fileID: 0}
     - target: {fileID: 4281125383873519246, guid: af4669157868690418198ee09d1841c9,
         type: 3}
@@ -564,7 +578,7 @@ PrefabInstance:
     - target: {fileID: 4281125383873519246, guid: af4669157868690418198ee09d1841c9,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: -0.000002110361
+      value: -0.0000035762787
       objectReference: {fileID: 0}
     - target: {fileID: 4281125383873519246, guid: af4669157868690418198ee09d1841c9,
         type: 3}
@@ -656,6 +670,18 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: af4669157868690418198ee09d1841c9, type: 3}
+--- !u!114 &7072575729041317887 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2392713991140805472, guid: af4669157868690418198ee09d1841c9,
+    type: 3}
+  m_PrefabInstance: {fileID: 4833055736395240607}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!224 &8681790333240003089 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4281125383873519246, guid: af4669157868690418198ee09d1841c9,
@@ -673,7 +699,7 @@ PrefabInstance:
     - target: {fileID: 4784238092085452248, guid: 3a9fe15fb2a9b024c9ba9201db524c8b,
         type: 3}
       propertyPath: m_Name
-      value: SpawnButton (1)
+      value: Button
       objectReference: {fileID: 0}
     - target: {fileID: 5603495227411497913, guid: 3a9fe15fb2a9b024c9ba9201db524c8b,
         type: 3}
@@ -836,7 +862,7 @@ PrefabInstance:
     - target: {fileID: 4784238092085452248, guid: 3a9fe15fb2a9b024c9ba9201db524c8b,
         type: 3}
       propertyPath: m_Name
-      value: SpawnButton
+      value: Button
       objectReference: {fileID: 0}
     - target: {fileID: 5603495227411497913, guid: 3a9fe15fb2a9b024c9ba9201db524c8b,
         type: 3}
@@ -848,7 +874,7 @@ PrefabInstance:
     - target: {fileID: 5603495227411497913, guid: 3a9fe15fb2a9b024c9ba9201db524c8b,
         type: 3}
       propertyPath: m_fontSize
-      value: 17.65
+      value: 17.7
       objectReference: {fileID: 0}
     - target: {fileID: 8833336700871736200, guid: 3a9fe15fb2a9b024c9ba9201db524c8b,
         type: 3}

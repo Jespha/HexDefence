@@ -1,12 +1,14 @@
 using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class MouseController : Singleton<MouseController>
 {
 
-    public Action<RaycastHit> OnLeftMouseClick;
-    public Action<RaycastHit> OnRightMouseClick;
-    public Action<RaycastHit> OnMiddleMouseClick;
+    public Action OnLeftMouseClick;
+    public Action OnRightMouseClick;
+    public Action OnMiddleMouseClick;
+    public EventSystem eventSystem;
 
     void Update()
     {
@@ -27,23 +29,20 @@ public class MouseController : Singleton<MouseController>
 
     void CheckMouseClick(int button)
     {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, Mathf.Infinity))
-        {
+
             switch (button)
             {
                 case 0:
-                    OnLeftMouseClick?.Invoke(hit);
+                    OnLeftMouseClick?.Invoke();
                     break;
                 case 1:
-                    OnRightMouseClick?.Invoke(hit);
+                    OnRightMouseClick?.Invoke();
                     break;
                 case 2:
-                    OnMiddleMouseClick?.Invoke(hit);
+                    OnMiddleMouseClick?.Invoke();
                     break;
             }
-        }
+        
     }
 
 }

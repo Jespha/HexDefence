@@ -13,7 +13,10 @@ public class HexCell : MonoBehaviour
     public HexTerrain HexTerrain  { get; private set; }
     public HexBuilding HexBuilding  { get; private set; }
     public List<Vector3> Neighbors  { get; private set; }
-    GameObject buildingPrefab;
+
+    [SerializeField]private AnimationCurve _clickCurve;
+    [SerializeField]private float _duration = 1f;
+    private Building buildingPrefab;
 
     public void Initialize(Vector3 position, int depth, float height, HexTerrain terrain, HexBuilding building, List<Vector3> neighbors, HexGridManager hexGridManager)
     {
@@ -34,8 +37,18 @@ public class HexCell : MonoBehaviour
 
     private void BuildHexBuilding()
     {
-        buildingPrefab = Instantiate(HexBuilding.Prefab.gameObject,this.transform);
+        buildingPrefab = Instantiate(HexBuilding.Prefab,this.transform);
+        buildingPrefab.Initialize(this);
         buildingPrefab.transform.position = this.transform.position;
+    }
+
+    public void BuildHexBuilding(HexBuilding hexBuilding)
+    {
+        HexBuilding = hexBuilding;
+        buildingPrefab = Instantiate(HexBuilding.Prefab,this.transform);
+        buildingPrefab.Initialize(this);
+        buildingPrefab.transform.position = this.transform.position;
+        StartCoroutine(AnimateScaleCoroutine(this.transform));
     }
 
     public void RandomizeHeight()
@@ -44,15 +57,32 @@ public class HexCell : MonoBehaviour
         gameObject.transform.localScale = new Vector3(1, Height, 1);
         if (buildingPrefab != null)
         {
-            ScaleParentObjectButNotChild(gameObject, buildingPrefab, new Vector3(1, 1, 1));
+            ScaleParentObjectButNotChild(gameObject, buildingPrefab.gameObject, new Vector3(1, 1, 1));
             Debug.Log("BuildingPrefab is not null");
         }
     }
 
-    public void Selected(RaycastHit hit)
+    public void Selected()
     {
-        HexGridManager.SelectHexCell(this);
-        gameObject.GetComponent<Renderer>().material.color = Color.red;
+        StartCoroutine(AnimateScaleCoroutine(this.transform));
+    }
+
+    private IEnumerator AnimateScaleCoroutine(Transform _transform)
+    {
+        float time = 0;
+
+        while (time < _duration)
+        {
+            float scale = _clickCurve.Evaluate(time / _duration);
+            _transform.localScale = new Vector3(scale, scale, scale);
+
+            time += Time.deltaTime;
+            yield return null;
+        }
+
+        // ensure the final scale is set correctly
+        float finalScale = _clickCurve.Evaluate(1);
+        _transform.localScale = new Vector3(finalScale, finalScale, finalScale);
     }
 
     private void ScaleParentObjectButNotChild(GameObject parentObject, GameObject childObject, Vector3 initialChildScale)

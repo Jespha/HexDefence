@@ -12,7 +12,7 @@ public class HexCell : MonoBehaviour
     public float Height { get; private set; }
     public HexTerrain HexTerrain  { get; private set; }
     public HexBuilding HexBuilding  { get; private set; }
-    public List<Vector3> Neighbors  { get; private set; }
+    public List<Vector3> Neighbors ;
 
     [SerializeField]private AnimationCurve _clickCurve;
     [SerializeField]private float _duration = 1f;
@@ -33,6 +33,11 @@ public class HexCell : MonoBehaviour
             BuildHexBuilding();
         }    
 
+    }
+
+    public void SetNeighbors(List<Vector3> neighbors)
+    {
+        Neighbors = neighbors;
     }
 
     private void BuildHexBuilding()
@@ -65,6 +70,21 @@ public class HexCell : MonoBehaviour
     public void Selected()
     {
         StartCoroutine(AnimateScaleCoroutine(this.transform));
+        ShowNeighbors();
+    }
+
+
+
+
+    private void ShowNeighbors()
+    {
+        foreach (var neighbor in Neighbors)
+        {
+            if (!HexGridManager.PositionExistsInList(HexGridManager.HexCells, neighbor))
+            {
+                HexGridManager.InstantiateTempHexagon(neighbor, Depth + 1);
+            }
+        }
     }
 
     private IEnumerator AnimateScaleCoroutine(Transform _transform)

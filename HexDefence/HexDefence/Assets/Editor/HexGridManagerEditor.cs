@@ -26,7 +26,10 @@ public class HexGridManagerEditor : Editor
         {
             _hexGridManager.ClearHexGrid();
         }
-
+        if (GUILayout.Button("Clear TEMP"))
+        {
+            _hexGridManager.ClearTempHexGrid();
+        }
     }
 
     void OnSceneGUI()

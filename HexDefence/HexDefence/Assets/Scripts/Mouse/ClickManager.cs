@@ -32,6 +32,13 @@ public class ClickManager : MonoBehaviour
             Debug.Log("HexGridManager not found");
             gameObject.SetActive(false);
         }
+        if (EventSystem.current == null){
+            eventSystem = FindObjectOfType<EventSystem>();
+            if (eventSystem != null)
+            return;
+            Debug.Log("EventSystem not found");
+            gameObject.SetActive(false);
+        }   
     }
 
     private void OnEnable()
@@ -84,27 +91,11 @@ public class ClickManager : MonoBehaviour
                 OnLeft3DClick(hit);
             }        
         }
-        // PointerEventData pointerData = new PointerEventData(eventSystem);
-        // pointerData.position = Input.mousePosition;
-
-        // List<RaycastResult> results = new List<RaycastResult>();
-
-        // graphicRaycaster.Raycast(pointerData, results);
-
-        // if (results.Count > 0)
-        // {
-        //     OnLeftUIClick();
-        // }
-        // else
-        // {
-        //     OnLeft3DClick(hit);
-        // }        
-
     }
 
     private void OnLeftUIClick()
     {
-        Debug.Log("UIClick");
+        
     }
 
     private void OnLeft3DClick(RaycastHit hit)
@@ -118,19 +109,23 @@ public class ClickManager : MonoBehaviour
         {
             _hexGridManager.SelectHexCell(hexCell);
             OnHexSelected?.Invoke(hexCell);
-
         }
         else
         {
-            _hexGridManager.DeselectHexCell();
-            OnHexSelected?.Invoke(null);
+            if(_hexGridManager.PositionExistsInList(_hexGridManager.TempHexCells,hexCell.Position))
+            _hexGridManager.SelectHexCell(hexCell);
+            else
+            {
+                _hexGridManager.DeselectHexCell();
+                OnHexSelected?.Invoke(null);
+            }
+
         }     
-        Debug.Log("3DClick");
     }
 
     private void OnRightMouseClick()
     {
-        Debug.Log("Rclick");
+
     }
 
 }

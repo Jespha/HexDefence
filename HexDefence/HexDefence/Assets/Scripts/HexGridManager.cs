@@ -8,6 +8,9 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
 
+/// <summary>
+///  HexGridManager class is responsible for creating and managing the hex grid
+/// </summary>
 public class HexGridManager : MonoBehaviour
 {
     [field:Header ("Base Hex Setup") ]
@@ -44,19 +47,16 @@ public class HexGridManager : MonoBehaviour
     public void InstantiateTempHexagon(Vector3 position, int depth)
     {
         HexCell newHexCell = Instantiate(_hexCellTemp,this.transform);
-        newHexCell.Initialize(position, depth, 1, _hexTerrain, _hexBuilding, new List<Vector3>(), this);
+        newHexCell.Initialize(position, depth, 1, _hexTerrain, _hexBuilding, new List<Vector3>(), this, true);
         newHexCell.transform.position = position;
         TempHexCells.Add(newHexCell);
     }
 
     public void ClearTempHexGrid()
     {
-        foreach (var cell in TempHexCells)
+        for (int i = TempHexCells.Count - 1; i >= 0; --i)
         {
-            if (cell != null)
-            {
-                UnityEngine.Object.DestroyImmediate(cell, true);
-            }
+            UnityEngine.Object.DestroyImmediate(TempHexCells[i].gameObject,true);
         }
         TempHexCells.Clear();
     }
@@ -66,7 +66,7 @@ public class HexGridManager : MonoBehaviour
         if (!PositionExistsInList(HexCells, position))
         {
             HexCell newHexCell = Instantiate(_hexCell,this.transform);
-            newHexCell.Initialize(position, depth, 1, _hexTerrain, _hexBuilding, neighborPositions, this);
+            newHexCell.Initialize(position, depth, 1, _hexTerrain, _hexBuilding, neighborPositions, this, false);
             newHexCell.transform.position = position;
             HexCells.Add(newHexCell);
         }
@@ -77,7 +77,7 @@ public class HexGridManager : MonoBehaviour
         if (!PositionExistsInList(HexCells, position))
         {
             HexCell newHexCell = Instantiate(_hexCell,this.transform);
-            newHexCell.Initialize(position, depth, 1, _hexTerrain, _hexBuilding, new List<Vector3>(), this);
+            newHexCell.Initialize(position, depth, 1, _hexTerrain, _hexBuilding, new List<Vector3>(), this, false);
             newHexCell.transform.position = position;
             HexCells.Add(newHexCell);
         }
@@ -117,7 +117,7 @@ public class HexGridManager : MonoBehaviour
                     // Calculate the positions of the neighbors
                     for (int j = 0; j < 6; j++)
                     {
-                        float neighbor_angle_deg = 60 * j - 30; // Start from -30 degrees
+                        float neighbor_angle_deg = 60 * j; // Start from -30 degrees
                         float neighbor_angle_rad = Mathf.PI / 180 * neighbor_angle_deg;
                         Vector3 neighborCoords = new Vector3(hexCoords.x + radius * Mathf.Cos(neighbor_angle_rad), hexCoords.y, hexCoords.z + radius * Mathf.Sin(neighbor_angle_rad));
 
@@ -147,6 +147,7 @@ public class HexGridManager : MonoBehaviour
             UnityEngine.Object.DestroyImmediate(this.transform.GetChild(0).gameObject);
     }
 
+    /// <summary> Just a Test Void That Sets the Height of the HexCells to a Random Value </summary>
     public void Test()
     {
         for (int i = 0; i < HexCells.Count; i++)
@@ -155,8 +156,13 @@ public class HexGridManager : MonoBehaviour
         }
     }
 
+    /// <summary> Sets the selected HexCell as _selected in HexGridManager</summary>
+    /// <param name="hexCell">The HexCell to be selected</param>
     public void SelectHexCell(HexCell hexCell)
     {
+        if(!PositionExistsInList(TempHexCells,hexCell.Position))
+        ClearTempHexGrid();
+
         if (_selected != null)
         {
             _selected.GetComponent<MeshRenderer>().material.SetFloat("_selected", 0);

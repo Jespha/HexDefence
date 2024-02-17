@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
 
+/// <summary>
+/// HexCell class is responsible hexagon cells and their properties
+/// </summary>
 public class HexCell : MonoBehaviour
 {
     public HexGridManager HexGridManager { get; private set; }
@@ -12,13 +15,14 @@ public class HexCell : MonoBehaviour
     public float Height { get; private set; }
     public HexTerrain HexTerrain  { get; private set; }
     public HexBuilding HexBuilding  { get; private set; }
-    public List<Vector3> Neighbors ;
+    public List<Vector3> Neighbors;
+    public bool IsTemp { get; private set; }
 
     [SerializeField]private AnimationCurve _clickCurve;
     [SerializeField]private float _duration = 1f;
     private Building buildingPrefab;
 
-    public void Initialize(Vector3 position, int depth, float height, HexTerrain terrain, HexBuilding building, List<Vector3> neighbors, HexGridManager hexGridManager)
+    public void Initialize(Vector3 position, int depth, float height, HexTerrain terrain, HexBuilding building, List<Vector3> neighbors, HexGridManager hexGridManager, bool isTemp)
     {
         Position = position;
         Depth = depth;
@@ -27,11 +31,16 @@ public class HexCell : MonoBehaviour
         HexBuilding = building;
         Neighbors = neighbors;
         HexGridManager = hexGridManager;
+        IsTemp = isTemp;
 
         if (HexBuilding.HexBuildingType != HexBuildingType.None)
         {
             BuildHexBuilding();
         }    
+
+        if (IsTemp)
+        {
+        }
 
     }
 
@@ -75,7 +84,7 @@ public class HexCell : MonoBehaviour
 
 
 
-
+        
     private void ShowNeighbors()
     {
         foreach (var neighbor in Neighbors)

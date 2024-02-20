@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7529705026436801151}
   - component: {fileID: 5095949631850910196}
+  - component: {fileID: 6568318041363888805}
   m_Layer: 0
   m_Name: ClickManager
   m_TagString: Untagged
@@ -45,6 +46,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _pool: {fileID: 0}
+  _hexGridManager: {fileID: 0}
+  graphicRaycaster: {fileID: 0}
+  eventSystem: {fileID: 0}
   clickTypes:
   - {fileID: 11400000, guid: f2846ccda95dffc409666ac7d44d1fad, type: 2}
   - {fileID: 11400000, guid: 02480e81a2293ad4b96bd08b4e8bc70c, type: 2}
+--- !u!114 &6568318041363888805
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1005424856757457417}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4fa8b8240e5afb43bb3661ee340bb17, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  eventSystem: {fileID: 0}

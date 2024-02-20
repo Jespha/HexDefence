@@ -13,10 +13,6 @@ public class UIManager : MonoBehaviour
 
     private void Start()
     {
-        if (_selectedHexCell == null)
-            _selectedHexCell = FindObjectOfType<SelectedHexCell>();
-        else
-            Debug.Log("SelectedHexCell not found");
 
         if (_buildingButtons == null)
             _buildingButtons = FindObjectOfType<BuildingButtons>();

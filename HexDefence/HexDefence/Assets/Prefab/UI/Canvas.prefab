@@ -959,11 +959,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8915054505945693967, guid: 3642815916b6db946b52927dc7db54b7,
-        type: 3}
-      propertyPath: _canvasGroup
-      value: 
-      objectReference: {fileID: 6033472219118552142}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -984,12 +979,6 @@ MonoBehaviour:
 --- !u!224 &4031471992316558304 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7583451704051017591, guid: 3642815916b6db946b52927dc7db54b7,
-    type: 3}
-  m_PrefabInstance: {fileID: 6831819139317521559}
-  m_PrefabAsset: {fileID: 0}
---- !u!225 &6033472219118552142 stripped
-CanvasGroup:
-  m_CorrespondingSourceObject: {fileID: 969483707851446489, guid: 3642815916b6db946b52927dc7db54b7,
     type: 3}
   m_PrefabInstance: {fileID: 6831819139317521559}
   m_PrefabAsset: {fileID: 0}

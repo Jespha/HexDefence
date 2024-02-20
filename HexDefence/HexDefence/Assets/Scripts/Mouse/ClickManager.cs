@@ -104,23 +104,49 @@ public class ClickManager : MonoBehaviour
         ClickType type = GetScriptableObjectByLayerMask(clickTypes, layerMaskHit);
         PooledObject obj = _pool.Get(type.pooledObject);
         obj.transform.position = hit.point;
+        HexCell _hexCell = null;
 
         if (hit.transform.gameObject.TryGetComponent<HexCell>(out HexCell hexCell))
         {
-            _hexGridManager.SelectHexCell(hexCell);
-            OnHexSelected?.Invoke(hexCell);
+            _hexCell = hexCell;
         }
-        else
-        {
-            if(_hexGridManager.PositionExistsInList(_hexGridManager.TempHexCells,hexCell.Position))
-            _hexGridManager.SelectHexCell(hexCell);
-            else
-            {
-                _hexGridManager.DeselectHexCell();
-                OnHexSelected?.Invoke(null);
-            }
 
-        }     
+
+        switch (layerMaskHit.value)
+        {
+            case 4:
+                OnWaterClick(hit);
+                break;
+            case 6:
+                OnLandClick(hit, _hexCell);
+                break;
+            case 10:
+                OnTempLandClick(hit, _hexCell);
+
+                break;
+            default:
+                break;
+        }  
+    }
+
+    private void OnWaterClick(RaycastHit hit)
+    {
+        _hexGridManager.DeselectHexCell();
+        OnHexSelected?.Invoke(null);
+    }
+
+    private void OnLandClick(RaycastHit hit, HexCell hexCell)
+    {
+        _hexGridManager.SelectHexCell(hexCell);
+        OnHexSelected?.Invoke(hexCell);
+    }
+
+    private void OnTempLandClick(RaycastHit hit, HexCell hexCell)
+    {
+        if(_hexGridManager.PositionExistsInList(_hexGridManager.TempHexCells,hexCell.Position))
+        _hexGridManager.SelectHexCell(hexCell);
+        else
+        return;
     }
 
     private void OnRightMouseClick()

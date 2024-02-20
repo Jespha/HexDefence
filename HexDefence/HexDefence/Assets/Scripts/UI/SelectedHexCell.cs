@@ -14,6 +14,11 @@ public class SelectedHexCell : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _name; 
     [SerializeField] private CanvasGroup _canvasGroup;
 
+    private void Start()
+    {
+        _canvasGroup.alpha = 0;
+    }
+
     public void SetSelectedHexCell(HexCell hexCell)
     {   
         if (hexCell != null)

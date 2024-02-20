@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6787107445651044326}
   - component: {fileID: 7937008018983819425}
   - component: {fileID: 7326428066781996950}
-  m_Layer: 6
+  m_Layer: 10
   m_Name: PossibleHex
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -52,36 +52,45 @@ MonoBehaviour:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
-      time: 0
-      value: 0.40932527
-      inSlope: -1.2394838
-      outSlope: -1.2394838
+      time: 0.0010566711
+      value: -1.5
+      inSlope: 2.0657725
+      outSlope: 2.0657725
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
-      outWeight: 0.17295401
+      outWeight: 0.10461614
     - serializedVersion: 3
-      time: 0.57441115
-      value: 0.9825818
-      inSlope: -3.157488
-      outSlope: -3.157488
+      time: 0.7225191
+      value: 0.21407372
+      inSlope: -1.4404385
+      outSlope: -1.4404385
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.0076673925
-      outWeight: 0.1856305
+      inWeight: 0.33333334
+      outWeight: 0.05504939
     - serializedVersion: 3
-      time: 1
-      value: 0.9912909
+      time: 1.2771754
+      value: 0
+      inSlope: 0.5324171
+      outSlope: 0.5324171
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.22655024
+    - serializedVersion: 3
+      time: 1.528285
+      value: 0
       inSlope: 0
       outSlope: 0
-      tangentMode: 0
+      tangentMode: 136
       weightedMode: 0
-      inWeight: 0
-      outWeight: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  _duration: 0.4
+  _duration: 0.6
 --- !u!23 &6787107445651044326
 MeshRenderer:
   m_ObjectHideFlags: 0

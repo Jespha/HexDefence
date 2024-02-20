@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 
 /// <summary>
 /// HexCell class is responsible hexagon cells and their properties
@@ -18,11 +19,14 @@ public class HexCell : MonoBehaviour
     public List<Vector3> Neighbors;
     public bool IsTemp { get; private set; }
 
+    public HexCell RoadEntryPoint { get; private set; }
+    public HexCell RoadEndPoint { get; private set; }
+
     [SerializeField]private AnimationCurve _clickCurve;
     [SerializeField]private float _duration = 1f;
     private Building buildingPrefab;
 
-    public void Initialize(Vector3 position, int depth, float height, HexTerrain terrain, HexBuilding building, List<Vector3> neighbors, HexGridManager hexGridManager, bool isTemp)
+    public void Initialize(Vector3 position, int depth, float height, HexTerrain terrain, HexBuilding building, List<Vector3> neighbors, HexGridManager hexGridManager)
     {
         Position = position;
         Depth = depth;
@@ -31,16 +35,22 @@ public class HexCell : MonoBehaviour
         HexBuilding = building;
         Neighbors = neighbors;
         HexGridManager = hexGridManager;
-        IsTemp = isTemp;
 
         if (HexBuilding.HexBuildingType != HexBuildingType.None)
         {
             BuildHexBuilding();
         }    
+    }
 
-        if (IsTemp)
-        {
-        }
+    public void InitializationTemp(bool isTemp, float offset)
+    {
+        IsTemp = isTemp;
+        StartCoroutine(AnimateScaleHeightCoroutine(this.transform, offset));
+        this.gameObject.layer = 10;
+        MeshRenderer _renderer = this.GetComponent<MeshRenderer>();
+        _renderer.renderingLayerMask = _renderer.renderingLayerMask + 2;
+        _renderer.material.SetFloat("_selected", 1);
+        _renderer.material.SetFloat("_Temp", 1);
 
     }
 
@@ -49,11 +59,25 @@ public class HexCell : MonoBehaviour
         Neighbors = neighbors;
     }
 
+    public void SetRoad(HexCell hexcell , RoadType roadType)
+    {
+        if (roadType == RoadType.Entry)
+        {
+            RoadEntryPoint = hexcell;
+        }
+        else
+        {
+            RoadEndPoint = hexcell;
+        }
+    }
+
     private void BuildHexBuilding()
     {
         buildingPrefab = Instantiate(HexBuilding.Prefab,this.transform);
         buildingPrefab.Initialize(this);
         buildingPrefab.transform.position = this.transform.position;
+        buildingPrefab.GetComponent<MeshRenderer>().renderingLayerMask = 1;
+
     }
 
     public void BuildHexBuilding(HexBuilding hexBuilding)
@@ -79,11 +103,28 @@ public class HexCell : MonoBehaviour
     public void Selected()
     {
         StartCoroutine(AnimateScaleCoroutine(this.transform));
-        ShowNeighbors();
+        this.GetComponent<MeshRenderer>().material.SetFloat("_Selected", 1);
+
+        if (!IsTemp)
+        {
+            this.gameObject.layer = 12;
+            ShowNeighbors();
+        }
     }
+    
 
-
-
+    public void Deselected()
+    {
+        if (IsTemp)
+        {
+            this.GetComponent<MeshRenderer>().material.SetFloat("_Selected", 0);
+            return;
+        }
+        else{
+            this.GetComponent<MeshRenderer>().material.SetFloat("_Selected", 0);
+            this.gameObject.layer = 6;
+        }
+    }
         
     private void ShowNeighbors()
     {
@@ -112,6 +153,29 @@ public class HexCell : MonoBehaviour
         // ensure the final scale is set correctly
         float finalScale = _clickCurve.Evaluate(1);
         _transform.localScale = new Vector3(finalScale, finalScale, finalScale);
+    }
+
+    private IEnumerator AnimateScaleHeightCoroutine(Transform _transform, float offset)
+    {
+        float time = 0;
+        float y = _transform.localPosition.y ;
+        if (offset != 0)
+        // _duration = _duration + (offset*0.175f);
+        this.GetComponent<MeshRenderer>().enabled = false;
+        yield return new WaitForSeconds(offset*0.075f);
+        this.GetComponent<MeshRenderer>().enabled = true;
+        while (time < _duration)
+        {
+            
+            float scale = y + _clickCurve.Evaluate(time / _duration);
+            _transform.localPosition =  new Vector3(_transform.localPosition.x, scale, _transform.localPosition.z);
+
+            time += Time.deltaTime;
+            yield return null;
+        }
+        // ensure the final scale is set correctly
+        // float finalScale = _clickCurve.Evaluate(1);
+        // _transform.localPosition =  new Vector3(_transform.localPosition.x, y, _transform.localPosition.z);
     }
 
     private void ScaleParentObjectButNotChild(GameObject parentObject, GameObject childObject, Vector3 initialChildScale)
@@ -150,4 +214,13 @@ public class HexCell : MonoBehaviour
         None,
         Base,
         BasicTower,
+    }
+
+    [Serializable]
+    public enum RoadType
+    {
+        Entry,
+        End,
+        LastPoint,
+        None,
     }

@@ -19,8 +19,6 @@ public class uGUITools : MonoBehaviour {
 			t.anchorMin = newAnchorsMin;
 			t.anchorMax = newAnchorsMax;
 			t.offsetMin = t.offsetMax = new Vector2(0, 0);
-			
-			//UnityEditor.EditorUtility.SetDirty(transform);
 		}
 	}
 

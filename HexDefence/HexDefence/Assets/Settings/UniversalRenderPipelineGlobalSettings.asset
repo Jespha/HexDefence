@@ -15,10 +15,10 @@ MonoBehaviour:
   k_AssetVersion: 3
   m_RenderingLayerNames:
   - Light Layer default
-  - Light Layer 1
-  - Light Layer 2
-  - Light Layer 3
-  - Light Layer 4
+  - Tower
+  - Selection
+  - Opaque
+  - Water
   - Light Layer 5
   - Light Layer 6
   - Light Layer 7

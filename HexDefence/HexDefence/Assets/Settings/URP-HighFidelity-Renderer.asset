@@ -18,7 +18,7 @@ MonoBehaviour:
   _outlineSettings:
     _outlineSettings: {fileID: 0}
     _outlineColor: {r: 0.6189309, g: 1, b: 0.6084906, a: 1}
-    _outlineWidth: 15
+    _outlineWidth: 6
     _outlineIntensity: 1.8
     _outlineAlphaCutoff: 0.9
     _outlineMode: 0
@@ -41,7 +41,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f62c9c65cf3354c93be831c8bc075510, type: 3}
   m_Name: SSAO
   m_EditorClassIdentifier: 
-  m_Active: 1
+  m_Active: 0
   m_Settings:
     AOMethod: 1
     Downsample: 0

@@ -51,11 +51,12 @@ MonoBehaviour:
   showCoordinates: 1
   _roads: {fileID: 0}
   <HexSize>k__BackingField: 2
-  <StartRoads>k__BackingField: 4
-  <Depth>k__BackingField: 1
+  <StartRoads>k__BackingField: 3
+  <Depth>k__BackingField: 0
   <HexCells>k__BackingField: []
   <TempHexCells>k__BackingField: []
   _hexTerrain: {fileID: 11400000, guid: 2e99d5359888935498913c99a3e6d7c1, type: 2}
   _hexBuilding: {fileID: 11400000, guid: 917c4c030e270e247ac630e832579521, type: 2}
   _baseTowerPrefab: {fileID: 11400000, guid: b054a98019727c344ba795d281962d8f, type: 2}
   _selected: {fileID: 0}
+  _selectedTemp: {fileID: 0}

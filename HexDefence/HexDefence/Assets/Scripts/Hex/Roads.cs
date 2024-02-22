@@ -1,45 +1,38 @@
-using System.Collections;
 using System.Collections.Generic;
-using Unity.Mathematics;
+using Dreamteck.Splines;
 using UnityEngine;
 
 public class Roads : MonoBehaviour
 {
 
     // public static Roads Instance;
-    private List<GameObject> _roads = new List<GameObject>();
+    [SerializeField] private Material _roadMaterial;
+    [SerializeField] private GameObject _roadPrefab;
+    [SerializeField] public List<GameObject> _roads = new List<GameObject>();
 
     private void Start()
     {
     }
     // void Awake() => Instance = this;
 
-    public void CreateRoad()
+    public void CreateRoad(HexCell StartPoint, HexCell EndPoint)
     {
-        for (int i = 0; i <  HexGridManager.Instance.HexCells2DArray.GetLength(0); i++)
-        {
-            GameObject road = new GameObject("Road" + i);
-            LineRenderer lineRenderer = road.AddComponent<LineRenderer>();
-            lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
-            lineRenderer.widthMultiplier = 0.2f;
-            lineRenderer.positionCount = 2;
-            _roads.Add(road);
-            Vector3 roadPos = this.transform.position +  new Vector3(0,1,0);
-            Instantiate(road, this.transform);
-
-            for (int j = 0; j < HexGridManager.Instance.HexCells2DArray.GetLength(j); j++)
-            {
-                lineRenderer.SetPosition(j, HexGridManager.Instance.HexCells[j].transform.position);
-            }
-        }
+        GameObject road = Instantiate(_roadPrefab, this.transform);
+        road.TryGetComponent(out SplineComputer roadSpline);
+        road.TryGetComponent(out SplineMesh roadSplineMesh);
+        roadSpline.SetPoint(0, new SplinePoint(StartPoint.transform.position), SplineComputer.Space.World);
+        roadSpline.SetPoint(1, new SplinePoint(EndPoint.transform.position), SplineComputer.Space.World);
+        roadSplineMesh.Rebuild();
+        _roads.Add(road);
     }
 
     public void ClearRoads()
     {
-        for (int i = 0; i < _roads.Count; i++)
+        for (int i = _roads.Count - 1; i >= 0; --i)
         {
-            UnityEngine.Object.DestroyImmediate(_roads[i]);
+            DestroyImmediate(_roads[i].gameObject,true);
         }
+        _roads.Clear();
     }
 
 }

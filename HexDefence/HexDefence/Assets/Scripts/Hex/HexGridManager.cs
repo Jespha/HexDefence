@@ -37,6 +37,7 @@ public class HexGridManager : MonoBehaviour
     public void MakeHexGrid()
     {
         ClearHexGrid();
+        _roads.ClearRoads();
         InstantiateHexagon(new Vector3(0,0,0), -1, _hexTerrain, _baseTowerPrefab);
         SetRoadEndPoint(HexCells[0]);
         InstantiateNeighbors(new Vector3(0,0,0), HexSize, Depth);
@@ -46,29 +47,27 @@ public class HexGridManager : MonoBehaviour
     {
         HexCell newHexCell = Instantiate(_hexCellTemp,this.transform);
         newHexCell.Initialize(position, depth, 1, _hexTerrain, _hexBuilding, new List<Vector3>(), this);
-
-        float offset = TempHexCellsRange(newHexCell);
-
+        // float offset = TempHexCellsRange(newHexCell);
         newHexCell.InitializationTemp(true, TempHexCells.Count);
         newHexCell.transform.position = position;
         TempHexCells.Add(newHexCell);
     }
 
-    private float TempHexCellsRange(HexCell newHexCell)
-    {
-        float offset = 0;
-        for (int i = 0; i < TempHexCells.Count; i++)
-        {
-            offset += 0.1f;
-        }
-        return offset;
-    }
+    // private float TempHexCellsRange(HexCell newHexCell)
+    // {
+    //     float offset = 0;
+    //     for (int i = 0; i < TempHexCells.Count; i++)
+    //     {
+    //         offset += 0.1f;
+    //     }
+    //     return offset;
+    // }
 
     public void ClearTempHexGrid()
     {
         for (int i = TempHexCells.Count - 1; i >= 0; --i)
         {
-            UnityEngine.Object.DestroyImmediate(TempHexCells[i].gameObject,true);
+            DestroyImmediate(TempHexCells[i].gameObject,true);
         }
         TempHexCells.Clear();
     }
@@ -90,9 +89,8 @@ public class HexGridManager : MonoBehaviour
             HexCell newHexCell = Instantiate(_hexCell,this.transform);
             newHexCell.Initialize(position, depth, 1, _hexTerrain, _hexBuilding, neighborPositions, this);
             newHexCell.SetRoad(hexCell, RoadType.Entry);
-            _roads.CreateRoad();
-            Debug.Log("Road Created");
             newHexCell.transform.position = position;
+            _roads.CreateRoad(hexCell , newHexCell);
             HexCells.Add(newHexCell);
         }
     }
@@ -103,8 +101,6 @@ public class HexGridManager : MonoBehaviour
         {
             HexCell newHexCell = Instantiate(_hexCell,this.transform);
             newHexCell.Initialize(position, depth, 1, _hexTerrain, _hexBuilding, neighborPositions, this);
-            Debug.Log("HEX Created");
-
             newHexCell.transform.position = position;
             HexCells.Add(newHexCell);
         }
@@ -146,6 +142,8 @@ public class HexGridManager : MonoBehaviour
         Queue<(Vector3, int)> queue = new Queue<(Vector3, int)>();
         queue.Enqueue((center, 0));
 
+        int _startRoads = StartRoads;
+
         while (queue.Count > 0)
         {
             (Vector3 hex, int depth) = queue.Dequeue();
@@ -154,8 +152,11 @@ public class HexGridManager : MonoBehaviour
             {
                 float angle_deg = 60 * i ;
                 float angle_rad = Mathf.PI / 180 * angle_deg;
-                Vector3 hexCoords = new Vector3(hex.x + radius * Mathf.Cos(angle_rad), hex.y, hex.z + radius * Mathf.Sin(angle_rad));
-                int _startRoads = StartRoads;
+                Vector3 hexCoords = new Vector3(
+                    hex.x + radius * Mathf.Cos(angle_rad), 
+                    hex.y, 
+                    hex.z + radius * Mathf.Sin(angle_rad));
+                    
 
                 if (!PositionExistsInList(HexCells,hexCoords))
                 {
@@ -166,30 +167,36 @@ public class HexGridManager : MonoBehaviour
                     {
                         float neighbor_angle_deg = 60 * j;
                         float neighbor_angle_rad = Mathf.PI / 180 * neighbor_angle_deg;
-                        Vector3 neighborCoords = new Vector3(hexCoords.x + radius * Mathf.Cos(neighbor_angle_rad), hexCoords.y, hexCoords.z + radius * Mathf.Sin(neighbor_angle_rad));
+                        Vector3 neighborCoords = new Vector3(
+                            hexCoords.x + radius * Mathf.Cos(neighbor_angle_rad), 
+                            hexCoords.y, 
+                            hexCoords.z + radius * Mathf.Sin(neighbor_angle_rad));
 
                         neighborPositions.Add(neighborCoords);
                     }
 
                     if (depth == 0)
                     {                           
-                         Debug.Log("HexCells.Count < _startRoads");
-                        if (HexCells.Count < _startRoads + 1)
-                        {                         Debug.Log("HexCells.Count < _startRoads");
-
+                
+                        if (6 - HexCells.Count <= _startRoads - 1)
+                        {
+                            Debug.Log("Hex: " + HexCells.Count + " Road Created: " + _startRoads);
                             InstantiateHexagonRoad(hexCoords, depth, neighborPositions, HexCells[0]);
+                            _startRoads = _startRoads - 1;
                         }
                         else
                         {
-                            Debug.Log("HexCells.Count < _startRoads ELSE");
-                            bool _road = UnityEngine.Random.Range(0, 1) == 0;
-                            if (_road)
+                            bool _road = UnityEngine.Random.value > 0.5f;
+                            if (_road && _startRoads > 0)
                             {
                                 InstantiateHexagonRoad(hexCoords, depth, neighborPositions, HexCells[0]);
+                                _startRoads = _startRoads - 1;
+                                Debug.Log("_road: " + _road + " Road CreatedRANDOM: " + _startRoads);
                             }
                             else
                             {
                                 InstantiateHexagon(hexCoords, depth, neighborPositions);
+                                Debug.Log("Created A NON ROAD: " + _road);
                             }
                         }
                     }
@@ -210,7 +217,7 @@ public class HexGridManager : MonoBehaviour
     public void ClearHexGrid()
     {
         HexCells.Clear();
-        _roads.ClearRoads();
+        // _roads.ClearRoads();
         for (int i = this.transform.childCount; i > 0; --i)
             UnityEngine.Object.DestroyImmediate(this.transform.GetChild(0).gameObject);
     }

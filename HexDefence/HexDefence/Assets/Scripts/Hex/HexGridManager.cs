@@ -39,7 +39,7 @@ public class HexGridManager : MonoBehaviour
         ClearHexGrid();
         _roads.ClearRoads();
         InstantiateHexagon(new Vector3(0,0,0), -1, _hexTerrain, _baseTowerPrefab);
-        SetRoadEndPoint(HexCells[0]);
+        InitializeRoads(HexCells[0]);
         InstantiateNeighbors(new Vector3(0,0,0), HexSize, Depth);
     } 
 
@@ -47,21 +47,10 @@ public class HexGridManager : MonoBehaviour
     {
         HexCell newHexCell = Instantiate(_hexCellTemp,this.transform);
         newHexCell.Initialize(position, depth, 1, _hexTerrain, _hexBuilding, new List<Vector3>(), this);
-        // float offset = TempHexCellsRange(newHexCell);
         newHexCell.InitializationTemp(true, TempHexCells.Count);
         newHexCell.transform.position = position;
         TempHexCells.Add(newHexCell);
     }
-
-    // private float TempHexCellsRange(HexCell newHexCell)
-    // {
-    //     float offset = 0;
-    //     for (int i = 0; i < TempHexCells.Count; i++)
-    //     {
-    //         offset += 0.1f;
-    //     }
-    //     return offset;
-    // }
 
     public void ClearTempHexGrid()
     {
@@ -70,29 +59,6 @@ public class HexGridManager : MonoBehaviour
             DestroyImmediate(TempHexCells[i].gameObject,true);
         }
         TempHexCells.Clear();
-    }
-
-    public void SetRoadEndPoint(HexCell hexCell)
-    {
-        HexCells2DArray = new HexCell[StartRoads, 1];
-
-        for (int i = 0; i < StartRoads; i++)
-        {
-            HexCells2DArray[i, 0] = hexCell;
-        }
-    }
-    
-    void InstantiateHexagonRoad(Vector3 position, int depth, List<Vector3> neighborPositions, HexCell hexCell)
-    {
-        if (!PositionExistsInList(HexCells, position))
-        {
-            HexCell newHexCell = Instantiate(_hexCell,this.transform);
-            newHexCell.Initialize(position, depth, 1, _hexTerrain, _hexBuilding, neighborPositions, this);
-            newHexCell.SetRoad(hexCell, RoadType.Entry);
-            newHexCell.transform.position = position;
-            _roads.CreateRoad(hexCell , newHexCell);
-            HexCells.Add(newHexCell);
-        }
     }
 
     void InstantiateHexagon(Vector3 position, int depth, List<Vector3> neighborPositions)
@@ -117,12 +83,33 @@ public class HexGridManager : MonoBehaviour
         }
     }
 
-    void InstantiateHexagonFromTemp(Vector3 position, int depth, HexTerrain _hexTerrain, HexBuilding _hexBuilding)
+    HexCell InstantiateHexagonFromTemp(HexCell hexcell, HexCell hexcellParent)
     {
+        HexCell newHexCell = Instantiate(_hexCell,this.transform);
+        newHexCell.Initialize(hexcell.Position, hexcell.Depth, 1, hexcell.HexTerrain, hexcell.HexBuilding, new List<Vector3>(), this);
+        newHexCell.transform.position = hexcell.Position;
+        HexCells.Add(newHexCell);
+        if (hexcellParent.RoadEntryPoint != null && hexcellParent.RoadEndPoint == null)
+        {
+            _roads.AddRoad(newHexCell,hexcellParent);
+            hexcellParent.SetRoad(newHexCell, RoadType.Exit);
+            newHexCell.SetRoad(hexcellParent, RoadType.Entry, hexcellParent.RoadIndex);
+            // AddRoadToArray(newHexCell, hexcellParent.RoadIndex);
+        }
+        return newHexCell;
+    }
+
+    void InstantiateHexagonRoad(Vector3 position, int depth, List<Vector3> neighborPositions, HexCell hexCell, int roadIndex)
+    {
+        if (!PositionExistsInList(HexCells, position))
+        {
             HexCell newHexCell = Instantiate(_hexCell,this.transform);
-            newHexCell.Initialize(position, depth, 1, _hexTerrain, _hexBuilding, new List<Vector3>(), this);
+            newHexCell.Initialize(position, depth, 1, _hexTerrain, _hexBuilding, neighborPositions, this);
+            newHexCell.SetRoad(hexCell, RoadType.Entry, roadIndex);
             newHexCell.transform.position = position;
+            _roads.CreateRoad(hexCell , newHexCell, roadIndex);
             HexCells.Add(newHexCell);
+        }
     }
 
     public bool PositionExistsInList(List<HexCell> hexCellList, Vector3 position)
@@ -180,8 +167,7 @@ public class HexGridManager : MonoBehaviour
                 
                         if (6 - HexCells.Count <= _startRoads - 1)
                         {
-                            Debug.Log("Hex: " + HexCells.Count + " Road Created: " + _startRoads);
-                            InstantiateHexagonRoad(hexCoords, depth, neighborPositions, HexCells[0]);
+                            InstantiateHexagonRoad(hexCoords, depth, neighborPositions, HexCells[0], _startRoads);
                             _startRoads = _startRoads - 1;
                         }
                         else
@@ -189,14 +175,12 @@ public class HexGridManager : MonoBehaviour
                             bool _road = UnityEngine.Random.value > 0.5f;
                             if (_road && _startRoads > 0)
                             {
-                                InstantiateHexagonRoad(hexCoords, depth, neighborPositions, HexCells[0]);
+                                InstantiateHexagonRoad(hexCoords, depth, neighborPositions, HexCells[0], _startRoads);
                                 _startRoads = _startRoads - 1;
-                                Debug.Log("_road: " + _road + " Road CreatedRANDOM: " + _startRoads);
                             }
                             else
                             {
                                 InstantiateHexagon(hexCoords, depth, neighborPositions);
-                                Debug.Log("Created A NON ROAD: " + _road);
                             }
                         }
                     }
@@ -212,6 +196,41 @@ public class HexGridManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    HexCell InstantiateHexagonNeighborsFromTemp(HexCell hexCell, HexCell hexcellParent)
+    {
+
+
+        List<Vector3> neighborPositions = new List<Vector3>();
+
+        // Calculate the positions of the neighbors
+        for (int j = 0; j < 6; j++)
+        {
+            float neighbor_angle_deg = 60 * j;
+            float neighbor_angle_rad = Mathf.PI / 180 * neighbor_angle_deg;
+            Vector3 neighborCoords = new Vector3(
+                hexCell.Position.x + HexSize * Mathf.Cos(neighbor_angle_rad), 
+                hexCell.Position.y, 
+                hexCell.Position.z + HexSize * Mathf.Sin(neighbor_angle_rad));
+
+            neighborPositions.Add(neighborCoords);
+        }
+
+        HexCell newHexCell = Instantiate(_hexCell,this.transform);
+        newHexCell.Initialize(hexCell.Position, hexCell.Depth, 1, hexCell.HexTerrain, hexCell.HexBuilding, neighborPositions, this);
+        newHexCell.transform.position = hexCell.Position;
+        HexCells.Add(newHexCell);
+        if (hexcellParent.RoadEntryPoint != null && hexcellParent.RoadEndPoint == null)
+        {
+            _roads.AddRoad(newHexCell,hexcellParent);
+            hexcellParent.SetRoad(newHexCell, RoadType.Exit);
+            newHexCell.SetRoad(hexcellParent, RoadType.Entry, hexcellParent.RoadIndex);
+            // AddRoadToArray(newHexCell, hexcellParent.RoadIndex);
+        }
+
+        return newHexCell;
+
     }
 
     public void ClearHexGrid()
@@ -231,39 +250,61 @@ public class HexGridManager : MonoBehaviour
         }
     }
 
-    private void AddRoad(HexCell hexCell, int roadIndex)
+    public void InitializeRoads(HexCell hexCell)
     {
-        HexCells2DArray[roadIndex, 1] = hexCell;
+        HexCells2DArray = new HexCell[StartRoads, HexCells.Count];
+        for (int i = 0; i < StartRoads; i++)
+        {
+            HexCells2DArray[i, 0] = hexCell;
+        }
     }
+    
+private void AddRoadToArray(HexCell hexCell, int roadIndex)
+{   
+    Debug.Log("RoadIndex: " + roadIndex);
+    int _lastRoad = HexCells2DArray.GetLength(roadIndex);
+    Debug.Log("_lastRoad: " + _lastRoad);
 
-
+    HexCells2DArray[roadIndex - 1, _lastRoad] = hexCell;
+}
     /// <summary> Sets the selected HexCell as _selected in HexGridManager</summary>
     /// <param name="hexCell">The HexCell to be selected</param>
     public void SelectHexCell(HexCell hexCell)
     {
-        if(!PositionExistsInList(TempHexCells,hexCell.Position))
-        ClearTempHexGrid();
-
-        if (_selected != null)
-        {
-            if (!hexCell.IsTemp)
-            {
-                _selected.Deselected();
-            }
-        }
-
-        if (_selectedTemp != null)
-        {
-            _selectedTemp.Deselected();
-        }
 
         if (hexCell.IsTemp)
-        {
-            _selectedTemp = hexCell;
-            _selectedTemp.Selected();
+        { 
+            if ( _selectedTemp != null)
+            {
+                if(_selectedTemp.Position == hexCell.Position )
+                {
+                    HexCell newHexCell = InstantiateHexagonNeighborsFromTemp(hexCell,_selected);
+                    _selectedTemp.Deselected();
+                    _selected.Deselected();
+                    ClearTempHexGrid();
+                    _selected = newHexCell;
+                }
+                else
+                {
+                    _selectedTemp.Deselected();
+                    _selectedTemp = hexCell;
+                    _selectedTemp.Selected();
+                }
+            }
+            else
+            {
+                _selectedTemp = hexCell;
+                _selectedTemp.Selected();
+            }
         }
         else
-        {
+        {       
+            if (_selected != null)
+            {
+                _selected.Deselected();
+                ClearTempHexGrid();
+            }
+
             _selected = hexCell;
             _selected.Selected();
         }
@@ -283,5 +324,4 @@ public class HexGridManager : MonoBehaviour
             ClearTempHexGrid();
         }
     }
-
 }

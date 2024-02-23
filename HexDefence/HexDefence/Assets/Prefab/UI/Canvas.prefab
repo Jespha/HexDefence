@@ -1088,13 +1088,19 @@ PrefabInstance:
     - target: {fileID: 5095949631850910196, guid: 18b11cd39afa296448e10028353d24c1,
         type: 3}
       propertyPath: clickTypes.Array.size
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 5095949631850910196, guid: 18b11cd39afa296448e10028353d24c1,
         type: 3}
       propertyPath: clickTypes.Array.data[2]
       value: 
       objectReference: {fileID: 11400000, guid: 452b851a6d562c54587e4be61f1d8fb3,
+        type: 2}
+    - target: {fileID: 5095949631850910196, guid: 18b11cd39afa296448e10028353d24c1,
+        type: 3}
+      propertyPath: clickTypes.Array.data[3]
+      value: 
+      objectReference: {fileID: 11400000, guid: 36b72f168dbd0044a805d34aef5c1ccd,
         type: 2}
     - target: {fileID: 6568318041363888805, guid: 18b11cd39afa296448e10028353d24c1,
         type: 3}

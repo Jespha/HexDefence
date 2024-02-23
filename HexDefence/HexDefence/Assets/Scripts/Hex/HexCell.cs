@@ -19,6 +19,7 @@ public class HexCell : MonoBehaviour
     public List<Vector3> Neighbors;
     public bool IsTemp { get; private set; }
 
+    public int RoadIndex { get; private set; }
     public HexCell RoadEntryPoint { get; private set; }
     public HexCell RoadEndPoint { get; private set; }
 
@@ -35,7 +36,7 @@ public class HexCell : MonoBehaviour
         HexBuilding = building;
         Neighbors = neighbors;
         HexGridManager = hexGridManager;
-
+        
         if (HexBuilding.HexBuildingType != HexBuildingType.None)
         {
             BuildHexBuilding();
@@ -71,6 +72,19 @@ public class HexCell : MonoBehaviour
         }
     }
 
+    public void SetRoad(HexCell hexcell , RoadType roadType, int roadIndex)
+    {
+        RoadIndex = roadIndex;
+        if (roadType == RoadType.Entry)
+        {
+            RoadEntryPoint = hexcell;
+        }
+        else
+        {
+            RoadEndPoint = hexcell;
+        }
+    }
+
     private void BuildHexBuilding()
     {
         buildingPrefab = Instantiate(HexBuilding.Prefab,this.transform);
@@ -92,6 +106,16 @@ public class HexCell : MonoBehaviour
     public void RandomizeHeight()
     {
         Height = (Depth + 2 ) + UnityEngine.Random.Range(0f, 2.0f);
+        gameObject.transform.localScale = new Vector3(1, Height, 1);
+        if (buildingPrefab != null)
+        {
+            ScaleParentObjectButNotChild(gameObject, buildingPrefab.gameObject, new Vector3(1, 1, 1));
+            Debug.Log("BuildingPrefab is not null");
+        }
+    }
+
+    private void SetHeight()
+    {   
         gameObject.transform.localScale = new Vector3(1, Height, 1);
         if (buildingPrefab != null)
         {
@@ -220,7 +244,7 @@ public class HexCell : MonoBehaviour
     public enum RoadType
     {
         Entry,
-        End,
+        Exit,
         LastPoint,
         None,
     }

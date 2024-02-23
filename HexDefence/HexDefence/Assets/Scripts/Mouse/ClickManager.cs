@@ -122,7 +122,9 @@ public class ClickManager : MonoBehaviour
                 break;
             case 10:
                 OnTempLandClick(hit, _hexCell);
-
+                break;
+            case 12:
+                OnLandClick(hit, _hexCell);
                 break;
             default:
                 break;

@@ -1577,9 +1577,6 @@
             "m_Id": "9c304a399b6649b392b181aed1fcbc98"
         },
         {
-            "m_Id": "69dfd59b463e47adb9118097a585fd69"
-        },
-        {
             "m_Id": "5b4eef8a373b474c9e2548477dc21b57"
         },
         {
@@ -2855,23 +2852,6 @@
         "y": 0.0,
         "z": 0.0,
         "w": 0.0
-    }
-}
-
-{
-    "m_SGVersion": 0,
-    "m_Type": "UnityEditor.ShaderGraph.Texture2DArrayInputMaterialSlot",
-    "m_ObjectId": "69dfd59b463e47adb9118097a585fd69",
-    "m_Id": -1710718586,
-    "m_DisplayName": "Texture2D Array",
-    "m_SlotType": 0,
-    "m_Hidden": false,
-    "m_ShaderOutputName": "_Texture2D_Array",
-    "m_StageCapability": 3,
-    "m_BareResource": false,
-    "m_TextureArray": {
-        "m_SerializedTexture": "{\"textureArray\":{\"instanceID\":0}}",
-        "m_Guid": ""
     }
 }
 

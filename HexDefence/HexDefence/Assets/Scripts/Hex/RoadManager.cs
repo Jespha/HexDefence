@@ -2,10 +2,10 @@ using System.Collections.Generic;
 using Dreamteck.Splines;
 using UnityEngine;
 
-public class Roads : MonoBehaviour
+public class RoadManager : MonoBehaviour
 {
 
-    public static Roads Instance;
+    public static RoadManager Instance;
     [SerializeField] private Material _roadMaterial;
     [SerializeField] private GameObject _roadPrefab;
     [SerializeField] public List<GameObject> _roads = new List<GameObject>();

@@ -1,4 +1,4 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,34 +6,94 @@ public class Currency : MonoBehaviour
 {
     // Currency
     public static Currency Instance;
-    [SerializeField] private int _hexCurrency;
-    [SerializeField] private int _GoldCurrency;
-    public int HexCurrency { get => _hexCurrency; set => _hexCurrency = value; }
-    public int GoldCurrency { get => _GoldCurrency; set => _GoldCurrency = value; }
+    public int HexCurrency {  get; private set; }
+    public int GoldCurrency {  get; private set; }
+    public int LifeCurrency {  get; private set; }
+    public int MaxLifeCurrency {  get; private set; }
 
     // Locally linked objects
     [SerializeField] private TMPro.TextMeshProUGUI _hexCurrencyText;
     [SerializeField] private TMPro.TextMeshProUGUI _goldCurrencyText;
+    [SerializeField] private TMPro.TextMeshProUGUI _lifeCurrencyText;
     [SerializeField] private Animator _hexCurrencyAnimator;
     [SerializeField] private Animator _goldCurrencyAnimator;
+    [SerializeField] private Animator _lifeCurrencyAnimator;
 
     private void Update()
     {
-        _hexCurrencyText.text = _hexCurrency.ToString();
-        _goldCurrencyText.text = _GoldCurrency.ToString();
+        int _levelIndex = GameManager.Instance.Levels.LevelList.IndexOf(GameManager.Instance.CurrentLevel);
+        //TODO: IMPLIMENT GAME OVER
+        // if (LifeCurrency <= 0 && _levelIndex > 0) 
+        // {
+        //     GameManager.Instance.GameOver();
+        // }
     }
 
     private void Awake() => Instance = this;
 
-    public void AddCurrency(int amount)
+        ///<summary>Add currency to the player's inventory</summary>
+        /// <param name="amount"></param>
+        /// <param name="CurrencyType"></param>    
+
+    public void UpdateCurrency(int amount, CurrencyType currencyType)
     {
-        _hexCurrency += amount;
-        _hexCurrencyAnimator.SetTrigger("AddCurrencyChange");
+        bool _positive = true;
+        if (amount <= 0)
+        {
+            if (amount == 0)
+            return;
+            _positive = false;
+        }
+        switch (currencyType)
+        {
+            case CurrencyType.HexCurrency:
+                HexCurrency += amount;
+                if (_positive == true)
+                _hexCurrencyAnimator.SetTrigger("AddCurrencyChange");
+                else
+                _hexCurrencyAnimator.SetTrigger("RemoveCurrencyChange");
+                _hexCurrencyText.text = HexCurrency.ToString();
+                break;
+            case CurrencyType.GoldCurrency:
+                GoldCurrency += amount;
+                if (_positive == true)
+                _goldCurrencyAnimator.SetTrigger("AddCurrencyChange");
+                else
+                _goldCurrencyAnimator.SetTrigger("RemoveCurrencyChange");
+                _goldCurrencyText.text = GoldCurrency.ToString();
+                break;
+            case CurrencyType.LifeCurrency:
+                LifeCurrency += amount;
+                if (_positive == true)
+                _lifeCurrencyAnimator.SetTrigger("AddCurrencyChange");
+                else
+                _lifeCurrencyAnimator.SetTrigger("RemoveCurrencyChange");
+                _lifeCurrencyText.text = LifeCurrency.ToString();
+                break;
+            case CurrencyType.MaxLifeCurrency:
+                MaxLifeCurrency += amount;
+                if (_positive == true)
+                _lifeCurrencyAnimator.SetTrigger("AddCurrencyChange");
+                else
+                _lifeCurrencyAnimator.SetTrigger("RemoveCurrencyChange");
+                break;
+        }
     }
 
-    public void RemoveCurrency(int amount)
+    public void Notify(string message)
     {
-        _hexCurrency -= amount;
-        _hexCurrencyAnimator.SetTrigger("RemoveCurrencyChange");
+
     }
+
+}
+
+/// <summary>
+/// The type of currency (HexCurrency, GoldCurrency, LifeCurrency)
+/// </summary>
+public enum CurrencyType
+{
+    HexCurrency,
+    GoldCurrency,
+    LifeCurrency,
+    MaxLifeCurrency
 }

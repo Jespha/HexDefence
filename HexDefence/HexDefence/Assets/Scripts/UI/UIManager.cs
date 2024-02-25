@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class UIManager : MonoBehaviour
@@ -10,6 +11,9 @@ public class UIManager : MonoBehaviour
     private BuildingButtons _buildingButtons;
     public HexBuilding _selectedBuilding { get; private set; }
     [SerializeField]private AudioSource _audioSource;
+    [SerializeField]private Currency _hexCurrency;
+    [SerializeField]private TextMeshProUGUI _levelText;
+    [SerializeField]private Canvas _canvas;
 
     private void Start()
     {
@@ -18,22 +22,34 @@ public class UIManager : MonoBehaviour
             _buildingButtons = FindObjectOfType<BuildingButtons>();
         else
             Debug.Log("BuildingButtons not found");
+        
+        if (_canvas == null)
+            _canvas = this.GetComponent<Canvas>();
+        else
+            Debug.Log("Canvas not found");
+
     }
 
     private void OnEnable()
     {
-        ClickManager.OnHexSelected += OnHexSelected;
+        ClickManager.OnHexSelected += OnHexSelectedUI;
     }
 
     private void OnDisable()
     {
-        ClickManager.OnHexSelected -= OnHexSelected;
+        ClickManager.OnHexSelected -= OnHexSelectedUI;
     }
 
-    private void OnHexSelected(HexCell hexCell)
+    private void OnHexSelectedUI(HexCell hexCell, RaycastHit hit)
     {   
+        Vector2 hexCellScreenPosition = RaycastResultToCanvasPosition(hit, _canvas);
         _lastSelectedHexCell = hexCell;
-        _selectedHexCell.SetSelectedHexCell(hexCell);
+        _selectedHexCell.SetSelectedHexCell(hexCell, hexCellScreenPosition);
+    }
+
+    public void SetLevel(int level)
+    {
+        _levelText.text = "Level: " + level;
     }
 
     public void SetSelectedBuilding(HexBuilding building)
@@ -46,6 +62,20 @@ public class UIManager : MonoBehaviour
         }
         _audioSource.Play();
         _lastSelectedHexCell.BuildHexBuilding(_selectedBuilding);
+    }
+
+    public Vector2 RaycastResultToCanvasPosition(RaycastHit hit, Canvas canvas)
+    {
+        Vector2 screenPosition = Camera.main.WorldToScreenPoint(hit.point);
+        Vector2 canvasPosition;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(canvas.GetComponent<RectTransform>(), screenPosition, null, out canvasPosition);
+
+        return canvasPosition;
+    }
+
+    public void Notify(string message)
+    {
+
     }
 
 }

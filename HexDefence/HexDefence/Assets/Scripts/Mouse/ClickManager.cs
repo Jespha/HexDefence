@@ -12,7 +12,7 @@ public class ClickManager : MonoBehaviour
     [SerializeField] private EventSystem eventSystem;
 
     public ClickType[] clickTypes;
-    public static event Action<HexCell> OnHexSelected;
+    public static event Action<HexCell,RaycastHit> OnHexSelected;
     
     private void Start()
     {
@@ -134,13 +134,13 @@ public class ClickManager : MonoBehaviour
     private void OnWaterClick(RaycastHit hit)
     {
         _hexGridManager.DeselectHexCell();
-        OnHexSelected?.Invoke(null);
+        OnHexSelected?.Invoke(null, hit);
     }
 
     private void OnLandClick(RaycastHit hit, HexCell hexCell)
     {
         _hexGridManager.SelectHexCell(hexCell);
-        OnHexSelected?.Invoke(hexCell);
+        OnHexSelected?.Invoke(hexCell, hit);
     }
 
     private void OnTempLandClick(RaycastHit hit, HexCell hexCell)

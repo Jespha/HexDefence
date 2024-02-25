@@ -12,7 +12,6 @@ public class HexGridManager : MonoBehaviour
     [field:SerializeField] private HexCell _hexCellTemp;
     public static HexGridManager Instance;
     [SerializeField] public bool showCoordinates;
-    [SerializeField] private Roads _roads;
 
     [field:SerializeField] public int HexSize { get; private set; } 
     [field:SerializeField][field:Range(1, 6)] public int  StartRoads { get; private set; } = 1;
@@ -37,7 +36,7 @@ public class HexGridManager : MonoBehaviour
     public void MakeHexGrid()
     {
         ClearHexGrid();
-        _roads.ClearRoads();
+        RoadManager.Instance.ClearRoads();
         InstantiateHexagon(new Vector3(0,0,0), -1, _hexTerrain, _baseTowerPrefab);
         InitializeRoads(HexCells[0]);
         InstantiateNeighbors(new Vector3(0,0,0), HexSize, Depth);
@@ -91,7 +90,7 @@ public class HexGridManager : MonoBehaviour
         HexCells.Add(newHexCell);
         if (hexcellParent.RoadEntryPoint != null && hexcellParent.RoadEndPoint == null)
         {
-            _roads.AddRoad(newHexCell,hexcellParent);
+            RoadManager.Instance.AddRoad(newHexCell,hexcellParent);
             hexcellParent.SetRoad(newHexCell, RoadType.Exit);
             newHexCell.SetRoad(hexcellParent, RoadType.Entry, hexcellParent.RoadIndex);
             // AddRoadToArray(newHexCell, hexcellParent.RoadIndex);
@@ -107,7 +106,7 @@ public class HexGridManager : MonoBehaviour
             newHexCell.Initialize(position, depth, 1, _hexTerrain, _hexBuilding, neighborPositions, this);
             newHexCell.SetRoad(hexCell, RoadType.Entry, roadIndex);
             newHexCell.transform.position = position;
-            _roads.CreateRoad(hexCell , newHexCell, roadIndex);
+            RoadManager.Instance.CreateRoad(hexCell , newHexCell, roadIndex);
             HexCells.Add(newHexCell);
         }
     }
@@ -223,7 +222,7 @@ public class HexGridManager : MonoBehaviour
         HexCells.Add(newHexCell);
         if (hexcellParent.RoadEntryPoint != null && hexcellParent.RoadEndPoint == null)
         {
-            _roads.AddRoad(newHexCell,hexcellParent);
+            RoadManager.Instance.AddRoad(newHexCell,hexcellParent);
             hexcellParent.SetRoad(newHexCell, RoadType.Exit);
             newHexCell.SetRoad(hexcellParent, RoadType.Entry, hexcellParent.RoadIndex);
             // AddRoadToArray(newHexCell, hexcellParent.RoadIndex);
@@ -236,7 +235,6 @@ public class HexGridManager : MonoBehaviour
     public void ClearHexGrid()
     {
         HexCells.Clear();
-        // _roads.ClearRoads();
         for (int i = this.transform.childCount; i > 0; --i)
             UnityEngine.Object.DestroyImmediate(this.transform.GetChild(0).gameObject);
     }
@@ -271,18 +269,26 @@ private void AddRoadToArray(HexCell hexCell, int roadIndex)
     /// <param name="hexCell">The HexCell to be selected</param>
     public void SelectHexCell(HexCell hexCell)
     {
-
         if (hexCell.IsTemp)
         { 
             if ( _selectedTemp != null)
             {
                 if(_selectedTemp.Position == hexCell.Position )
                 {
-                    HexCell newHexCell = InstantiateHexagonNeighborsFromTemp(hexCell,_selected);
-                    _selectedTemp.Deselected();
-                    _selected.Deselected();
-                    ClearTempHexGrid();
-                    _selected = newHexCell;
+                    if (Currency.Instance.HexCurrency >= 1)
+                    {
+                        HexCell newHexCell = InstantiateHexagonNeighborsFromTemp(hexCell,_selected);
+                        _selectedTemp.Deselected();
+                        _selected.Deselected();
+                        ClearTempHexGrid();
+                        _selected = newHexCell;
+                        Currency.Instance.UpdateCurrency(-1, CurrencyType.HexCurrency);
+                    }
+                    else
+                    {
+                        Currency.Instance.Notify("Not enough HexCurrency");
+                        //TODO: Show a message to the player. Make a notification system
+                    }
                 }
                 else
                 {
@@ -304,7 +310,7 @@ private void AddRoadToArray(HexCell hexCell, int roadIndex)
                 _selected.Deselected();
                 ClearTempHexGrid();
             }
-
+        
             _selected = hexCell;
             _selected.Selected();
         }

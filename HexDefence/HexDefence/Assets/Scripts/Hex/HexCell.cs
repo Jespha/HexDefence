@@ -132,6 +132,7 @@ public class HexCell : MonoBehaviour
         if (!IsTemp)
         {
             this.gameObject.layer = 12;
+            if (Currency.Instance.HexCurrency >= 1)
             ShowNeighbors();
         }
     }

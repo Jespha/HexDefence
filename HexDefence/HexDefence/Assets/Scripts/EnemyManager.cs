@@ -30,42 +30,44 @@ public class EnemyManager : MonoBehaviour
         List<int> enemiesToDeactivate = new List<int>();
         for (int i = 0; i < activeEnemyCount; i++)
         {
-            UpdateEnemy(i);
+            if (UpdateEnemy(i))
+            {
+                enemiesToDeactivate.Add(i);
+            }
         }
 
         foreach (int index in enemiesToDeactivate)
         {
             DeactivateUnusedEnemy(index);
-            activeEnemyCount--;
         }
+
+        activeEnemyCount -= enemiesToDeactivate.Count;
     }
 
-    private void UpdateEnemy(int index)
+    private bool UpdateEnemy(int index)
     {
         if (index >= activeEnemyCount)
         {
-            return;
+            return false;
         }
 
         enemies[index].SplinePercentage += enemies[index].Speed * Time.deltaTime * 0.05f;
+
         if (enemies[index].SplinePercentage >= 1)
         {
             enemies[index].health = 0;
             Currency.Instance.UpdateCurrency(-1, CurrencyType.LifeCurrency);
             Debug.Log("Life Lost");
-            DeactivateUnusedEnemy(index);
-            return;
+            return true;
         }
 
         if (enemies[index].health <= 0)
         {
             enemies[index].health = 0;
             Debug.Log("Enemy killed");
-            DeactivateUnusedEnemy(index);
-            return;
+            return true;
         }
 
-        // Reverse the direction of the spline
         Vector3 position = enemies[index].spline.EvaluatePosition(1 - enemies[index].SplinePercentage);
         Vector3 nextPosition = enemies[index].spline.EvaluatePosition(
             Math.Max(0, 1 - (enemies[index].SplinePercentage + 0.01f))
@@ -74,6 +76,8 @@ public class EnemyManager : MonoBehaviour
         GameObject enemy = GetEnemyFromPool(index);
         enemy.transform.position = position;
         enemy.transform.rotation = Quaternion.LookRotation(direction);
+
+        return false;
     }
 
     private GameObject GetEnemyFromPool(int index)
@@ -94,7 +98,18 @@ public class EnemyManager : MonoBehaviour
 
     private void DeactivateUnusedEnemy(int index)
     {
-        enemyPool[index].SetActive(false);
+        // Swap the enemy to deactivate with the last active enemy
+        EnemyData temp = enemies[index];
+        enemies[index] = enemies[activeEnemyCount - 1];
+        enemies[activeEnemyCount - 1] = temp;
+
+        // Swap the GameObject to deactivate with the last active GameObject
+        GameObject tempGameObject = enemyPool[index];
+        enemyPool[index] = enemyPool[activeEnemyCount - 1];
+        enemyPool[activeEnemyCount - 1] = tempGameObject;
+
+        // Deactivate the GameObject
+        enemyPool[activeEnemyCount - 1].SetActive(false);
     }
 
     public void SpawnEnemies(Level level)

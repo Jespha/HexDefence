@@ -51,6 +51,7 @@ public class GameManager : MonoBehaviour
                 Debug.Log("CameraManager not found in GameManager");
             }
         }
+        StartGame();
     }
 
     private void Update()
@@ -70,10 +71,9 @@ public class GameManager : MonoBehaviour
         Currency.Instance.UpdateCurrency(CurrentLevel.hexCurrency, CurrencyType.HexCurrency);
         Currency.Instance.UpdateCurrency(CurrentLevel.goldCurrency, CurrencyType.GoldCurrency);
         UIManager.SetLevel(0);
-        EnemyManager.SpawnEnemies(CurrentLevel);
     }
 
-    private void LoadNextLevel()
+    public void LoadNextLevel()
     {
         if (Levels.LevelList.IndexOf(CurrentLevel) + 1 < Levels.LevelList.Count)
         {

@@ -68,7 +68,7 @@ public class Currency : MonoBehaviour
                 _lifeCurrencyAnimator.SetTrigger("AddCurrencyChange");
                 else
                 _lifeCurrencyAnimator.SetTrigger("RemoveCurrencyChange");
-                _lifeCurrencyText.text = LifeCurrency.ToString();
+                _lifeCurrencyText.text = LifeCurrency.ToString() + "/" + MaxLifeCurrency.ToString();
                 break;
             case CurrencyType.MaxLifeCurrency:
                 MaxLifeCurrency += amount;
@@ -76,6 +76,7 @@ public class Currency : MonoBehaviour
                 _lifeCurrencyAnimator.SetTrigger("AddCurrencyChange");
                 else
                 _lifeCurrencyAnimator.SetTrigger("RemoveCurrencyChange");
+                _lifeCurrencyText.text = LifeCurrency.ToString() + "/" + MaxLifeCurrency.ToString();
                 break;
         }
     }

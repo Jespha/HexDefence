@@ -4,60 +4,110 @@ using UnityEngine;
 
 public class RoadManager : MonoBehaviour
 {
-
     public static RoadManager Instance;
-    [SerializeField] private Material _roadMaterial;
-    [SerializeField] private GameObject _roadPrefab;
-    [SerializeField] public List<GameObject> _roads = new List<GameObject>();
-    [SerializeField] private SplineComputer _splineComputer;
-    [SerializeField] private SplineMesh _splinMesh;
 
-    private void Start()
+    [SerializeField]
+    private Material _roadMaterial;
+
+    [SerializeField]
+    private GameObject _roadPrefab;
+    RoadParent[] Roads = new RoadParent[6];
+
+    private void Start() { }
+
+    void Awake()
     {
+        if (Instance != null)
+        {
+            Debug.LogError("More than one RoadManager in the scene!");
+            return;
+        }
+        Instance = this;
     }
-    void Awake() => Instance = this;
 
     public void CreateRoad(HexCell StartPoint, HexCell EndPoint, int roadIndex)
     {
-        
+        if (roadIndex < 0 || roadIndex >= Roads.Length)
+        {
+            Debug.LogError("Road index is out of bounds!");
+            return;
+        }
         GameObject road = Instantiate(_roadPrefab, this.transform);
         road.name = "Road" + roadIndex;
         road.TryGetComponent(out SplineComputer _splineComputer);
         road.TryGetComponent(out SplineMesh _splinMesh);
 
-        _splineComputer.SetPoint(0, new SplinePoint(StartPoint.transform.position), SplineComputer.Space.World);
-        _splineComputer.SetPoint(1, new SplinePoint(EndPoint.transform.position), SplineComputer.Space.World);
+        _splineComputer.SetPoint(
+            0,
+            new SplinePoint(StartPoint.transform.position),
+            SplineComputer.Space.World
+        );
+        _splineComputer.SetPoint(
+            1,
+            new SplinePoint(EndPoint.transform.position),
+            SplineComputer.Space.World
+        );
         _splinMesh.Rebuild();
-        _roads.Add(road);
+        Roads[roadIndex] = new RoadParent
+        {
+            gameObject = road,
+            splineComputer = _splineComputer,
+            splineMesh = _splinMesh
+        };
     }
-
 
     public void AddRoad(HexCell end, HexCell start)
     {
-        // Debug.Log("RoadIndex: " + roadIndex);
         int roadIndex = start.RoadIndex;
+        if (roadIndex < 0 || roadIndex >= Roads.Length || Roads[roadIndex].gameObject == null)
+        {
+            Debug.LogError("Invalid road index or road does not exist!");
+            return;
+        }
         string roadName = "Road" + roadIndex.ToString();
-        GameObject currentRoad = _roads.Find(x => x.name == roadName);
-
-
-        // Debug.Log("Road with name " + currentRoad.name);
-
-
-        currentRoad.TryGetComponent(out SplineComputer _splineComputer);
-        currentRoad.TryGetComponent(out SplineMesh _splinMesh);
-        int pointCount = _splineComputer.pointCount;
-
-        _splineComputer.SetPoint( pointCount, new SplinePoint(end.Position), SplineComputer.Space.World);
-        _splinMesh.Rebuild();
+        int pointCount = Roads[roadIndex].splineComputer.pointCount;
+        Roads[roadIndex]
+            .splineComputer.SetPoint(
+                pointCount,
+                new SplinePoint(end.Position),
+                SplineComputer.Space.World
+            );
+        Roads[roadIndex].splineMesh.Rebuild();
     }
 
     public void ClearRoads()
     {
-        for (int i = _roads.Count - 1; i >= 0; --i)
+        if (Roads == null)
+            return;
+
+        for (int i = Roads.Length - 1; i >= 0; --i)
         {
-            DestroyImmediate(_roads[i].gameObject,true);
+            if (Roads[i].gameObject != null)
+            {
+                DestroyImmediate(Roads[i].gameObject, true);
+            }
         }
-        _roads.Clear();
+        Roads = new RoadParent[6];
     }
 
+    public RoadParent GetRandomRoad()
+    {
+        if (Roads.Length == 0)
+            return default(RoadParent);
+
+        RoadParent randomRoad = default(RoadParent);
+        while (randomRoad.gameObject == null)
+        {
+            int randomIndex = Random.Range(0, Roads.Length);
+            randomRoad = Roads[randomIndex];
+        }
+        return randomRoad;
+    }
+}
+
+public struct RoadParent
+{
+    public GameObject gameObject;
+    public SplineComputer splineComputer;
+    public SplineMesh splineMesh;
 }

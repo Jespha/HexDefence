@@ -110,7 +110,6 @@ public class HexCell : MonoBehaviour
         if (buildingPrefab != null)
         {
             ScaleParentObjectButNotChild(gameObject, buildingPrefab.gameObject, new Vector3(1, 1, 1));
-            Debug.Log("BuildingPrefab is not null");
         }
     }
 
@@ -120,7 +119,6 @@ public class HexCell : MonoBehaviour
         if (buildingPrefab != null)
         {
             ScaleParentObjectButNotChild(gameObject, buildingPrefab.gameObject, new Vector3(1, 1, 1));
-            Debug.Log("BuildingPrefab is not null");
         }
     }
 

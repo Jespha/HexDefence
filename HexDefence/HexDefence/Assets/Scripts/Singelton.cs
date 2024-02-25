@@ -37,6 +37,7 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
         Init();
         if (_instance == null) { 
             _instance = gameObject.GetComponent<T>();
+            _instance.transform.parent = null; // Ensure _instance is a root GameObject
             DontDestroyOnLoad(_instance.gameObject);
         }
         else if (_instance.GetInstanceID() != GetInstanceID())

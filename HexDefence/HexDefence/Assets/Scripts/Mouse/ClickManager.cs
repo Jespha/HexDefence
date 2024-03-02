@@ -2,55 +2,66 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class ClickManager : MonoBehaviour
 {
-    [SerializeField] private ClickPool _pool;
-    [SerializeField] private HexGridManager _hexGridManager;
-    [SerializeField] private GraphicRaycaster graphicRaycaster;
-    [SerializeField] private EventSystem eventSystem;
+    [SerializeField]
+    private PooledObjectManager _pool;
+
+    [SerializeField]
+    private HexGridManager _hexGridManager;
+
+    [SerializeField]
+    private GraphicRaycaster graphicRaycaster;
+
+    [SerializeField]
+    private EventSystem eventSystem;
 
     public ClickType[] clickTypes;
-    public static event Action<HexCell,RaycastHit> OnHexSelected;
-    
+    public static event Action<HexCell, RaycastHit> OnHexSelected;
+
     private void Start()
     {
-        if (_pool == null){
-        
-            _pool = FindObjectOfType<ClickPool>();
+        if (_pool == null)
+        {
+            _pool = FindObjectOfType<PooledObjectManager>();
 
-            if (_pool == null){
+            if (_pool == null)
+            {
                 Debug.Log("ClickPool not found");
                 gameObject.SetActive(false);
             }
-        } 
-        if (HexGridManager.Instance == null){
+        }
+        if (HexGridManager.Instance == null)
+        {
             _hexGridManager = FindObjectOfType<HexGridManager>();
             if (_hexGridManager != null)
-            return;
+                return;
             Debug.Log("HexGridManager not found");
             gameObject.SetActive(false);
         }
-        if (EventSystem.current == null){
+        if (EventSystem.current == null)
+        {
             eventSystem = FindObjectOfType<EventSystem>();
             if (eventSystem != null)
-            return;
+                return;
             Debug.Log("EventSystem not found");
             gameObject.SetActive(false);
-        }   
+        }
     }
 
     private void OnEnable()
     {
-       MouseController.Instance.OnLeftMouseClick += OnLeftMouseClick;
-       MouseController.Instance.OnRightMouseClick += OnRightMouseClick;
+        PlayerInput.Instance.OnLeftMouseClick += OnLeftMouseClick;
+        PlayerInput.Instance.OnRightMouseClick += OnRightMouseClick;
     }
 
     private void OnDisable()
     {
-       MouseController.Instance.OnLeftMouseClick -= OnLeftMouseClick;
-       MouseController.Instance.OnRightMouseClick -= OnRightMouseClick;
+        PlayerInput.Instance.OnLeftMouseClick -= OnLeftMouseClick;
+        PlayerInput.Instance.OnRightMouseClick -= OnRightMouseClick;
     }
 
     private ClickType GetScriptableObjectByLayerMask(ClickType[] array, int layer)
@@ -62,7 +73,7 @@ public class ClickManager : MonoBehaviour
             if ((array[i].layerMask.value & layerMask) != 0)
             {
                 return array[i];
-            }        
+            }
         }
 
         return null;
@@ -89,14 +100,11 @@ public class ClickManager : MonoBehaviour
             else
             {
                 OnLeft3DClick(hit);
-            }        
+            }
         }
     }
 
-    private void OnLeftUIClick()
-    {
-        
-    }
+    private void OnLeftUIClick() { }
 
     private void OnLeft3DClick(RaycastHit hit)
     {
@@ -110,7 +118,6 @@ public class ClickManager : MonoBehaviour
         {
             _hexCell = hexCell;
         }
-
 
         switch (layerMaskHit.value)
         {
@@ -128,7 +135,7 @@ public class ClickManager : MonoBehaviour
                 break;
             default:
                 break;
-        }  
+        }
     }
 
     private void OnWaterClick(RaycastHit hit)
@@ -145,15 +152,11 @@ public class ClickManager : MonoBehaviour
 
     private void OnTempLandClick(RaycastHit hit, HexCell hexCell)
     {
-        if(_hexGridManager.PositionExistsInList(_hexGridManager.TempHexCells,hexCell.Position))
-        _hexGridManager.SelectHexCell(hexCell);
+        if (_hexGridManager.PositionExistsInList(_hexGridManager.TempHexCells, hexCell.Position))
+            _hexGridManager.SelectHexCell(hexCell);
         else
-        return;
+            return;
     }
 
-    private void OnRightMouseClick()
-    {
-
-    }
-
+    private void OnRightMouseClick() { }
 }

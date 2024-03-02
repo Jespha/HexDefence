@@ -10,19 +10,12 @@ public class EnemyManager : MonoBehaviour
     int activeEnemyCount = 0;
     EnemyData[] enemies = new EnemyData[maxEnemies];
     List<GameObject> enemyPool = new();
-    public bool SpawnEnemiesTest = false;
-    // public SplineComputer spline;
     public GameObject enemyPrefab;
     public float spawnCooldown = 1.0f;
 
     public void Update()
     {
         UpdateEnemies();
-        if (SpawnEnemiesTest)
-        {
-            Level level = ScriptableObject.CreateInstance<Level>();
-            SpawnEnemies(level);
-        }
     }
 
     private void UpdateEnemies()
@@ -51,7 +44,7 @@ public class EnemyManager : MonoBehaviour
             return false;
         }
 
-        enemies[index].SplinePercentage += enemies[index].Speed * Time.deltaTime * 0.05f;
+        enemies[index].SplinePercentage += enemies[index].Speed * Time.deltaTime;
 
         if (enemies[index].SplinePercentage >= 1)
         {
@@ -68,10 +61,10 @@ public class EnemyManager : MonoBehaviour
             return true;
         }
 
-        Vector3 position = enemies[index].spline.EvaluatePosition(1 - enemies[index].SplinePercentage);
-        Vector3 nextPosition = enemies[index].spline.EvaluatePosition(
-            Math.Max(0, 1 - (enemies[index].SplinePercentage + 0.01f))
-        );
+        Vector3 position = enemies[index]
+            .spline.EvaluatePosition(1 - enemies[index].SplinePercentage);
+        Vector3 nextPosition = enemies[index]
+            .spline.EvaluatePosition(Math.Max(0, 1 - (enemies[index].SplinePercentage + 0.01f)));
         Vector3 direction = (nextPosition - position).normalized;
         GameObject enemy = GetEnemyFromPool(index);
         enemy.transform.position = position;
@@ -135,17 +128,21 @@ public class EnemyManager : MonoBehaviour
 
     private void SpawnEnemy(int index)
     {
+        SplineComputer splineComputer = RoadManager.Instance.GetRandomRoad().splineComputer;
+        float splineLength = splineComputer.CalculateLength(); // Calculate spline length
+
         enemies[index] = new EnemyData
         {
             SplinePercentage = 0f,
-            Speed = 1.0f,
+            Speed = 1.0f / splineLength, // Adjust speed based on spline length
             health = 1,
-            spline = RoadManager.Instance.GetRandomRoad().splineComputer,
+            spline = splineComputer,
+            SplineLength = splineLength, // Store spline length
         };
-        
+
         double percent = index / (double)maxEnemies;
         Vector3 position = enemies[index].spline.EvaluatePosition(0);
-        Vector3 nextPosition = enemies[index].spline.EvaluatePosition(Math.Min(0,  percent + 0.05));
+        Vector3 nextPosition = enemies[index].spline.EvaluatePosition(Math.Min(0, percent + 0.05));
         Vector3 direction = (nextPosition - position).normalized;
     }
 }
@@ -156,4 +153,5 @@ struct EnemyData
     public float Speed;
     public int health;
     public SplineComputer spline;
+    public float SplineLength;
 }

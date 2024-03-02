@@ -366,6 +366,7 @@ public class HexGridManager : MonoBehaviour
     /// <param name="hexCell">The HexCell to be selected</param>
     public void SelectHexCell(HexCell hexCell)
     {
+        
         if (hexCell.IsTemp)
         {
             if (_selectedTemp != null)
@@ -410,7 +411,7 @@ public class HexGridManager : MonoBehaviour
                 _selected.Deselected();
                 ClearTempHexGrid();
             }
-
+            GameManager.Instance.SetFollowTarget(hexCell);
             _selected = hexCell;
             _selected.Selected();
         }

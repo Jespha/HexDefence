@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
 
-public class ClickPool : MonoBehaviour
+public class PooledObjectManager : MonoBehaviour
 {
-    [SerializeField] private ClickManager _clickManager;
+    [SerializeField]
+    private ClickManager _clickManager;
 
     public PooledObject[] _prefab;
     public int[] _poolSize;
@@ -13,25 +14,25 @@ public class ClickPool : MonoBehaviour
 
     void Start()
     {
-        if (_clickManager == null){
-        
+        if (_clickManager == null)
+        {
             _clickManager = FindObjectOfType<ClickManager>();
 
-            if (_clickManager == null){
+            if (_clickManager == null)
+            {
                 Debug.Log("ClickPool not found");
                 gameObject.SetActive(false);
             }
+        }
 
-        } 
-
-        SetPools();
+        InitalizePools();
 
         for (int j = 0; j < _pools.Length; j++)
         {
             _pools[j] = new List<PooledObject>();
             for (int i = 0; i < _poolSize[j]; i++)
             {
-                PooledObject obj = Instantiate(_prefab[j],this.transform) as PooledObject;
+                PooledObject obj = Instantiate(_prefab[j], this.transform) as PooledObject;
                 obj.gameObject.SetActive(false);
                 _pools[j].Add(obj);
             }
@@ -51,14 +52,16 @@ public class ClickPool : MonoBehaviour
                         _pools[i][j].gameObject.SetActive(true);
                         return _pools[i][j];
                     }
-                    if ((j == (_pools[i].Count - 1)) && (_pools[i][j].gameObject.activeInHierarchy == true))
+                    if (
+                        (j == (_pools[i].Count - 1))
+                        && (_pools[i][j].gameObject.activeInHierarchy == true)
+                    )
                     {
                         IncreasePool(i);
 
-                        return _pools[i][j+1];
+                        return _pools[i][j + 1];
                     }
                 }
-
             }
         }
         return null;
@@ -66,12 +69,12 @@ public class ClickPool : MonoBehaviour
 
     private void IncreasePool(int _specifiedPool)
     {
-        PooledObject obj = Instantiate(_prefab[_specifiedPool]) as PooledObject;
+        PooledObject obj = Instantiate(_prefab[_specifiedPool], this.transform) as PooledObject;
         obj.gameObject.SetActive(true);
         _pools[_specifiedPool].Add(obj);
     }
 
-    private void SetPools()
+    private void InitalizePools()
     {
         ClickType[] _clickTypes = _clickManager.clickTypes;
 
@@ -86,5 +89,4 @@ public class ClickPool : MonoBehaviour
             _pools[i] = new List<PooledObject>(_poolSize[i]);
         }
     }
-
 }

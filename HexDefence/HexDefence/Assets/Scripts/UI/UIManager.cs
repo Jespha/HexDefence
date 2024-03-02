@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using BBX.Dialogue.GUI;
 using TMPro;
 using UnityEngine;
 
@@ -50,7 +51,17 @@ public class UIManager : MonoBehaviour
     public void SetLevel(int level)
     {
         _levelText.text = "Level: " + level;
+        _levelText.ForceMeshUpdate();
+        _levelText.GetComponent<TextMeshAnimator>().RunText();
     }
+
+    public void SetLevelComplete(int level)
+    {
+        _levelText.text = "<wave>Level: " + level + "<br>COMPLETE!</wave>";
+        _levelText.ForceMeshUpdate();
+        _levelText.GetComponent<TextMeshAnimator>().RunText();
+    }
+
 
     public void SetSelectedBuilding(HexBuilding building)
     {
@@ -71,11 +82,6 @@ public class UIManager : MonoBehaviour
         RectTransformUtility.ScreenPointToLocalPointInRectangle(canvas.GetComponent<RectTransform>(), screenPosition, null, out canvasPosition);
 
         return canvasPosition;
-    }
-
-    public void Notify(string message)
-    {
-
     }
 
 }

@@ -1,6 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.Transforms;
+using System;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -14,17 +13,28 @@ public class GameManager : MonoBehaviour
     public EnemyManager EnemyManager;
 
     [SerializeField]
-    public CameraManger CameraManager;
+    public CameraManager CameraManager;
+
+    [SerializeField]
+    public PlayerInput PlayerInput;
 
     [field: SerializeField]
     public Levels Levels { get; private set; }
 
     [SerializeField]
+    public GameObject FollowTarget;
+
     public Level CurrentLevel { get; private set; }
     private bool _noMoreEnemies = false;
     private bool _canGotoNextLevel = false;
 
+    /// GLOBAL GAME EVENTS
+    public Action OnLevelStart;
+    public Action OnLevelComplete;
+    public Action NoMoreLives;
+
     void Awake() => Instance = this;
+
 
     private void Start()
     {
@@ -44,13 +54,26 @@ public class GameManager : MonoBehaviour
         {
             try
             {
-                CameraManager = FindObjectOfType<CameraManger>();
+                CameraManager = FindObjectOfType<CameraManager>();
             }
             catch
             {
                 Debug.Log("CameraManager not found in GameManager");
             }
         }
+
+        if (PlayerInput == null)
+        {
+            try
+            {
+                PlayerInput = FindObjectOfType<PlayerInput>();
+            }
+            catch
+            {
+                Debug.Log("PlayerInput not found in GameManager");
+            }
+        }
+
         StartGame();
     }
 
@@ -61,6 +84,16 @@ public class GameManager : MonoBehaviour
             _canGotoNextLevel = true;
             _noMoreEnemies = false;
         }
+
+        if (Currency.Instance.LifeCurrency > 0)
+        {
+            PlayerInput.HandleAllInputs();
+        }
+        else
+        {
+           FollowTarget.transform.position = new Vector3(0, 0, 0);
+        }
+
     }
 
     public void StartGame()
@@ -75,6 +108,7 @@ public class GameManager : MonoBehaviour
 
     public void LoadNextLevel()
     {
+        OnLevelStart?.Invoke();
         if (Levels.LevelList.IndexOf(CurrentLevel) + 1 < Levels.LevelList.Count)
         {
             CurrentLevel = Levels.LevelList[Levels.LevelList.IndexOf(CurrentLevel) + 1];
@@ -103,6 +137,7 @@ public class GameManager : MonoBehaviour
     public void NoMoreEnemies()
     {
         _noMoreEnemies = true;
+        UIManager.SetLevelComplete(Levels.LevelList.IndexOf(CurrentLevel));
     }
 
     public void GameOver()
@@ -111,5 +146,10 @@ public class GameManager : MonoBehaviour
         HexGridManager.Instance.MakeHexGrid();
         RoadManager.Instance.ClearRoads();
         StartGame();
+    }
+
+    public void SetFollowTarget(HexCell hexCell)
+    {
+        FollowTarget.transform.position = new Vector3(hexCell.transform.position.x, FollowTarget.transform.position.y, -FollowTarget.transform.position.y + hexCell.transform.position.z);
     }
 }

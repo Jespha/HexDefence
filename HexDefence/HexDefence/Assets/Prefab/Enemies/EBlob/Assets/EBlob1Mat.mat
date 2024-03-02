@@ -113,6 +113,7 @@ Material:
     - _GlossyReflections: 0
     - _Metallic: 0.631
     - _OcclusionStrength: 1
+    - _Outline: 4
     - _Parallax: 0.005
     - _QueueControl: 0
     - _QueueOffset: 0
@@ -124,14 +125,14 @@ Material:
     - _SrcBlendAlpha: 1
     - _Surface: 0
     - _WiggleAmount: 0.2
-    - _WiggleSpeed: 1
+    - _WiggleSpeed: 0.5
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 0.85303086, b: 0.8443396, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _MaskColor: {r: 0.4552977, g: 0.8018868, b: 0.35177106, a: 1}
+    - _MaskColor: {r: 0.3861976, g: 0.74509805, b: 0.2784314, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _Vector3: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []

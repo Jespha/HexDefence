@@ -1,22 +1,36 @@
 using System.Collections;
-using System.Collections.Generic;
-using Dreamteck.Splines;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.UIElements;
 
 public class SelectedHexCell : MonoBehaviour
 {
+    [field: SerializeField]
+    public HexCell _selectedHexCell { get; private set; }
 
-    [field:SerializeField] public HexCell _selectedHexCell { get; private set;}
-    [SerializeField] private UnityEngine.UI.Image _hexIcon; 
-    [SerializeField] private UnityEngine.UI.Image _towerIcon; 
-    [SerializeField] private TextMeshProUGUI _name; 
-    [SerializeField] private CanvasGroup _canvasGroup;
-    [SerializeField] private RectTransform _rectTransform;
-    [SerializeField] private Vector2 baseOffset;
-    private Vector2 offset;
+    [SerializeField]
+    private UnityEngine.UI.Image _hexIcon;
+
+    [SerializeField]
+    private UnityEngine.UI.Image _towerIcon;
+
+    [SerializeField]
+    private TextMeshProUGUI _name;
+
+    [SerializeField]
+    private CanvasGroup _canvasGroup;
+
+    [SerializeField]
+    private RectTransform _rectTransform;
+
+    [SerializeField]
+    private Vector2 baseOffset;
+
+    [SerializeField]
+    private AnimationCurve _clickCurve;
+
+    private Vector2 zoomOffset;
+    private bool isZooming = false;
 
     private void Start()
     {
@@ -24,23 +38,89 @@ public class SelectedHexCell : MonoBehaviour
         _canvasGroup.blocksRaycasts = false;
     }
 
+    private void OnEnable()
+    {
+        StartCoroutine(WaitForPlayerInput());
+    }
+
+    private IEnumerator WaitForPlayerInput()
+    {
+        yield return new WaitUntil(() => GameManager.Instance != null && GameManager.Instance.PlayerInput != null);
+        GameManager.Instance.PlayerInput.OnScrollWheel += ZoomCameraOffset;
+    }
+
+    private void OnDisable()
+    {
+        if (GameManager.Instance != null && GameManager.Instance.PlayerInput != null)
+        {
+            GameManager.Instance.PlayerInput.OnScrollWheel -= ZoomCameraOffset;
+        }
+    }
+
+    // private IEnumerator LerpZoom(float level)
+    // {
+    //     isZooming = true;
+    //     float timeElapsed = 0;
+    //     float lerpDuration = 1f; // Duration of the lerp operation
+    //     Vector2 startPosition = _rectTransform.anchoredPosition;
+    //     Vector2 endPosition = new Vector2(_rectTransform.anchoredPosition.x, _rectTransform.anchoredPosition.x + zoomOffset.y);
+
+    //     while (timeElapsed < lerpDuration)
+    //     {
+    //         _rectTransform.anchoredPosition = Vector2.Lerp(startPosition, endPosition, timeElapsed / lerpDuration);
+    //         timeElapsed += Time.deltaTime;
+    //         yield return null;
+    //     }
+
+    //     _rectTransform.anchoredPosition = endPosition;
+    //     isZooming = false;
+    // }
+
+    private void ZoomCameraOffset(float level)
+    {
+        UnSetSelectedHexCell();
+        // if (_selectedHexCell != null && !isZooming)
+        // {
+        //     Debug.Log("Zooming");
+        //     level = Mathf.Clamp(level, 0.1f, -0.1f);
+        //     zoomOffset.y += level;
+        //     StartCoroutine(LerpZoom(level));
+        // }
+    }
+
+    public void UnSetSelectedHexCell()
+    {
+        _selectedHexCell = null;
+        _canvasGroup.alpha = 0;
+        _canvasGroup.blocksRaycasts = false;
+    }
+
     public void SetSelectedHexCell(HexCell hexCell, Vector2 hexCellScreenPosition)
-    {   
+    {
+        if (hexCell == null)
+        {
+            _canvasGroup.alpha = 0;
+            _canvasGroup.blocksRaycasts = false;
+            return;
+        }
+
         if (hexCell != null)
         {
+
             _selectedHexCell = hexCell;
             _hexIcon.sprite = _selectedHexCell.HexTerrain.Icon;
             _canvasGroup.alpha = 1;
             _canvasGroup.blocksRaycasts = true;
+            _rectTransform.anchoredPosition = hexCellScreenPosition;
+            StartCoroutine(
+                AnimationCoroutine.SetPositionVec2Coroutine(
+                    _rectTransform,
+                    hexCell,
+                    SetOffset(hexCell),
+                    _clickCurve
+                )
+            );
 
-            // offset = ;
-
-            _rectTransform.anchoredPosition = hexCellScreenPosition + SetOffset(hexCell);
-        }
-        else
-        {
-            _canvasGroup.alpha = 0;
-            _canvasGroup.blocksRaycasts = false;
         }
 
         if (_selectedHexCell.HexBuilding.HexBuildingType != HexBuildingType.None)
@@ -59,18 +139,40 @@ public class SelectedHexCell : MonoBehaviour
 
     Vector2 SetOffset(HexCell hexCell)
     {
-            Vector2 _offset;
-            if (hexCell.Position.y<=0)
-            _offset.y = baseOffset.y;
-            else
-            _offset.y = baseOffset.y * -1;
+        Vector2 _offset = Vector2.zero;
 
-            if (hexCell.Position.x<=0)
-            _offset.x = baseOffset.x * -1;
-            else
-            _offset.x = baseOffset.x;
-            return _offset;
+        switch (hexCell.Position.y)
+        {
+            case float n when n == 0:
+                _offset.y = baseOffset.y * 1;
+                break;
+            case float n when n < 0:
+                _offset.y = baseOffset.y;
+                break;
+            case float n when n > 0:
+                _offset.y = baseOffset.y * -1;
+                break;
+            default:
+                _offset.y = baseOffset.y * 1;
+            break;
+        }
+
+        switch (hexCell.Position.x)
+        {
+            case float n when n == 0:
+                _offset.x = 0;
+                break;
+            case float n when n < 0:
+                _offset.x = baseOffset.x;
+                break;
+            case float n when n > 0:
+                _offset.x = baseOffset.x * -1;
+                break;
+            default:
+                _offset.x = 0;
+            break;
+        }
+
+        return _offset;
     }
-
 }
-

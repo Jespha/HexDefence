@@ -10,10 +10,26 @@ public class RoadManager : MonoBehaviour
     private Material _roadMaterial;
 
     [SerializeField]
+    private GameObject _portalPrefab;
+    private List<GameObject> _portals = new();
+
+    [SerializeField]
     private GameObject _roadPrefab;
     RoadParent[] Roads = new RoadParent[6];
 
     private void Start() { }
+
+    void OnEnable()
+    {
+        GameManager.Instance.OnLevelStart += OnLevelStart;
+        GameManager.Instance.OnLevelStart += OnLevelComplete;
+    }
+
+    void OnDisable()
+    {
+        GameManager.Instance.OnLevelStart -= OnLevelStart;
+        GameManager.Instance.OnLevelStart -= OnLevelComplete;
+    }
 
     void Awake()
     {
@@ -36,7 +52,6 @@ public class RoadManager : MonoBehaviour
         road.name = "Road" + roadIndex;
         road.TryGetComponent(out SplineComputer _splineComputer);
         road.TryGetComponent(out SplineMesh _splinMesh);
-
         _splineComputer.SetPoint(
             0,
             new SplinePoint(StartPoint.transform.position),
@@ -102,6 +117,37 @@ public class RoadManager : MonoBehaviour
             randomRoad = Roads[randomIndex];
         }
         return randomRoad;
+    }
+
+    private void OnLevelStart()
+    {
+        for (int i = 0; i < Roads.Length; i++)
+        {
+            if (Roads[i].gameObject != null)
+            {
+                GameObject portal = Instantiate(
+                    _portalPrefab,
+                    Roads[i]
+                        .splineComputer.GetPointPosition(
+                            Roads[i].splineComputer.pointCount - 1,
+                            SplineComputer.Space.World
+                        ),
+                    Quaternion.identity
+                );
+                _portals.Add(portal);
+            }
+        }
+    }
+
+    private void OnLevelComplete()
+    {
+        if (_portals.Count > 0)
+        {
+            foreach (GameObject portal in _portals)
+            {
+                Destroy(portal);
+            }
+        }
     }
 }
 

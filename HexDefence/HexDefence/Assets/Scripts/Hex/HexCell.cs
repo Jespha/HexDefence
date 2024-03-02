@@ -173,7 +173,6 @@ public class HexCell : MonoBehaviour
             yield return null;
         }
 
-        // ensure the final scale is set correctly
         float finalScale = _clickCurve.Evaluate(1);
         _transform.localScale = new Vector3(finalScale, finalScale, finalScale);
     }

@@ -26,12 +26,13 @@ public class GameManager : MonoBehaviour
 
     public Level CurrentLevel { get; private set; }
     private bool _noMoreEnemies = false;
-    private bool _canGotoNextLevel = false;
 
     /// GLOBAL GAME EVENTS
-    public Action OnLevelStart;
+    public Action<int,Level> OnLevelStart;
+    public Action<GamePhase> UpdateGamePhase;
     public Action OnLevelComplete;
     public Action NoMoreLives;
+    public GamePhase GamePhase = GamePhase.Income;
 
     void Awake() => Instance = this;
 
@@ -73,17 +74,16 @@ public class GameManager : MonoBehaviour
                 Debug.Log("PlayerInput not found in GameManager");
             }
         }
-
         StartGame();
     }
 
     private void Update()
     {
-        if (_noMoreEnemies && Currency.Instance.HexCurrency == 0)
-        {
-            _canGotoNextLevel = true;
-            _noMoreEnemies = false;
-        }
+        // if (_noMoreEnemies && Currency.Instance.HexCurrency == 0)
+        // {
+        //     _canGotoNextLevel = true;
+        //     _noMoreEnemies = false;
+        // }
 
         if (Currency.Instance.LifeCurrency > 0)
         {
@@ -101,21 +101,16 @@ public class GameManager : MonoBehaviour
         CurrentLevel = Levels.LevelList[0];
         Currency.Instance.UpdateCurrency(25, CurrencyType.LifeCurrency);
         Currency.Instance.UpdateCurrency(25, CurrencyType.MaxLifeCurrency);
-        Currency.Instance.UpdateCurrency(CurrentLevel.hexCurrency, CurrencyType.HexCurrency);
-        Currency.Instance.UpdateCurrency(CurrentLevel.goldCurrency, CurrencyType.GoldCurrency);
-        UIManager.SetLevel(0);
+        UIManager.SetLevel(0, CurrentLevel);
+        LevelComplete();
     }
 
     public void LoadNextLevel()
     {
-        OnLevelStart?.Invoke();
         if (Levels.LevelList.IndexOf(CurrentLevel) + 1 < Levels.LevelList.Count)
         {
             CurrentLevel = Levels.LevelList[Levels.LevelList.IndexOf(CurrentLevel) + 1];
-            Currency.Instance.UpdateCurrency(CurrentLevel.hexCurrency, CurrencyType.HexCurrency);
-            Currency.Instance.UpdateCurrency(CurrentLevel.goldCurrency, CurrencyType.GoldCurrency);
-            UIManager.SetLevel(Levels.LevelList.IndexOf(CurrentLevel));
-            EnemyManager.SpawnEnemies(CurrentLevel);
+            OnLevelStart?.Invoke(Levels.LevelList.IndexOf(CurrentLevel), CurrentLevel);
         }
         else
         {
@@ -123,21 +118,36 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void LevelComplete()
+    {
+        OnLevelComplete?.Invoke();
+        Currency.Instance.UpdateCurrency(CurrentLevel.hexCurrency, CurrencyType.HexCurrency);
+        Currency.Instance.UpdateCurrency(CurrentLevel.goldCurrency, CurrencyType.GoldCurrency);
+        GamePhase = GamePhase.Income;
+    }
+
+    public void SetGamePhase(GamePhase gamePhase)
+    {
+        GamePhase = gamePhase;
+        UpdateGamePhase?.Invoke(gamePhase);
+    }
+
     // make event to call this from button
     // also activate button to call event
-    public void GotoNextLevel()
+    public void LoadLevelIfPossible()
     {
-        if (_canGotoNextLevel)
+        if (GamePhase == GamePhase.HexPlacement || GamePhase == GamePhase.Build)
         {
-            _canGotoNextLevel = false;
+            EnemyManager.ClearEnemies();
+            GamePhase = GamePhase.Defend;
             LoadNextLevel();
         }
     }
 
     public void NoMoreEnemies()
     {
-        _noMoreEnemies = true;
-        UIManager.SetLevelComplete(Levels.LevelList.IndexOf(CurrentLevel));
+        // _noMoreEnemies = true;
+        // UIManager.SetLevelComplete(Levels.LevelList.IndexOf(CurrentLevel));
     }
 
     public void GameOver()
@@ -152,4 +162,12 @@ public class GameManager : MonoBehaviour
     {
         FollowTarget.transform.position = new Vector3(hexCell.transform.position.x, FollowTarget.transform.position.y, -FollowTarget.transform.position.y + hexCell.transform.position.z);
     }
+}
+
+public enum GamePhase
+{
+    Income,
+    HexPlacement,
+    Build,
+    Defend
 }

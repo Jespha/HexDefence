@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa505a088720eb04eb5e12631f22c4a5, type: 3}
+  m_Name: EnemyBlobGreen
+  m_EditorClassIdentifier: 
+  prefab: {fileID: 4741397612153782051, guid: 3a10b307579d6e34b8afaad325ba2eb5, type: 3}
+  sprite: {fileID: 21300000, guid: 78aa55e13a518cc48aecaf26266702b3, type: 3}
+  enemyName: Green Blob
+  health: 4
+  damage: 1
+  speed: 1
+  slow: 0
+  goldDrop: 10
+  movmentType: 0

@@ -11,6 +11,10 @@ public class PooledObjectManager : MonoBehaviour
     public PooledObject[] _prefab;
     public int[] _poolSize;
     public List<PooledObject>[] _pools;
+    
+    public static PooledObjectManager Instance;
+
+    void Awake() => Instance = this;
 
     void Start()
     {
@@ -74,7 +78,7 @@ public class PooledObjectManager : MonoBehaviour
         _pools[_specifiedPool].Add(obj);
     }
 
-    private void InitalizePools()
+    public void InitalizePools()
     {
         ClickType[] _clickTypes = _clickManager.clickTypes;
 

@@ -6,16 +6,83 @@ using UnityEngine;
 
 public class EnemyManager : MonoBehaviour
 {
-    const int maxEnemies = 10;
-    int activeEnemyCount = 0;
-    EnemyData[] enemies = new EnemyData[maxEnemies];
+    private int maxEnemies;
+    public int activeEnemyCount { get; private set; }
+    EnemyData[] enemies = new EnemyData[0];
     List<GameObject> enemyPool = new();
-    public GameObject enemyPrefab;
+    public GameObject enemyPrefab; // REMOVE
     public float spawnCooldown = 1.0f;
+    public Level currentLevel;
+
+    private void OnEnable()
+    {
+        StartCoroutine(WaitForGameManager());
+    }
+
+    private IEnumerator WaitForGameManager()
+    {
+        yield return new WaitUntil(() => GameManager.Instance != null);
+        GameManager.Instance.OnLevelStart += LoadNextLevelEnemies;
+    }
+
+    private void OnDisable()
+    {
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.OnLevelStart -= LoadNextLevelEnemies;
+        }
+    }
 
     public void Update()
     {
-        UpdateEnemies();
+
+        if (GameManager.Instance.GamePhase == GamePhase.Defend)
+            UpdateEnemies();
+
+        if (
+            activeEnemyCount == 0
+            && GameManager.Instance.CurrentLevel != null
+            && GameManager.Instance.CurrentLevel.enemies.Count == 0
+        )
+            GameManager.Instance.NoMoreEnemies();
+    }
+
+    public void LoadNextLevelEnemies(int level, Level _level)
+    {
+        if (GameManager.Instance.GamePhase == GamePhase.Income)
+            return;
+
+        int _maxEnemies = 0;
+        activeEnemyCount = 0;
+        foreach (var enemy in currentLevel.enemies)
+        {
+            _maxEnemies += enemy.amount; // Sum up the amounts of all enemies
+        }
+        maxEnemies = _maxEnemies;
+        EnemyData[] enemies = new EnemyData[maxEnemies];
+        int currentIndex = 0; // Keep track of the current index across all enemy types
+
+        foreach (var enemy in currentLevel.enemies)
+        {
+            for (int i = 0; i < enemy.amount; i++)
+            {
+                SplineComputer _spline = RoadManager.Instance.GetRandomRoad().splineComputer;
+                enemies[currentIndex] = new EnemyData
+                {
+                    Prefab = enemy.enemy.prefab,
+                    Health = enemy.enemy.health,
+                    Damage = enemy.enemy.damage,
+                    Speed = enemy.enemy.speed,
+                    Slow = enemy.enemy.slow,
+                    GoldDrop = enemy.enemy.goldDrop,
+                    SplinePercentage = 0f,
+                    Spline = _spline,
+                    SplineLength = _spline.CalculateLength()
+                };
+                currentIndex++; // Increment the current index after each enemy is added
+            }
+        }
+        StartCoroutine(SpawnEnemiesCoroutine());
     }
 
     private void UpdateEnemies()
@@ -48,23 +115,23 @@ public class EnemyManager : MonoBehaviour
 
         if (enemies[index].SplinePercentage >= 1)
         {
-            enemies[index].health = 0;
+            enemies[index].Health = 0;
             Currency.Instance.UpdateCurrency(-1, CurrencyType.LifeCurrency);
             Debug.Log("Life Lost");
             return true;
         }
 
-        if (enemies[index].health <= 0)
+        if (enemies[index].Health <= 0)
         {
-            enemies[index].health = 0;
+            enemies[index].Health = 0;
             Debug.Log("Enemy killed");
             return true;
         }
 
         Vector3 position = enemies[index]
-            .spline.EvaluatePosition(1 - enemies[index].SplinePercentage);
+            .Spline.EvaluatePosition(1 - enemies[index].SplinePercentage);
         Vector3 nextPosition = enemies[index]
-            .spline.EvaluatePosition(Math.Max(0, 1 - (enemies[index].SplinePercentage + 0.01f)));
+            .Spline.EvaluatePosition(Math.Max(0, 1 - (enemies[index].SplinePercentage + 0.01f)));
         Vector3 direction = (nextPosition - position).normalized;
         GameObject enemy = GetEnemyFromPool(index);
         enemy.transform.position = position;
@@ -101,13 +168,19 @@ public class EnemyManager : MonoBehaviour
         enemyPool[index] = enemyPool[activeEnemyCount - 1];
         enemyPool[activeEnemyCount - 1] = tempGameObject;
 
+        // Reset all of the EnemyData before deactivating the enemy
+        enemies[activeEnemyCount - 1] = new EnemyData
+        {
+            SplinePercentage = 0f,
+            Speed = 0f,
+            Health = 0,
+            Spline = null,
+            SplineLength = 0f,
+            // Add any other fields you have in EnemyData and want to reset
+        };
+
         // Deactivate the GameObject
         enemyPool[activeEnemyCount - 1].SetActive(false);
-    }
-
-    public void SpawnEnemies(Level level)
-    {
-        StartCoroutine(SpawnEnemiesCoroutine(level));
     }
 
     public void ClearEnemies()
@@ -116,7 +189,7 @@ public class EnemyManager : MonoBehaviour
         activeEnemyCount = 0;
     }
 
-    private IEnumerator SpawnEnemiesCoroutine(Level level)
+    private IEnumerator SpawnEnemiesCoroutine()
     {
         for (int i = 0; i < maxEnemies; i++)
         {
@@ -128,30 +201,23 @@ public class EnemyManager : MonoBehaviour
 
     private void SpawnEnemy(int index)
     {
-        SplineComputer splineComputer = RoadManager.Instance.GetRandomRoad().splineComputer;
-        float splineLength = splineComputer.CalculateLength(); // Calculate spline length
-
-        enemies[index] = new EnemyData
-        {
-            SplinePercentage = 0f,
-            Speed = 1.0f / splineLength, // Adjust speed based on spline length
-            health = 1,
-            spline = splineComputer,
-            SplineLength = splineLength, // Store spline length
-        };
-
         double percent = index / (double)maxEnemies;
-        Vector3 position = enemies[index].spline.EvaluatePosition(0);
-        Vector3 nextPosition = enemies[index].spline.EvaluatePosition(Math.Min(0, percent + 0.05));
+        Vector3 position = enemies[index].Spline.EvaluatePosition(0);
+        Vector3 nextPosition = enemies[index].Spline.EvaluatePosition(Math.Min(0, percent + 0.05));
         Vector3 direction = (nextPosition - position).normalized;
     }
 }
 
 struct EnemyData
 {
-    public float SplinePercentage;
+    public GameObject Prefab;
+    public float Health;
+    public int Damage;
     public float Speed;
-    public int health;
-    public SplineComputer spline;
+    public float Slow;
+    public int GoldDrop;
+
+    public float SplinePercentage;
+    public SplineComputer Spline;
     public float SplineLength;
 }

@@ -59,7 +59,7 @@ MonoBehaviour:
   triggerGroups: []
   _spline:
     points: []
-    type: 1
+    type: 0
     linearAverageDirection: 1
     customValueInterpolation:
       serializedVersion: 2

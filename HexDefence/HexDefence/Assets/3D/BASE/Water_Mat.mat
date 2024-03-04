@@ -98,12 +98,12 @@ Material:
     - _Cutoff: 0.5
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
-    - _Distance: 0.73
+    - _Distance: 1.43
     - _DstBlend: 0
     - _DstBlendAlpha: 0
     - _EnvironmentReflections: 1
-    - _FoamAmount: 0.14
-    - _FoamCutoff: 1.12
+    - _FoamAmount: 0.86
+    - _FoamCutoff: 2.22
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0

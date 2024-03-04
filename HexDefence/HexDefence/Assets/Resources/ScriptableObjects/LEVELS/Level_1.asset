@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Level_1
   m_EditorClassIdentifier: 
   enemies:
-  - enemy: {fileID: 0}
+  - enemy: {fileID: 11400000, guid: e46a862439f0d8749a20bf63455fe0db, type: 2}
     amount: 5
   levelName: Fresh Start
   hexCurrency: 5

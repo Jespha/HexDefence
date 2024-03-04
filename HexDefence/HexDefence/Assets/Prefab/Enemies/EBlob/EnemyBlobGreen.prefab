@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1952278889786928921}
   - component: {fileID: 7210507770413707498}
   m_Layer: 0
-  m_Name: EBlob1
+  m_Name: EnemyBlobGreen
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

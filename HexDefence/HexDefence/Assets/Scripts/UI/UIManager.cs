@@ -13,7 +13,7 @@ public class UIManager : MonoBehaviour
     public HexBuilding _selectedBuilding { get; private set; }
     [SerializeField]private AudioSource _audioSource;
     [SerializeField]private Currency _hexCurrency;
-    [SerializeField]private TextMeshProUGUI _levelText;
+    [SerializeField]private LevelDisplay _levelDisplay;
     [SerializeField]private Canvas _canvas;
 
     private void Start()
@@ -33,12 +33,27 @@ public class UIManager : MonoBehaviour
 
     private void OnEnable()
     {
+        StartCoroutine(WaitForGameManager());
         ClickManager.OnHexSelected += OnHexSelectedUI;
+    }
+
+    private IEnumerator WaitForGameManager()
+    {
+        yield return new WaitUntil(() => GameManager.Instance != null);
+        GameManager.Instance.OnLevelStart += SetLevel;
+        GameManager.Instance.OnLevelComplete += SetLevelComplete;
+        GameManager.Instance.UpdateGamePhase += UpdateGamePhase;
     }
 
     private void OnDisable()
     {
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.OnLevelStart -= SetLevel;
+        }
         ClickManager.OnHexSelected -= OnHexSelectedUI;
+        GameManager.Instance.OnLevelComplete -= SetLevelComplete;
+        GameManager.Instance.UpdateGamePhase -= UpdateGamePhase;
     }
 
     private void OnHexSelectedUI(HexCell hexCell, RaycastHit hit)
@@ -48,20 +63,33 @@ public class UIManager : MonoBehaviour
         _selectedHexCell.SetSelectedHexCell(hexCell, hexCellScreenPosition);
     }
 
-    public void SetLevel(int level)
+    public void SetLevel(int level, Level _level)
     {
-        _levelText.text = "Level: " + level;
-        _levelText.ForceMeshUpdate();
-        _levelText.GetComponent<TextMeshAnimator>().RunText();
+        _levelDisplay.UpdateLevel(level);
     }
 
-    public void SetLevelComplete(int level)
+    private void SetLevelComplete()
     {
-        _levelText.text = "<wave>Level: " + level + "<br>COMPLETE!</wave>";
-        _levelText.ForceMeshUpdate();
-        _levelText.GetComponent<TextMeshAnimator>().RunText();
+        //TODO SET LEVEL COMPLETE
     }
 
+    private void UpdateGamePhase(GamePhase gamePhase)
+    {
+        switch (gamePhase)
+        {
+            case GamePhase.Income:
+                _levelDisplay.UpdateGameState(gamePhase);
+                break;
+            case GamePhase.HexPlacement:
+                _levelDisplay.UpdateGameState(gamePhase);
+                break;
+            case GamePhase.Build:
+                _levelDisplay.UpdateGameState(gamePhase);
+                break;
+            case GamePhase.Defend:
+                break;
+        }
+    }
 
     public void SetSelectedBuilding(HexBuilding building)
     {

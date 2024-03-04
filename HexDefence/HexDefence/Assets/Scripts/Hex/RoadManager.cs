@@ -119,7 +119,7 @@ public class RoadManager : MonoBehaviour
         return randomRoad;
     }
 
-    private void OnLevelStart()
+    private void OnLevelStart(int level,Level _level)
     {
         for (int i = 0; i < Roads.Length; i++)
         {
@@ -139,7 +139,7 @@ public class RoadManager : MonoBehaviour
         }
     }
 
-    private void OnLevelComplete()
+    private void OnLevelComplete(int level,Level _level)
     {
         if (_portals.Count > 0)
         {

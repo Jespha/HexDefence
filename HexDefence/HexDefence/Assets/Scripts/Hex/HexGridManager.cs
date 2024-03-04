@@ -384,6 +384,10 @@ public class HexGridManager : MonoBehaviour
                         ClearTempHexGrid();
                         _selected = newHexCell;
                         Currency.Instance.UpdateCurrency(-1, CurrencyType.HexCurrency);
+                        if (Currency.Instance.HexCurrency == 0)
+                        {
+                            GameManager.Instance.SetGamePhase(GamePhase.HexPlacement);
+                        }
                     }
                     else
                     {

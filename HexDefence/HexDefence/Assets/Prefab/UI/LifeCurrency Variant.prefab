@@ -129,6 +129,12 @@ PrefabInstance:
       propertyPath: m_Name
       value: LifeCurrency Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 6856723410120587467, guid: 02bf7902b30ff7748a9c61e29e6e93ff,
+        type: 3}
+      propertyPath: _currency
+      value: 
+      objectReference: {fileID: 9021008589650957859, guid: 25b26c005f2798a44952d12c21f1e9fd,
+        type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

@@ -54,7 +54,7 @@ public class LevelDisplay : MonoBehaviour
         else
             _levelTitleText.text = " ";
         _levelTitleText.color = new Color(1, 1, 1, 1);
-        UpdateGameState(GameManager.Instance.GamePhase);
+        UpdateGamePhaseUI(GameManager.Instance.GamePhase);
     }
 
     public void UpdateLevel(int level, bool complete = false)
@@ -72,19 +72,16 @@ public class LevelDisplay : MonoBehaviour
         }
     }
 
-    public void UpdateGameState(GamePhase gamePhase)
+    public void UpdateGamePhaseUI(GamePhase gamePhase)
     {
         switch (gamePhase)
         {
             case GamePhase.Income:
-                StartCoroutine(FillGameStateImage(_gameStateImage[0], 1));
-                _levelTitleText.color = new Color(1, 1, 1, 0);
-                _levelText.text = "Income Phase";
+                StartCoroutine(IncomePhase());
                 break;
             case GamePhase.HexPlacement:
                 StartCoroutine(FillGameStateImage(_gameStateImage[1], 1));
                 _levelText.text = "Hex Placment Phase";
-                StartCoroutine(AnimationCoroutine.FadeCanvasGroup(1, _nextLevelButtonCanvasGroup, 1));
                 break;
             case GamePhase.Build:
                 StartCoroutine(FillGameStateImage(_gameStateImage[2], 1));
@@ -94,6 +91,16 @@ public class LevelDisplay : MonoBehaviour
                 );
                 break;
         }
+    }
+
+    private IEnumerator IncomePhase()
+    {
+        StartCoroutine(FillGameStateImage(_gameStateImage[0], 1));
+        _levelTitleText.color = new Color(1, 1, 1, 0);
+        _levelText.text = "Income Phase";
+        AnimationCoroutine.FadeCanvasGroup(1, _gameStateCanvasGroup, 1, 0);
+        yield return new WaitForSeconds(3);
+        GameManager.Instance.SetGamePhase(GamePhase.HexPlacement);
     }
 
     private IEnumerator FillGameStateImage(Image image, float fillAmount)
@@ -107,23 +114,6 @@ public class LevelDisplay : MonoBehaviour
             yield return null;
         }
     }
-
-    // private IEnumerator ShowGameStateFade(float toAlpha, float _duration)
-    // {
-    //     yield return new WaitForSeconds(1);
-    //     float time = 0;
-       
-    //     for (int i = 0; i < _gameStateImage.Count; i++)
-    //     {
-    //         _gameStateImage[i].fillAmount = 0;
-    //     }
-    //     while (time < _duration)
-    //     {
-    //         _gameStateCanvasGroup.alpha = Mathf.Lerp(0, toAlpha, time / _duration);
-    //         time += Time.deltaTime;
-    //         yield return null;
-    //     }
-    // }
 
     public void StartGameIfPossible()
     {   

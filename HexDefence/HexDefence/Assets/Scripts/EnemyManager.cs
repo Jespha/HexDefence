@@ -7,10 +7,10 @@ using UnityEngine;
 public class EnemyManager : MonoBehaviour
 {
     private int maxEnemies;
-    public int activeEnemyCount { get; private set; }
-    EnemyData[] enemies = new EnemyData[0];
-    List<GameObject> enemyPool = new();
-    public GameObject enemyPrefab; // REMOVE
+    EnemyData[] enemies = new EnemyData[0]; 
+    private List<GameObject> enemyPool = new();
+    public List<GameObject> activeEnemies = new();
+    private int _defeatedEnemies = 0;
     public float spawnCooldown = 1.0f;
     public Level currentLevel;
 
@@ -35,31 +35,28 @@ public class EnemyManager : MonoBehaviour
 
     public void Update()
     {
-
-        if (GameManager.Instance.GamePhase == GamePhase.Defend)
+        if (GameManager.Instance.GamePhase == GamePhase.Defend && activeEnemies.Count > 0)
             UpdateEnemies();
 
-        if (
-            activeEnemyCount == 0
-            && GameManager.Instance.CurrentLevel != null
-            && GameManager.Instance.CurrentLevel.enemies.Count == 0
-        )
-            GameManager.Instance.NoMoreEnemies();
+        if (GameManager.Instance.GamePhase == GamePhase.Defend && enemyPool.Count == _defeatedEnemies)
+            GameManager.Instance.LevelComplete();
+
     }
 
     public void LoadNextLevelEnemies(int level, Level _level)
     {
         if (GameManager.Instance.GamePhase == GamePhase.Income)
             return;
-
+        ClearEnemies();
+        currentLevel = _level;
         int _maxEnemies = 0;
-        activeEnemyCount = 0;
+        _defeatedEnemies = 0;
         foreach (var enemy in currentLevel.enemies)
         {
             _maxEnemies += enemy.amount; // Sum up the amounts of all enemies
         }
         maxEnemies = _maxEnemies;
-        EnemyData[] enemies = new EnemyData[maxEnemies];
+        enemies = new EnemyData[maxEnemies];
         int currentIndex = 0; // Keep track of the current index across all enemy types
 
         foreach (var enemy in currentLevel.enemies)
@@ -82,129 +79,124 @@ public class EnemyManager : MonoBehaviour
                 currentIndex++; // Increment the current index after each enemy is added
             }
         }
+        for (int i = 0; i < maxEnemies; i++)
+        {
+            GameObject enemy = Instantiate(enemies[i].Prefab, this.transform);
+            enemy.SetActive(false); // Deactivate the enemy
+            enemyPool.Add(enemy);
+        }
+
         StartCoroutine(SpawnEnemiesCoroutine());
     }
 
-    private void UpdateEnemies()
+private void UpdateEnemies()
+{
+    // Create a copy of the activeEnemies list
+    List<GameObject> activeEnemiesCopy = new List<GameObject>(activeEnemies);
+
+    for (int i = activeEnemiesCopy.Count - 1; i >= 0; i--)
     {
-        List<int> enemiesToDeactivate = new List<int>();
-        for (int i = 0; i < activeEnemyCount; i++)
+        GameObject enemy = activeEnemiesCopy[i];
+        if (enemy != null && UpdateEnemy(enemy))
         {
-            if (UpdateEnemy(i))
-            {
-                enemiesToDeactivate.Add(i);
-            }
+            enemy.SetActive(false); // Deactivate the enemy
+            activeEnemies.Remove(enemy); // Remove the enemy from the original activeEnemies list
+            _defeatedEnemies++;
         }
-
-        foreach (int index in enemiesToDeactivate)
-        {
-            DeactivateUnusedEnemy(index);
-        }
-
-        activeEnemyCount -= enemiesToDeactivate.Count;
     }
+}
 
-    private bool UpdateEnemy(int index)
+    private bool UpdateEnemy(GameObject enemy)
     {
-        if (index >= activeEnemyCount)
-        {
-            return false;
-        }
+        int index = enemyPool.IndexOf(enemy);
 
-        enemies[index].SplinePercentage += enemies[index].Speed * Time.deltaTime;
+        enemies[index].SplinePercentage +=
+            enemies[index].Speed * Time.deltaTime / enemies[index].SplineLength;
 
-        if (enemies[index].SplinePercentage >= 1)
-        {
-            enemies[index].Health = 0;
-            Currency.Instance.UpdateCurrency(-1, CurrencyType.LifeCurrency);
-            Debug.Log("Life Lost");
-            return true;
-        }
+        // Clamp the SplinePercentage between 0 and 1
+        enemies[index].SplinePercentage = Mathf.Clamp(enemies[index].SplinePercentage, 0, 1);
 
-        if (enemies[index].Health <= 0)
+        if (enemies[index].SplinePercentage >= 1 || enemies[index].Health <= 0)
         {
-            enemies[index].Health = 0;
-            Debug.Log("Enemy killed");
+            if (enemies[index].Health <= 0)
+            {
+                Currency.Instance.UpdateCurrency(enemies[index].GoldDrop, CurrencyType.HexCurrency);
+            }
+            if (enemies[index].SplinePercentage >= 1)
+            {
+                Currency.Instance.UpdateCurrency(-enemies[index].Damage, CurrencyType.LifeCurrency);
+            }
+            enemyPool[index].SetActive(false); // Deactivate the enemy
             return true;
         }
 
         Vector3 position = enemies[index]
             .Spline.EvaluatePosition(1 - enemies[index].SplinePercentage);
         Vector3 nextPosition = enemies[index]
-            .Spline.EvaluatePosition(Math.Max(0, 1 - (enemies[index].SplinePercentage + 0.01f)));
+            .Spline.EvaluatePosition(1 - Math.Max(0, enemies[index].SplinePercentage - 0.01f));
         Vector3 direction = (nextPosition - position).normalized;
-        GameObject enemy = GetEnemyFromPool(index);
+
+        direction = -direction;
+
+        enemy = enemyPool[index];
         enemy.transform.position = position;
         enemy.transform.rotation = Quaternion.LookRotation(direction);
 
         return false;
     }
 
-    private GameObject GetEnemyFromPool(int index)
-    {
-        GameObject enemy;
-        if (index < enemyPool.Count)
-        {
-            enemy = enemyPool[index];
-            enemy.SetActive(true);
-        }
-        else
-        {
-            enemy = Instantiate(enemyPrefab, this.transform);
-            enemyPool.Add(enemy);
-        }
-        return enemy;
-    }
-
-    private void DeactivateUnusedEnemy(int index)
-    {
-        // Swap the enemy to deactivate with the last active enemy
-        EnemyData temp = enemies[index];
-        enemies[index] = enemies[activeEnemyCount - 1];
-        enemies[activeEnemyCount - 1] = temp;
-
-        // Swap the GameObject to deactivate with the last active GameObject
-        GameObject tempGameObject = enemyPool[index];
-        enemyPool[index] = enemyPool[activeEnemyCount - 1];
-        enemyPool[activeEnemyCount - 1] = tempGameObject;
-
-        // Reset all of the EnemyData before deactivating the enemy
-        enemies[activeEnemyCount - 1] = new EnemyData
-        {
-            SplinePercentage = 0f,
-            Speed = 0f,
-            Health = 0,
-            Spline = null,
-            SplineLength = 0f,
-            // Add any other fields you have in EnemyData and want to reset
-        };
-
-        // Deactivate the GameObject
-        enemyPool[activeEnemyCount - 1].SetActive(false);
-    }
-
     public void ClearEnemies()
     {
+        StopAllCoroutines();
+        for (int i = 0; i < activeEnemies.Count; i++)
+        {
+            DestroyImmediate(enemyPool[i]);
+        }
         enemies = new EnemyData[maxEnemies];
-        activeEnemyCount = 0;
+        enemyPool.Clear();
+        activeEnemies.Clear();
     }
 
     private IEnumerator SpawnEnemiesCoroutine()
     {
         for (int i = 0; i < maxEnemies; i++)
         {
-            SpawnEnemy(i);
-            yield return new WaitForSeconds(spawnCooldown);
-            activeEnemyCount++;
+            // Check if i is within the bounds of the enemyPool list
+            if (i < enemyPool.Count)
+            {
+                yield return new WaitForSeconds(spawnCooldown);
+                GameObject enemy = SpawnEnemy(i);
+                activeEnemies.Add(enemy); // Add the enemy to the activeEnemies list
+            }
+            else
+            {
+                yield break;
+            }
         }
     }
 
-    private void SpawnEnemy(int index)
+    private GameObject SpawnEnemy(int index)
     {
-        double percent = index / (double)maxEnemies;
-        Vector3 position = enemies[index].Spline.EvaluatePosition(0);
-        Vector3 nextPosition = enemies[index].Spline.EvaluatePosition(Math.Min(0, percent + 0.05));
-        Vector3 direction = (nextPosition - position).normalized;
+        // Get the enemy data
+        EnemyData enemyData = enemies[index];
+
+        // Instantiate the enemy prefab
+        GameObject enemy = enemyPool[index];
+        enemy.SetActive(true);
+        enemy.transform.position = enemyData.Spline.EvaluatePosition(
+        1 - enemyData.SplinePercentage
+        );
+
+        // Calculate the direction for the enemy
+        Vector3 nextPosition = enemyData.Spline.EvaluatePosition(
+            Math.Min(0, enemyData.SplinePercentage + 0.05f)
+        );
+        Vector3 direction = (nextPosition - enemy.transform.position).normalized;
+
+        // Set the enemy's rotation to face along the direction of the spline
+        enemy.transform.rotation = Quaternion.LookRotation(direction);
+
+        return enemy;
     }
 }
 

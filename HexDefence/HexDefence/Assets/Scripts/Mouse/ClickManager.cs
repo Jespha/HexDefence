@@ -8,9 +8,6 @@ using UnityEngine.UI;
 public class ClickManager : MonoBehaviour
 {
     [SerializeField]
-    private PooledObjectManager _pool;
-
-    [SerializeField]
     private HexGridManager _hexGridManager;
 
     [SerializeField]
@@ -24,16 +21,6 @@ public class ClickManager : MonoBehaviour
 
     private void Start()
     {
-        if (_pool == null)
-        {
-            _pool = FindObjectOfType<PooledObjectManager>();
-
-            if (_pool == null)
-            {
-                Debug.Log("ClickPool not found");
-                gameObject.SetActive(false);
-            }
-        }
         if (HexGridManager.Instance == null)
         {
             _hexGridManager = FindObjectOfType<HexGridManager>();
@@ -110,7 +97,7 @@ public class ClickManager : MonoBehaviour
     {
         LayerMask layerMaskHit = hit.transform.gameObject.layer;
         ClickType type = GetScriptableObjectByLayerMask(clickTypes, layerMaskHit);
-        PooledObject obj = _pool.Get(type.pooledObject);
+        PooledObject obj = PooledObjectManager.Instance.Get(type.pooledObject);
         obj.transform.position = hit.point;
         HexCell _hexCell = null;
 

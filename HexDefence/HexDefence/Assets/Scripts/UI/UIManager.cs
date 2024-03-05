@@ -52,7 +52,7 @@ public class UIManager : MonoBehaviour
             GameManager.Instance.OnLevelStart -= SetLevel;
         }
         ClickManager.OnHexSelected -= OnHexSelectedUI;
-        GameManager.Instance.OnLevelComplete -= SetLevelComplete;
+        GameManager.Instance.OnLevelComplete -= SetLevel;
         GameManager.Instance.UpdateGamePhase -= UpdateGamePhase;
     }
 
@@ -68,9 +68,9 @@ public class UIManager : MonoBehaviour
         _levelDisplay.UpdateLevel(level);
     }
 
-    private void SetLevelComplete()
+    private void SetLevelComplete(int level, Level _level)
     {
-        //TODO SET LEVEL COMPLETE
+        _levelDisplay.UpdateLevel(level, true);
     }
 
     private void UpdateGamePhase(GamePhase gamePhase)
@@ -78,13 +78,13 @@ public class UIManager : MonoBehaviour
         switch (gamePhase)
         {
             case GamePhase.Income:
-                _levelDisplay.UpdateGameState(gamePhase);
+                _levelDisplay.UpdateGamePhaseUI(gamePhase);
                 break;
             case GamePhase.HexPlacement:
-                _levelDisplay.UpdateGameState(gamePhase);
+                _levelDisplay.UpdateGamePhaseUI(gamePhase);
                 break;
             case GamePhase.Build:
-                _levelDisplay.UpdateGameState(gamePhase);
+                _levelDisplay.UpdateGamePhaseUI(gamePhase);
                 break;
             case GamePhase.Defend:
                 break;

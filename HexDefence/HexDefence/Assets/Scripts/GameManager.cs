@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -29,8 +30,8 @@ public class GameManager : MonoBehaviour
 
     /// GLOBAL GAME EVENTS
     public Action<int,Level> OnLevelStart;
+    public Action<int,Level> OnLevelComplete;
     public Action<GamePhase> UpdateGamePhase;
-    public Action OnLevelComplete;
     public Action NoMoreLives;
     public GamePhase GamePhase = GamePhase.Income;
 
@@ -101,8 +102,7 @@ public class GameManager : MonoBehaviour
         CurrentLevel = Levels.LevelList[0];
         Currency.Instance.UpdateCurrency(25, CurrencyType.LifeCurrency);
         Currency.Instance.UpdateCurrency(25, CurrencyType.MaxLifeCurrency);
-        UIManager.SetLevel(0, CurrentLevel);
-        LevelComplete();
+        StartCoroutine(LevelComplete());
     }
 
     public void LoadNextLevel()
@@ -118,12 +118,15 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void LevelComplete()
-    {
-        OnLevelComplete?.Invoke();
+    public IEnumerator LevelComplete()
+    {   
+        yield return new WaitForSeconds(1); //TODO: Make it wait for initialization of all managers
+        OnLevelComplete?.Invoke(Levels.LevelList.IndexOf(CurrentLevel), CurrentLevel);
+        GamePhase = GamePhase.Income;
+        UpdateGamePhase?.Invoke(GamePhase);
+        yield return new WaitForSeconds(3);
         Currency.Instance.UpdateCurrency(CurrentLevel.hexCurrency, CurrencyType.HexCurrency);
         Currency.Instance.UpdateCurrency(CurrentLevel.goldCurrency, CurrencyType.GoldCurrency);
-        GamePhase = GamePhase.Income;
     }
 
     public void SetGamePhase(GamePhase gamePhase)
@@ -136,18 +139,12 @@ public class GameManager : MonoBehaviour
     // also activate button to call event
     public void LoadLevelIfPossible()
     {
-        if (GamePhase == GamePhase.HexPlacement || GamePhase == GamePhase.Build)
+        if (GamePhase == GamePhase.Build)
         {
             EnemyManager.ClearEnemies();
             GamePhase = GamePhase.Defend;
             LoadNextLevel();
         }
-    }
-
-    public void NoMoreEnemies()
-    {
-        // _noMoreEnemies = true;
-        // UIManager.SetLevelComplete(Levels.LevelList.IndexOf(CurrentLevel));
     }
 
     public void GameOver()
@@ -160,6 +157,7 @@ public class GameManager : MonoBehaviour
 
     public void SetFollowTarget(HexCell hexCell)
     {
+        if(Vector3.Distance(new Vector3(FollowTarget.transform.position.x,hexCell.transform.position.y,hexCell.transform.position.z), hexCell.transform.position) > 16f)
         FollowTarget.transform.position = new Vector3(hexCell.transform.position.x, FollowTarget.transform.position.y, -FollowTarget.transform.position.y + hexCell.transform.position.z);
     }
 }

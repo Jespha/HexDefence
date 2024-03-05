@@ -15,7 +15,7 @@ public class BuildingButton : MonoBehaviour
     {
         _building = hexBuilding;
         _image.sprite = hexBuilding.Icon;
-        _name.text = hexBuilding.Name;
+        // _name.text = hexBuilding.Name;
         _uiManager = uiManager;
         _button.onClick.AddListener(() => _uiManager.SetSelectedBuilding(hexBuilding));
     }

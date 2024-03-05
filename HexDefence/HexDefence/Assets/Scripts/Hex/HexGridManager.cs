@@ -386,7 +386,7 @@ public class HexGridManager : MonoBehaviour
                         Currency.Instance.UpdateCurrency(-1, CurrencyType.HexCurrency);
                         if (Currency.Instance.HexCurrency == 0)
                         {
-                            GameManager.Instance.SetGamePhase(GamePhase.HexPlacement);
+                            GameManager.Instance.SetGamePhase(GamePhase.Build);
                         }
                     }
                     else

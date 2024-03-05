@@ -118,7 +118,7 @@ PrefabInstance:
     - target: {fileID: 4285399288000124772, guid: 02bf7902b30ff7748a9c61e29e6e93ff,
         type: 3}
       propertyPath: m_fontSize
-      value: 36.9
+      value: 18.2
       objectReference: {fileID: 0}
     - target: {fileID: 5199154106575208520, guid: 02bf7902b30ff7748a9c61e29e6e93ff,
         type: 3}
@@ -131,6 +131,12 @@ PrefabInstance:
       propertyPath: m_Name
       value: GoldCurrency Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 6856723410120587467, guid: 02bf7902b30ff7748a9c61e29e6e93ff,
+        type: 3}
+      propertyPath: _currency
+      value: 
+      objectReference: {fileID: 3168822942251123303, guid: c90a780e61257024dac19257ddc79a83,
+        type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

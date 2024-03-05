@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fa505a088720eb04eb5e12631f22c4a5, type: 3}
-  m_Name: EnemyBlobYellow
+  m_Name: EnemyBlobRed
   m_EditorClassIdentifier: 
-  prefab: {fileID: 6406756500250294507, guid: c7f2b6349e692f14590c6034dfa85f49, type: 3}
+  prefab: {fileID: 3635822784500723042, guid: 1c283ec1738f1a24cb733d7f5eceb85e, type: 3}
   sprite: {fileID: 21300000, guid: 78aa55e13a518cc48aecaf26266702b3, type: 3}
-  enemyName: Yellow blob
+  enemyName: Red Blob
   health: 6
   damage: 1
   speed: 0.8

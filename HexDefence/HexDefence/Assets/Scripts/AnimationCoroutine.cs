@@ -59,6 +59,11 @@ public static class AnimationCoroutine
     )
     {
         float _time = 0;
+        if (targetAlpha <= 0)
+        canvasGroup.blocksRaycasts = false;
+        else
+        canvasGroup.blocksRaycasts = true;
+        
         yield return new WaitForSeconds(waitTime);
         while (_time < _duration)
         {
@@ -66,13 +71,6 @@ public static class AnimationCoroutine
             _time += Time.deltaTime;
             yield return null;
         }
-        if (targetAlpha <= 0)
-        {
-            canvasGroup.blocksRaycasts = false;
-        }
-        else
-        {
-            canvasGroup.blocksRaycasts = true;
-        }
+
     }
 }

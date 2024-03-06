@@ -99,9 +99,9 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
-        CurrentLevel = Levels.LevelList[0];
         Currency.Instance.UpdateCurrency(25, CurrencyType.LifeCurrency);
         Currency.Instance.UpdateCurrency(25, CurrencyType.MaxLifeCurrency);
+        CurrentLevel = Levels.LevelList[0];
         StartCoroutine(LevelComplete());
     }
 
@@ -127,6 +127,7 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(3);
         Currency.Instance.UpdateCurrency(CurrentLevel.hexCurrency, CurrencyType.HexCurrency);
         Currency.Instance.UpdateCurrency(CurrentLevel.goldCurrency, CurrencyType.GoldCurrency);
+        yield return null;
     }
 
     public void SetGamePhase(GamePhase gamePhase)

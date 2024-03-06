@@ -8,6 +8,12 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1850459716871513839, guid: 02bf7902b30ff7748a9c61e29e6e93ff,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 1a11c8b1a4cd795459e4abbf521d1c07,
+        type: 3}
     - target: {fileID: 3827776035842215043, guid: 02bf7902b30ff7748a9c61e29e6e93ff,
         type: 3}
       propertyPath: m_Pivot.x
@@ -133,7 +139,7 @@ PrefabInstance:
         type: 3}
       propertyPath: _currency
       value: 
-      objectReference: {fileID: 9021008589650957859, guid: 25b26c005f2798a44952d12c21f1e9fd,
+      objectReference: {fileID: -7906955127606124555, guid: 25b26c005f2798a44952d12c21f1e9fd,
         type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

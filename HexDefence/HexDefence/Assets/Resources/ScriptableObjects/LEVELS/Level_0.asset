@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Level_0
   m_EditorClassIdentifier: 
   enemies: []
-  levelName: Inital
+  levelName: It Begins
   hexCurrency: 3
   goldCurrency: 200

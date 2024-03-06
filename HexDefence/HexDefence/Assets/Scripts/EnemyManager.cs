@@ -39,7 +39,11 @@ public class EnemyManager : MonoBehaviour
             UpdateEnemies();
 
         if (GameManager.Instance.GamePhase == GamePhase.Defend && enemyPool.Count == _defeatedEnemies)
-            GameManager.Instance.LevelComplete();
+        {
+            Debug.Log("Level Complete");
+            StartCoroutine(GameManager.Instance.LevelComplete());
+            _defeatedEnemies = 0;
+        }
 
     }
 

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Unity.Entities;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PooledObjectManager : MonoBehaviour
@@ -30,24 +31,13 @@ public class PooledObjectManager : MonoBehaviour
         }
 
         InitalizePools();
-
-        for (int j = 0; j < _pools.Length; j++)
-        {
-            _pools[j] = new List<PooledObject>();
-            for (int i = 0; i < _poolSize[j]; i++)
-            {
-                PooledObject obj = Instantiate(_prefab[j], this.transform) as PooledObject;
-                obj.gameObject.SetActive(false);
-                _pools[j].Add(obj);
-            }
-        }
     }
 
-    public PooledObject Get(PooledObject _clickPrefab)
+    public PooledObject Get(PooledObject _pooledObject)
     {
         for (int i = 0; i < _prefab.Length; i++)
         {
-            if (_prefab[i] == _clickPrefab)
+            if (_prefab[i] != null && _prefab[i] == _pooledObject)
             {
                 for (int j = 0; j < _pools[i].Count; j++)
                 {
@@ -81,16 +71,28 @@ public class PooledObjectManager : MonoBehaviour
     public void InitalizePools()
     {
         ClickType[] _clickTypes = _clickManager.clickTypes;
+        
+        Array.Resize(ref _prefab, _prefab.Length + _clickTypes.Length);
+        Array.Resize(ref _poolSize, _poolSize.Length + _clickTypes.Length);
+        Array.Resize(ref _pools, _prefab.Length);
 
-        _prefab = new PooledObject[_clickTypes.Length];
-        _poolSize = new int[_clickTypes.Length];
-        _pools = new List<PooledObject>[_clickTypes.Length];
-
-        for (int i = 0; i < _clickTypes.Length; i++)
+        int offset = _prefab.Length - _clickTypes.Length;
+        for (int i = offset; i < _prefab.Length; i++)
         {
-            _prefab[i] = _clickTypes[i].pooledObject;
-            _poolSize[i] = _clickTypes[i].poolSize;
+            _prefab[i] = _clickTypes[i - offset].pooledObject;
+            _poolSize[i] = _clickTypes[i - offset].poolSize;
             _pools[i] = new List<PooledObject>(_poolSize[i]);
+        }
+
+        for (int j = 0; j < _pools.Length; j++)
+        {
+            _pools[j] = new List<PooledObject>();
+            for (int i = 0; i < _poolSize[j]; i++)
+            {
+                PooledObject obj = Instantiate(_prefab[j], this.transform) as PooledObject;
+                obj.gameObject.SetActive(false);
+                _pools[j].Add(obj);
+            }
         }
     }
 }

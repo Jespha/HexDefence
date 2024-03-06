@@ -77,6 +77,10 @@ public class LevelDisplay : MonoBehaviour
         switch (gamePhase)
         {
             case GamePhase.Income:
+                foreach (Image image in _gameStateImage)
+                {
+                    image.fillAmount = 0;
+                }
                 StartCoroutine(IncomePhase());
                 break;
             case GamePhase.HexPlacement:
@@ -86,6 +90,7 @@ public class LevelDisplay : MonoBehaviour
             case GamePhase.Build:
                 StartCoroutine(FillGameStateImage(_gameStateImage[2], 1));
                 _levelText.text = "Build Phase";
+                _nextLevelButtonCanvasGroup.blocksRaycasts = true;
                 StartCoroutine(
                     AnimationCoroutine.FadeCanvasGroup(1, _nextLevelButtonCanvasGroup, 1, 1)
                 );
@@ -117,7 +122,7 @@ public class LevelDisplay : MonoBehaviour
 
     public void StartGameIfPossible()
     {   
-    if (GameManager.Instance.GamePhase == GamePhase.HexPlacement || GameManager.Instance.GamePhase == GamePhase.Build)
+    if (GameManager.Instance.GamePhase == GamePhase.Build)
         {
             GameManager.Instance.LoadLevelIfPossible();
             StartCoroutine(AnimationCoroutine.FadeCanvasGroup(1, _nextLevelButtonCanvasGroup, 0));

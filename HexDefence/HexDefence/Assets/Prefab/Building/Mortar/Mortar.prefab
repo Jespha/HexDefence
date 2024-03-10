@@ -11,8 +11,7 @@ GameObject:
   - component: {fileID: 3428159209334681323}
   - component: {fileID: 6083236483341774595}
   - component: {fileID: 6866749960475963969}
-  - component: {fileID: 1189609305185911352}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Mortar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -41,7 +40,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1540248428568090432}
-  m_Mesh: {fileID: 2215392852476620872, guid: 09d02de97d0adde4588935a64787d721, type: 3}
+  m_Mesh: {fileID: 1749398012767899704, guid: 09d02de97d0adde4588935a64787d721, type: 3}
 --- !u!23 &6866749960475963969
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -84,48 +83,3 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &1189609305185911352
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1540248428568090432}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 97966cc4b3020764a9412cda5dce3b62, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _clickCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0.40932527
-      inSlope: -1.2394838
-      outSlope: -1.2394838
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.17295401
-    - serializedVersion: 3
-      time: 0.57441115
-      value: 0.9825818
-      inSlope: -3.157488
-      outSlope: -3.157488
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.0076673925
-      outWeight: 0.1856305
-    - serializedVersion: 3
-      time: 1
-      value: 0.9912909
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4

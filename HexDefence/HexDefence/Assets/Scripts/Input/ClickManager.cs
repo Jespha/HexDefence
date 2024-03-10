@@ -74,7 +74,13 @@ public class ClickManager : MonoBehaviour
         PointerEventData pointerData = new PointerEventData(eventSystem);
         pointerData.position = Input.mousePosition;
 
-        if (Physics.Raycast(ray, out hit, Mathf.Infinity))
+        // Define the layers to hit
+        int layerMask = 1 << LayerMask.NameToLayer("Tower");
+
+        // Invert the layerMask to ignore the specified layer
+        layerMask = ~layerMask;
+
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity, layerMask))
         {
             List<RaycastResult> results = new List<RaycastResult>();
 
@@ -111,8 +117,14 @@ public class ClickManager : MonoBehaviour
             case 4:
                 OnWaterClick(hit);
                 break;
+            case 7:
+                OnTowerClick(hit, _hexCell);
+                break;
             case 6:
                 OnLandClick(hit, _hexCell);
+                break;
+            case 9:
+                OnEnemyClick(hit, _hexCell);
                 break;
             case 10:
                 OnTempLandClick(hit, _hexCell);
@@ -135,6 +147,16 @@ public class ClickManager : MonoBehaviour
     {
         _hexGridManager.SelectHexCell(hexCell);
         OnHexSelected?.Invoke(hexCell, hit);
+    }
+
+    private void OnTowerClick(RaycastHit hit, HexCell hexCell)
+    {
+        //This needs to be ignored for now
+    }
+
+    private void OnEnemyClick(RaycastHit hit, HexCell hexCell)
+    {
+        //TODO implement Call to show enemy inSelectedHexCell - Also change the name of the method to SelectedObject
     }
 
     private void OnTempLandClick(RaycastHit hit, HexCell hexCell)

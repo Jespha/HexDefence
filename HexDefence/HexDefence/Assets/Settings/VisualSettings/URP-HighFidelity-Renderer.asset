@@ -25,7 +25,7 @@ MonoBehaviour:
     _filterMode: 1
     _layerMask:
       serializedVersion: 2
-      m_Bits: 1536
+      m_Bits: 1024
     _renderingLayerMask: 44
   _renderPassEvent: 1000
   _shaderPassNames: []

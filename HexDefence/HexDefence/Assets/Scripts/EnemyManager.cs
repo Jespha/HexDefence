@@ -3,13 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using Dreamteck.Splines;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class EnemyManager : MonoBehaviour
 {
     private int maxEnemies;
-    EnemyData[] enemies = new EnemyData[0]; 
+    EnemyData[] enemies = new EnemyData[0];
     private List<GameObject> enemyPool = new();
     public List<GameObject> activeEnemies = new();
+    public List<SphereCollider> colliders = new();
     private int _defeatedEnemies = 0;
     public float spawnCooldown = 1.0f;
     public Level currentLevel;
@@ -38,13 +40,15 @@ public class EnemyManager : MonoBehaviour
         if (GameManager.Instance.GamePhase == GamePhase.Defend && activeEnemies.Count > 0)
             UpdateEnemies();
 
-        if (GameManager.Instance.GamePhase == GamePhase.Defend && enemyPool.Count == _defeatedEnemies)
+        if (
+            GameManager.Instance.GamePhase == GamePhase.Defend
+            && enemyPool.Count == _defeatedEnemies
+        )
         {
             Debug.Log("Level Complete");
             StartCoroutine(GameManager.Instance.LevelComplete());
             _defeatedEnemies = 0;
         }
-
     }
 
     public void LoadNextLevelEnemies(int level, Level _level)
@@ -57,11 +61,11 @@ public class EnemyManager : MonoBehaviour
         _defeatedEnemies = 0;
         foreach (var enemy in currentLevel.enemies)
         {
-            _maxEnemies += enemy.amount; // Sum up the amounts of all enemies
+            _maxEnemies += enemy.amount;
         }
         maxEnemies = _maxEnemies;
         enemies = new EnemyData[maxEnemies];
-        int currentIndex = 0; // Keep track of the current index across all enemy types
+        int currentIndex = 0;
 
         foreach (var enemy in currentLevel.enemies)
         {
@@ -78,37 +82,40 @@ public class EnemyManager : MonoBehaviour
                     GoldDrop = enemy.enemy.goldDrop,
                     SplinePercentage = 0f,
                     Spline = _spline,
-                    SplineLength = _spline.CalculateLength()
+                    SplineLength = _spline.CalculateLength(),
                 };
-                currentIndex++; // Increment the current index after each enemy is added
+                currentIndex++; 
             }
         }
         for (int i = 0; i < maxEnemies; i++)
         {
             GameObject enemy = Instantiate(enemies[i].Prefab, this.transform);
-            enemy.SetActive(false); // Deactivate the enemy
+            SphereCollider collider = enemy.GetComponent<SphereCollider>();
+            colliders.Add(collider);
+            enemy.SetActive(false); 
             enemyPool.Add(enemy);
         }
 
         StartCoroutine(SpawnEnemiesCoroutine());
     }
 
-private void UpdateEnemies()
-{
-    // Create a copy of the activeEnemies list
-    List<GameObject> activeEnemiesCopy = new List<GameObject>(activeEnemies);
-
-    for (int i = activeEnemiesCopy.Count - 1; i >= 0; i--)
+    private void UpdateEnemies()
     {
-        GameObject enemy = activeEnemiesCopy[i];
-        if (enemy != null && UpdateEnemy(enemy))
+        // Using a copy of the activeEnemies list to avoid modifying the list while iterating
+        List<GameObject> activeEnemiesCopy = new List<GameObject>(activeEnemies);
+
+        for (int i = activeEnemiesCopy.Count - 1; i >= 0; i--)
         {
-            enemy.SetActive(false); // Deactivate the enemy
-            activeEnemies.Remove(enemy); // Remove the enemy from the original activeEnemies list
-            _defeatedEnemies++;
+            GameObject enemy = activeEnemiesCopy[i];
+            if (enemy != null && UpdateEnemy(enemy))
+            {
+                enemy.SetActive(false); 
+                activeEnemies.Remove(enemy);
+                colliders.Remove(enemy.GetComponent<SphereCollider>());
+                _defeatedEnemies++;
+            }
         }
     }
-}
 
     private bool UpdateEnemy(GameObject enemy)
     {
@@ -124,13 +131,13 @@ private void UpdateEnemies()
         {
             if (enemies[index].Health <= 0)
             {
-                Currency.Instance.UpdateCurrency(enemies[index].GoldDrop, CurrencyType.HexCurrency);
+                Currency.Instance.UpdateCurrency(enemies[index].GoldDrop, CurrencyType.GoldCurrency);
             }
             if (enemies[index].SplinePercentage >= 1)
             {
                 Currency.Instance.UpdateCurrency(-enemies[index].Damage, CurrencyType.LifeCurrency);
             }
-            enemyPool[index].SetActive(false); // Deactivate the enemy
+            enemyPool[index].SetActive(false);
             return true;
         }
 
@@ -140,7 +147,7 @@ private void UpdateEnemies()
             .Spline.EvaluatePosition(1 - Math.Max(0, enemies[index].SplinePercentage - 0.01f));
         Vector3 direction = (nextPosition - position).normalized;
 
-        direction = -direction;
+        direction = -direction; // Reversing the direction of the model since we are traveling the spline backwards
 
         enemy = enemyPool[index];
         enemy.transform.position = position;
@@ -152,6 +159,7 @@ private void UpdateEnemies()
     public void ClearEnemies()
     {
         StopAllCoroutines();
+        colliders.Clear();
         for (int i = 0; i < activeEnemies.Count; i++)
         {
             DestroyImmediate(enemyPool[i]);
@@ -165,12 +173,11 @@ private void UpdateEnemies()
     {
         for (int i = 0; i < maxEnemies; i++)
         {
-            // Check if i is within the bounds of the enemyPool list
             if (i < enemyPool.Count)
             {
                 yield return new WaitForSeconds(spawnCooldown);
                 GameObject enemy = SpawnEnemy(i);
-                activeEnemies.Add(enemy); // Add the enemy to the activeEnemies list
+                activeEnemies.Add(enemy);
             }
             else
             {
@@ -181,27 +188,37 @@ private void UpdateEnemies()
 
     private GameObject SpawnEnemy(int index)
     {
-        // Get the enemy data
         EnemyData enemyData = enemies[index];
-
-        // Instantiate the enemy prefab
         GameObject enemy = enemyPool[index];
         enemy.SetActive(true);
         enemy.transform.position = enemyData.Spline.EvaluatePosition(
-        1 - enemyData.SplinePercentage
+            1 - enemyData.SplinePercentage
         );
 
-        // Calculate the direction for the enemy
         Vector3 nextPosition = enemyData.Spline.EvaluatePosition(
             Math.Min(0, enemyData.SplinePercentage + 0.05f)
         );
         Vector3 direction = (nextPosition - enemy.transform.position).normalized;
 
-        // Set the enemy's rotation to face along the direction of the spline
         enemy.transform.rotation = Quaternion.LookRotation(direction);
 
         return enemy;
     }
+
+    public void  DamageEnemy(GameObject Enemy, float damage)
+    {
+        int index = activeEnemies.IndexOf(Enemy);
+        enemies[index].Health -= damage;
+        // if (enemies[index].Health <= 0)
+        // {
+        //     Currency.Instance.UpdateCurrency(enemies[index].GoldDrop, CurrencyType.HexCurrency);
+        //     activeEnemies.Remove(Enemy);
+        //     colliders.Remove(Enemy.GetComponent<SphereCollider>());
+        //     _defeatedEnemies++;
+        //     Enemy.SetActive(false);
+        // }
+    }
+
 }
 
 struct EnemyData
@@ -216,4 +233,5 @@ struct EnemyData
     public float SplinePercentage;
     public SplineComputer Spline;
     public float SplineLength;
+    public SphereCollider Collider;
 }

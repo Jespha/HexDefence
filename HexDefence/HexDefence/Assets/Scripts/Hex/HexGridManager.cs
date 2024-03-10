@@ -31,8 +31,6 @@ public class HexGridManager : MonoBehaviour
 
     [field: SerializeField]
     public List<HexCell> HexCells { get; private set; } = new List<HexCell>();
-
-    [field: SerializeField]
     public List<HexCell> TempHexCells { get; private set; } = new List<HexCell>();
 
     [field: SerializeField]
@@ -48,9 +46,9 @@ public class HexGridManager : MonoBehaviour
     private HexBuilding _baseTowerPrefab;
 
     [SerializeField]
-    private HexCell _selected;
+    private TowerManager _towerManager;
 
-    [SerializeField]
+    private HexCell _selected;
     private HexCell _selectedTemp;
 
     void Awake() => Instance = this;
@@ -353,20 +351,15 @@ public class HexGridManager : MonoBehaviour
         }
     }
 
-    private void AddRoadToArray(HexCell hexCell, int roadIndex)
+    public void AddTower(HexCell hexCell, GameObject buildingPrefab)
     {
-        Debug.Log("RoadIndex: " + roadIndex);
-        int _lastRoad = HexCells2DArray.GetLength(roadIndex);
-        Debug.Log("_lastRoad: " + _lastRoad);
-
-        HexCells2DArray[roadIndex - 1, _lastRoad] = hexCell;
+        _towerManager.AddTower(hexCell, buildingPrefab);
     }
 
     /// <summary> Sets the selected HexCell as _selected in HexGridManager</summary>
     /// <param name="hexCell">The HexCell to be selected</param>
     public void SelectHexCell(HexCell hexCell)
     {
-        
         if (hexCell.IsTemp)
         {
             if (_selectedTemp != null)

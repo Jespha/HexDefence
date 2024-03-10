@@ -123,6 +123,52 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &158124644
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 158124645}
+  - component: {fileID: 158124646}
+  m_Layer: 0
+  m_Name: TowerManage
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &158124645
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 158124644}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1213.3336, y: 719.8347, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &158124646
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 158124644}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1c2464dbfb8fa841b8ceb9fd574d6ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _enemyManager: {fileID: 538542166}
+  _projectileManager: {fileID: 797410926}
 --- !u!43 &239985158
 Mesh:
   m_ObjectHideFlags: 0
@@ -781,6 +827,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   activeEnemies: []
+  colliders: []
   spawnCooldown: 1
   currentLevel: {fileID: 11400000, guid: b6c319921d62008418e35795efeb349c, type: 2}
 --- !u!4 &538542167
@@ -798,6 +845,63 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &584928924 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6763451754998639032, guid: a5270f4ec4225d4489448a5f8a0d2199,
+    type: 3}
+  m_PrefabInstance: {fileID: 9004150060120764432}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4fa8b8240e5afb43bb3661ee340bb17, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1 &797410924
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 797410925}
+  - component: {fileID: 797410926}
+  m_Layer: 0
+  m_Name: ProjectileManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &797410925
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 797410924}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1213.3336, y: 719.8347, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &797410926
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 797410924}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b1fd7f5b61369e41a2ae4dc5c9994bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  activeProjectiles: []
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -1061,6 +1165,23 @@ PrefabInstance:
       propertyPath: _hexGridManager
       value: 
       objectReference: {fileID: 2143192310}
+    - target: {fileID: 723959000405897435, guid: 38aa1fce6de797649a3330f269dc7e8c,
+        type: 3}
+      propertyPath: clickTypes.Array.size
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 723959000405897435, guid: 38aa1fce6de797649a3330f269dc7e8c,
+        type: 3}
+      propertyPath: clickTypes.Array.data[4]
+      value: 
+      objectReference: {fileID: 11400000, guid: ef28fe36140ea1e46a2befede238dff4,
+        type: 2}
+    - target: {fileID: 723959000405897435, guid: 38aa1fce6de797649a3330f269dc7e8c,
+        type: 3}
+      propertyPath: clickTypes.Array.data[5]
+      value: 
+      objectReference: {fileID: 11400000, guid: 03fdc45b7303a5041987ee6212e15dc1,
+        type: 2}
     - target: {fileID: 1563847981809851154, guid: 38aa1fce6de797649a3330f269dc7e8c,
         type: 3}
       propertyPath: m_Sprite
@@ -1227,6 +1348,11 @@ PrefabInstance:
     - target: {fileID: 6064924423049297205, guid: 38aa1fce6de797649a3330f269dc7e8c,
         type: 3}
       propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6064924423049297205, guid: 38aa1fce6de797649a3330f269dc7e8c,
+        type: 3}
+      propertyPath: m_PreserveAspect
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6345256658792791096, guid: 38aa1fce6de797649a3330f269dc7e8c,
@@ -1696,8 +1822,18 @@ PrefabInstance:
       objectReference: {fileID: 1875631388}
     - target: {fileID: 7716620972525187223, guid: d3ce7de617af84744b56a9a1c6db7d03,
         type: 3}
+      propertyPath: _towerManager
+      value: 
+      objectReference: {fileID: 158124646}
+    - target: {fileID: 7716620972525187223, guid: d3ce7de617af84744b56a9a1c6db7d03,
+        type: 3}
       propertyPath: showCoordinates
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7716620972525187223, guid: d3ce7de617af84744b56a9a1c6db7d03,
+        type: 3}
+      propertyPath: <Depth>k__BackingField
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7716620972525187223, guid: d3ce7de617af84744b56a9a1c6db7d03,
         type: 3}
@@ -1776,7 +1912,7 @@ PrefabInstance:
         type: 3}
       propertyPath: PlayerInput
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 584928924}
     - target: {fileID: 3198781552601934717, guid: a5270f4ec4225d4489448a5f8a0d2199,
         type: 3}
       propertyPath: EnemyManager
@@ -1890,6 +2026,8 @@ SceneRoots:
   - {fileID: 9004150060120764432}
   - {fileID: 2047238965048256247}
   - {fileID: 5011652054303888364}
+  - {fileID: 158124645}
+  - {fileID: 797410925}
   - {fileID: 494017731}
   - {fileID: 1135889755}
   - {fileID: 1557541138880237724}

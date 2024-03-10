@@ -14,5 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HexBuilding
   HexBuildingType: 1
   Name: Base
-  Prefab: {fileID: 7573448198443196391, guid: 94408ed3247319040a973df648da2b62, type: 3}
+  Prefab: {fileID: 3776552402057902990, guid: 94408ed3247319040a973df648da2b62, type: 3}
   Icon: {fileID: 21300000, guid: 4e8e83c1d043aa24bac3eade2dffecaf, type: 3}
+  Cost: 0
+  TypeCollider: 1
+  ColliderSize: {x: 2, y: 2, z: 2}
+  ColliderPosition: {x: 0, y: 0, z: 0}
+  AttackType: 0
+  AttackSpeed: 1
+  AttackRange: 1
+  AttackDamage: 1
+  TargetPriority: 0

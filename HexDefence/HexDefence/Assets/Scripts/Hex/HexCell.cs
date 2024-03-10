@@ -25,7 +25,7 @@ public class HexCell : MonoBehaviour
 
     [SerializeField]private AnimationCurve _clickCurve;
     [SerializeField]private float _duration = 1f;
-    private Building buildingPrefab;
+    private GameObject buildingPrefab;
 
     public void Initialize(Vector3 position, int depth, float height, HexTerrain terrain, HexBuilding building, List<Vector3> neighbors, HexGridManager hexGridManager)
     {
@@ -88,19 +88,17 @@ public class HexCell : MonoBehaviour
     private void BuildHexBuilding()
     {
         buildingPrefab = Instantiate(HexBuilding.Prefab,this.transform);
-        buildingPrefab.Initialize(this);
         buildingPrefab.transform.position = this.transform.position;
         buildingPrefab.GetComponent<MeshRenderer>().renderingLayerMask = 1;
-
     }
 
     public void BuildHexBuilding(HexBuilding hexBuilding)
     {
         HexBuilding = hexBuilding;
         buildingPrefab = Instantiate(HexBuilding.Prefab,this.transform);
-        buildingPrefab.Initialize(this);
         buildingPrefab.transform.position = this.transform.position;
         StartCoroutine(AnimateScaleCoroutine(this.transform));
+        HexGridManager.AddTower(this, buildingPrefab);
     }
 
     public void RandomizeHeight()
@@ -216,6 +214,16 @@ public class HexCell : MonoBehaviour
         Debug.LogError("Objects are not in Parent-Child relationship");
         return false;
     }
+
+    public void DestroyBuilding()
+    {
+        if (buildingPrefab != null)
+        {
+            Destroy(buildingPrefab.gameObject);
+            HexBuilding = null;
+        }
+    }
+
 
 }
 

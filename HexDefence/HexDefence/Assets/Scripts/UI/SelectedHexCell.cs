@@ -57,35 +57,9 @@ public class SelectedHexCell : MonoBehaviour
         }
     }
 
-    // private IEnumerator LerpZoom(float level)
-    // {
-    //     isZooming = true;
-    //     float timeElapsed = 0;
-    //     float lerpDuration = 1f; // Duration of the lerp operation
-    //     Vector2 startPosition = _rectTransform.anchoredPosition;
-    //     Vector2 endPosition = new Vector2(_rectTransform.anchoredPosition.x, _rectTransform.anchoredPosition.x + zoomOffset.y);
-
-    //     while (timeElapsed < lerpDuration)
-    //     {
-    //         _rectTransform.anchoredPosition = Vector2.Lerp(startPosition, endPosition, timeElapsed / lerpDuration);
-    //         timeElapsed += Time.deltaTime;
-    //         yield return null;
-    //     }
-
-    //     _rectTransform.anchoredPosition = endPosition;
-    //     isZooming = false;
-    // }
-
     private void ZoomCameraOffset(float level)
     {
         UnSetSelectedHexCell();
-        // if (_selectedHexCell != null && !isZooming)
-        // {
-        //     Debug.Log("Zooming");
-        //     level = Mathf.Clamp(level, 0.1f, -0.1f);
-        //     zoomOffset.y += level;
-        //     StartCoroutine(LerpZoom(level));
-        // }
     }
 
     public void UnSetSelectedHexCell()

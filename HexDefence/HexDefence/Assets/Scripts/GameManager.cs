@@ -134,6 +134,7 @@ public class GameManager : MonoBehaviour
     {
         GamePhase = gamePhase;
         UpdateGamePhase?.Invoke(gamePhase);
+        Debug.Log("GamePhase: " + gamePhase);
     }
 
     // make event to call this from button

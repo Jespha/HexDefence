@@ -384,7 +384,6 @@ public class HexGridManager : MonoBehaviour
                     }
                     else
                     {
-                        Currency.Instance.Notify("Not enough HexCurrency");
                         //TODO: Show a message to the player. Make a notification system
                     }
                 }

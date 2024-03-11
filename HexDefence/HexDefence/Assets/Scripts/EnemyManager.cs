@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Dreamteck.Splines;
+using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -76,6 +77,7 @@ public class EnemyManager : MonoBehaviour
                 {
                     Prefab = enemy.enemy.prefab,
                     Health = enemy.enemy.health,
+                    MaxHealth = enemy.enemy.health,
                     Damage = enemy.enemy.damage,
                     Speed = enemy.enemy.speed,
                     Slow = enemy.enemy.slow,
@@ -219,12 +221,57 @@ public class EnemyManager : MonoBehaviour
         // }
     }
 
+    /// <summary>
+    /// <para>Provides float data from enemy provided the enemy GameObject and the data requested </para>
+    /// <para>Floats that can be requested are: Health, MaxHealth, Speed, SplinePercentage</para>
+    /// </summary>
+    /// <param name="enemy">The enemy GameObject</param>
+    /// <param name="data">The data requested</param>
+    public float ProvideEnemyFloatData(GameObject enemy, string data)
+    {
+        int index = enemyPool.IndexOf(enemy);
+        switch (data)
+        {
+            case "Health":
+                return enemies[index].Health;
+            case "MaxHealth":
+                return enemies[index].MaxHealth;
+            case "Speed":
+                return enemies[index].Speed;
+            case "SplinePercentage":
+                return enemies[index].SplinePercentage;
+            default:
+                return 0;
+        }
+    }
+
+    /// <summary>
+    /// <para>Provides int data from enemy provided the enemy GameObject and the data requested</para>
+    /// <para>Ints that can be requested are: Damage, GoldDrop</para>
+    /// </summary>
+    /// <param name="enemy">The enemy GameObject</param>
+    /// <param name="data">The data requested</param>
+    public int ProvideEnemyIntData(GameObject enemy, string data)
+    {
+        int index = enemyPool.IndexOf(enemy);
+        switch (data)
+        {
+            case "Damage":
+                return enemies[index].Damage;
+            case "GoldDrop":
+                return enemies[index].GoldDrop;
+            default:
+                return 0;
+        }
+    }
+
 }
 
-struct EnemyData
+public struct EnemyData
 {
     public GameObject Prefab;
     public float Health;
+    public float MaxHealth;
     public int Damage;
     public float Speed;
     public float Slow;

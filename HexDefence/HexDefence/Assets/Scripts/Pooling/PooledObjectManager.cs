@@ -68,6 +68,23 @@ public class PooledObjectManager : MonoBehaviour
         _pools[_specifiedPool].Add(obj);
     }
 
+    public void ReturnToPool(PooledObject _pooledObject)
+    {
+        for (int i = 0; i < _prefab.Length; i++)
+        {
+            if (_prefab[i] != null && _prefab[i] == _pooledObject)
+            {
+                for (int j = 0; j < _pools[i].Count; j++)
+                {
+                    if (_pools[i][j] == _pooledObject)
+                    {
+                        _pools[i][j].gameObject.SetActive(false);
+                    }
+                }
+            }
+        }
+    }
+
     public void InitalizePools()
     {
         ClickType[] _clickTypes = _clickManager.clickTypes;

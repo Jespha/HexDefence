@@ -93,8 +93,6 @@ public class Currency : MonoBehaviour
                 break;
         }
     }
-
-    public void Notify(string message) { }
 }
 
 /// <summary>

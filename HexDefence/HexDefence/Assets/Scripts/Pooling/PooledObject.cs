@@ -7,6 +7,7 @@ public class PooledObject : MonoBehaviour
 
     void OnEnable ()
     {
+        if (timeUntilReturn > 0)
         StartCoroutine(ReturnToPool(timeUntilReturn));
     }
 

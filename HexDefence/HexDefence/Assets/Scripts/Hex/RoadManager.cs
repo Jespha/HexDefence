@@ -54,12 +54,12 @@ public class RoadManager : MonoBehaviour
         road.TryGetComponent(out SplineMesh _splinMesh);
         _splineComputer.SetPoint(
             0,
-            new SplinePoint(StartPoint.transform.position),
+            new SplinePoint(StartPoint.transform.position + new Vector3(0,0.35f,0)),
             SplineComputer.Space.World
         );
         _splineComputer.SetPoint(
             1,
-            new SplinePoint(EndPoint.transform.position),
+            new SplinePoint(EndPoint.transform.position + new Vector3(0,0.35f,0)),
             SplineComputer.Space.World
         );
         _splinMesh.Rebuild();
@@ -84,7 +84,7 @@ public class RoadManager : MonoBehaviour
         Roads[roadIndex]
             .splineComputer.SetPoint(
                 pointCount,
-                new SplinePoint(end.Position),
+                new SplinePoint(end.Position + new Vector3(0,0.35f,0)),
                 SplineComputer.Space.World
             );
         Roads[roadIndex].splineMesh.Rebuild();
@@ -134,6 +134,7 @@ public class RoadManager : MonoBehaviour
                         ),
                     Quaternion.identity
                 );
+                Debug.Log("portal: " + portal.transform.position);
                 _portals.Add(portal);
             }
         }

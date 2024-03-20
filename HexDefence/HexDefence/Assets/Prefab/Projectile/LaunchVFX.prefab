@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1858506156196035807}
   - component: {fileID: 5188780241952731903}
   - component: {fileID: 311458382296458924}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: LaunchVFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}

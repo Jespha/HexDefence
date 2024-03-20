@@ -6,6 +6,7 @@ public class ProjectileManager : MonoBehaviour
 {
 
     public List<GameObject> activeProjectiles = new List<GameObject>();
+    public List<GameObject> activeProjectilesTarget = new List<GameObject>();
     private ProjectileData[] projectileData = new ProjectileData[0];
 
     private void OnEnable()
@@ -31,7 +32,9 @@ public class ProjectileManager : MonoBehaviour
     {
         Projectile projectilePrefab = hexcell.HexBuilding.ProjectilePrefab;
         GameObject projectile = Instantiate(projectilePrefab.ProjectilePrefab, this.transform.position, Quaternion.identity);
-        projectile.transform.position = hexcell.Position;
+        
+        Vector3 startPosition = hexcell.Position + new Vector3(0, 1, 0);
+        projectile.transform.position = startPosition;
         projectile.transform.LookAt(enemy.transform);
 
         ProjectileData[] temp = new ProjectileData[projectileData.Length + 1];
@@ -41,15 +44,15 @@ public class ProjectileManager : MonoBehaviour
         }
         
         temp[temp.Length - 1].projectile = projectile;
-        temp[temp.Length - 1].startPosition = hexcell.Position + new Vector3(0, 2, 0);
+        temp[temp.Length - 1].startPosition = hexcell.Position + new Vector3(0, 1, 0);
         temp[temp.Length - 1].endPosition = enemy.transform.position + new Vector3(0, 0.5f, 0);
         temp[temp.Length - 1].speed = hexcell.HexBuilding.ProjectilePrefab.AttackSpeed;
         temp[temp.Length - 1].damage = hexcell.HexBuilding.ProjectilePrefab.AttackDamage;
         temp[temp.Length - 1].launchVFX = hexcell.HexBuilding.ProjectilePrefab.LaunchVFXPrefab;
         temp[temp.Length - 1].impactVFX = hexcell.HexBuilding.ProjectilePrefab.ImpactVFXPrefab;
         projectileData = temp;
-        GameManager.Instance.EnemyManager.DamageEnemy(enemy, hexcell.HexBuilding.ProjectilePrefab.AttackDamage);
         activeProjectiles.Add(projectile);
+        activeProjectilesTarget.Add(enemy);
     }
 
     public void ClearProjectiles(int levelNumber, Level level)
@@ -82,8 +85,11 @@ public class ProjectileManager : MonoBehaviour
             {
                 if (projectileData[i].impactVFX != null)
                 {
-                    Instantiate(projectileData[i].impactVFX, projectileData[i].endPosition, Quaternion.identity);
+                    projectileData[i].projectile.transform.LookAt(projectileData[i].endPosition);
+                    Instantiate(projectileData[i].impactVFX, projectileData[i].endPosition, projectileData[i].projectile.transform.rotation * Quaternion.Euler(0, 180, 0));
                 }
+                GameManager.Instance.EnemyManager.DamageEnemy(activeProjectilesTarget[i], projectileData[i].damage);
+                activeProjectilesTarget.RemoveAt(i);
                 Destroy(projectileData[i].projectile);
                 activeProjectiles.RemoveAt(i);
                 RemoveProjectileData(i);

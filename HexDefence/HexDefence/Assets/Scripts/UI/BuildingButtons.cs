@@ -24,27 +24,32 @@ public class BuildingButtons : MonoBehaviour
         SetBuildingButtons();
     }
 
+    private void Update()
+    {
+
+    }
+
     public void SetBuildingButtons()
     {
-    if (_buttons.Count > 0)
-    {
-        foreach (var button in _buttons)
+        if (_buttons.Count > 0)
         {
-            Destroy(button.gameObject);
-        }
-        _buttons.Clear();
-    }
-
-    foreach (HexBuilding building in hexBuilding)
-    {   
-        if (building.HexBuildingType == HexBuildingType.None)
-        {
-            continue; // Skip this iteration and move to the next building
+            foreach (var button in _buttons)
+            {
+                Destroy(button.gameObject);
+            }
+            _buttons.Clear();
         }
 
-        var button = Instantiate(_buildingButton, _horizontalLayoutGroup.transform);
-        button.Initialization(building, _uiManager);
-        _buttons.Add(button);
-    }
+        foreach (HexBuilding building in hexBuilding)
+        {   
+            if (building.HexBuildingType == HexBuildingType.None || building.HexBuildingType == HexBuildingType.Base)
+            {
+                continue; // Skip this iteration and move to the next building
+            }
+
+            var button = Instantiate(_buildingButton, _horizontalLayoutGroup.transform);
+            button.Initialization(building, _uiManager);
+            _buttons.Add(button);
+        }
     }
 }

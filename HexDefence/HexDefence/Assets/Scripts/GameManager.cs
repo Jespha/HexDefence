@@ -26,7 +26,8 @@ public class GameManager : MonoBehaviour
     public GameObject FollowTarget;
 
     public Level CurrentLevel { get; private set; }
-    private bool _noMoreEnemies = false;
+    public bool Buildmode { get; private set; }
+    public bool BuildHexmode { get; private set; } //TODO: Might use this later to show all possible Hexes to build on
 
     /// GLOBAL GAME EVENTS
     public Action<int,Level> OnLevelStart;
@@ -80,11 +81,15 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        // if (_noMoreEnemies && Currency.Instance.HexCurrency == 0)
-        // {
-        //     _canGotoNextLevel = true;
-        //     _noMoreEnemies = false;
-        // }
+        // Update game phase Logic INCOME -> HEXPLACEMENT -> BUILD -> DEFEND
+        // HEXPLACMENT -> BUILD 
+        if (GamePhase == GamePhase.HexPlacement)
+        {
+            if (Currency.Instance.HexCurrency == 0)
+            {
+                SetGamePhase(GamePhase.Build);
+            }
+        }
 
         if (Currency.Instance.LifeCurrency > 0)
         {
@@ -124,7 +129,7 @@ public class GameManager : MonoBehaviour
         OnLevelComplete?.Invoke(Levels.LevelList.IndexOf(CurrentLevel), CurrentLevel);
         GamePhase = GamePhase.Income;
         UpdateGamePhase?.Invoke(GamePhase);
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(1);
         Currency.Instance.UpdateCurrency(CurrentLevel.hexCurrency, CurrencyType.HexCurrency);
         Currency.Instance.UpdateCurrency(CurrentLevel.goldCurrency, CurrencyType.GoldCurrency);
         yield return null;
@@ -143,6 +148,7 @@ public class GameManager : MonoBehaviour
     {
         if (GamePhase == GamePhase.Build)
         {
+            if (Levels.LevelList.IndexOf(CurrentLevel) != 0)
             EnemyManager.ClearEnemies();
             GamePhase = GamePhase.Defend;
             LoadNextLevel();
@@ -162,6 +168,12 @@ public class GameManager : MonoBehaviour
         if(Vector3.Distance(new Vector3(FollowTarget.transform.position.x,hexCell.transform.position.y,hexCell.transform.position.z), hexCell.transform.position) > 16f)
         FollowTarget.transform.position = new Vector3(hexCell.transform.position.x, FollowTarget.transform.position.y, -FollowTarget.transform.position.y + hexCell.transform.position.z);
     }
+
+    public void SetBuildMode(bool buildMode)
+    {
+        Buildmode = buildMode;
+    }
+
 }
 
 public enum GamePhase

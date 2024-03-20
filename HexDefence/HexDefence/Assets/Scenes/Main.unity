@@ -826,8 +826,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f8bc7d8021146444a4cbaa860e500ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  activeEnemies: []
-  colliders: []
   spawnCooldown: 1
   currentLevel: {fileID: 11400000, guid: b6c319921d62008418e35795efeb349c, type: 2}
 --- !u!4 &538542167
@@ -902,6 +900,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   activeProjectiles: []
+  activeProjectilesTarget: []
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -1166,6 +1165,17 @@ PrefabInstance:
       propertyPath: _hexGridManager
       value: 
       objectReference: {fileID: 2143192310}
+    - target: {fileID: 723959000405897435, guid: 38aa1fce6de797649a3330f269dc7e8c,
+        type: 3}
+      propertyPath: clickTypes.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 723959000405897435, guid: 38aa1fce6de797649a3330f269dc7e8c,
+        type: 3}
+      propertyPath: clickTypes.Array.data[4]
+      value: 
+      objectReference: {fileID: 11400000, guid: 03fdc45b7303a5041987ee6212e15dc1,
+        type: 2}
     - target: {fileID: 2870266170331195133, guid: 38aa1fce6de797649a3330f269dc7e8c,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -1641,12 +1651,12 @@ PrefabInstance:
     - target: {fileID: 5287598544151111833, guid: 0a4739a37e1b90b4aa9280f37f114fa5,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.05
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5287598544151111833, guid: 0a4739a37e1b90b4aa9280f37f114fa5,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.62
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5287598544151111833, guid: 0a4739a37e1b90b4aa9280f37f114fa5,
         type: 3}

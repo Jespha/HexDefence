@@ -12,9 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87f9d9c22dce9744db92ff6e9e0e4d61, type: 3}
   m_Name: Land_Selected
   m_EditorClassIdentifier: 
-  pooledObject: {fileID: 8742055076427076384, guid: 5385fcb74ec5e054aad1851abdb4bc4e,
-    type: 3}
+  pooledObject: {fileID: 0}
   layerMask:
     serializedVersion: 2
     m_Bits: 4096
-  poolSize: 1
+  poolSize: 0

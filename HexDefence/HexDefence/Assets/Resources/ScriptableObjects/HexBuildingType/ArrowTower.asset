@@ -23,6 +23,6 @@ MonoBehaviour:
   ColliderPosition: {x: 0, y: 0, z: 0}
   AttackType: 0
   AttackSpeed: 1
-  AttackRange: 10
+  AttackRange: 3
   AttackDamage: 1
   TargetPriority: 0

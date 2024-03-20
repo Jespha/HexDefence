@@ -5,6 +5,7 @@ using UnityEngine;
 public class Enemy : ScriptableObject
 {
     public GameObject prefab;
+    public PooledObject deathEffect;
     public Sprite sprite;
     public string enemyName;
     public float health;
@@ -17,6 +18,7 @@ public class Enemy : ScriptableObject
     [Range(0, 1000)]
     public int goldDrop;
     // public movmentType movmentType;
+    public EnemyAnimation enemyDeathAnimation;
 }
 
 public enum movmentType
@@ -26,3 +28,4 @@ public enum movmentType
     jumping,
     flying
 }
+

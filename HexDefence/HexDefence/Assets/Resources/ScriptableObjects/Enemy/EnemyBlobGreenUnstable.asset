@@ -13,10 +13,14 @@ MonoBehaviour:
   m_Name: EnemyBlobGreenUnstable
   m_EditorClassIdentifier: 
   prefab: {fileID: 8755444216325678910, guid: 16ab47344e8343343b48cc49a2291da9, type: 3}
+  deathEffect: {fileID: 7035638861358351981, guid: 81eb521edff8ea744b7dd10681c2f921,
+    type: 3}
   sprite: {fileID: 21300000, guid: 78aa55e13a518cc48aecaf26266702b3, type: 3}
   enemyName: Unstable Green Blob
   health: 4
   damage: 1
-  speed: 1
+  speed: 1.2
   slow: 0
   goldDrop: 10
+  enemyDeathAnimation: {fileID: 11400000, guid: 6a2de7bada2bec848baea771b752925f,
+    type: 2}

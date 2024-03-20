@@ -12,7 +12,8 @@ public class PooledObjectManager : MonoBehaviour
     public PooledObject[] _prefab;
     public int[] _poolSize;
     public List<PooledObject>[] _pools;
-    
+    private List<PooledObject> _tempObjects = new List<PooledObject>();
+
     public static PooledObjectManager Instance;
 
     void Awake() => Instance = this;
@@ -88,7 +89,7 @@ public class PooledObjectManager : MonoBehaviour
     public void InitalizePools()
     {
         ClickType[] _clickTypes = _clickManager.clickTypes;
-        
+
         Array.Resize(ref _prefab, _prefab.Length + _clickTypes.Length);
         Array.Resize(ref _poolSize, _poolSize.Length + _clickTypes.Length);
         Array.Resize(ref _pools, _prefab.Length);
@@ -112,4 +113,57 @@ public class PooledObjectManager : MonoBehaviour
             }
         }
     }
+
+    public void AddToPool(PooledObject _pooledObject, int _amount)
+    {
+        int index = Array.IndexOf(_prefab, _pooledObject);
+        if (index != -1)
+        {
+            // If the object is already in the array, instantiate new ones and add them to the pool
+            for (int j = 0; j < _amount; j++)
+            {
+                PooledObject obj = Instantiate(_prefab[index], this.transform) as PooledObject;
+                obj.gameObject.SetActive(false);
+                _pools[index].Add(obj);
+                _tempObjects.Add(obj); // Keep track of added objects
+            }
+            _poolSize[index] += _amount; // Increase the pool size
+        }
+        else
+        {
+            // If the object is not in the array, add it
+            Array.Resize(ref _prefab, _prefab.Length + 1);
+            _prefab[_prefab.Length - 1] = _pooledObject;
+
+            // Resize _poolSize and add the new size
+            Array.Resize(ref _poolSize, _poolSize.Length + 1);
+            _poolSize[_poolSize.Length - 1] = _amount;
+
+            // Resize _pools and add a new list for the new type of PooledObject
+            List<PooledObject>[] tempPools = new List<PooledObject>[_pools.Length + 1];
+            Array.Copy(_pools, tempPools, _pools.Length);
+            tempPools[_pools.Length] = new List<PooledObject>();
+            _pools = tempPools;
+
+            AddToPool(_pooledObject, _amount); // Recursive call
+        }
+    }
+    
+    public void LevelComplete()
+    {
+        foreach (PooledObject obj in _tempObjects)
+        {
+            // Remove the object from the pool
+            for (int i = 0; i < _prefab.Length; i++)
+            {
+                if (_prefab[i] != null && _prefab[i] == obj)
+                {
+                    _pools[i].Remove(obj);
+                }
+            }
+        }
+        // Clear the list of added objects
+        _tempObjects.Clear();
+    }
+
 }

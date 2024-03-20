@@ -103,6 +103,10 @@ public class ClickManager : MonoBehaviour
     {
         LayerMask layerMaskHit = hit.transform.gameObject.layer;
         ClickType type = GetScriptableObjectByLayerMask(clickTypes, layerMaskHit);
+        if (type == null) // ignore the layers with no Click VFX added to Clickamanager
+            return;
+        if (type.pooledObject == null) // ignore the layers with no Click VFX
+            return;
         PooledObject obj = PooledObjectManager.Instance.Get(type.pooledObject);
         obj.transform.position = hit.point;
         HexCell _hexCell = null;

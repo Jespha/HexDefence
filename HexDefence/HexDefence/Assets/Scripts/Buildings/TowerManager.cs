@@ -1,9 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq.Expressions;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class TowerManager : MonoBehaviour
 {
@@ -76,31 +72,41 @@ public class TowerManager : MonoBehaviour
 
     public void Update()
     {
-        if (GameManager.Instance.GamePhase == GamePhase.Defend)
+        if (GameManager.Instance != null && _enemyManager != null)
         {
-            for (int i = 0; i < Towers.Length; i++)
+            if (GameManager.Instance.GamePhase == GamePhase.Defend && _enemyManager != null && _enemyManager.activeEnemies != null && _enemyManager.activeEnemies.Count > 0)            
             {
-                for (int j = 0; j < _enemyManager.activeEnemies.Count; j++)
+                for (int i = 0; i < Towers.Length; i++)
                 {
-                    if (Vector3.Distance(Towers[i].position, _enemyManager.activeEnemies[j].transform.position) <= Towers[i].attackRange)
+                    // Create a temporary copy of the keys in the dictionary
+                    var enemies = new List<GameObject>(_enemyManager.activeEnemies.Keys);
+
+                    foreach (var enemy in enemies)
                     {
-                        if (Towers[i].lastAttackTime + Towers[i].attackSpeed > Time.time)
-                            continue; // Skip to the next iteration of the loop
-                        Towers[i].lastAttackTime = Time.time;
-                        switch (Towers[i].attackType)
+                        // Check if the enemy is still in the dictionary
+                        if (!_enemyManager.activeEnemies.ContainsKey(enemy))
+                            continue;
+
+                        if (Vector3.Distance(Towers[i].position, enemy.transform.position) <= Towers[i].attackRange)
                         {
-                            case AttackType.Projectile:
-                                projectileLogic(Towers[i].hexCell, _enemyManager.activeEnemies[j]);
-                                break;
-                            case AttackType.Area:
-                                areaLogic(Towers[i].hexCell);
-                                break;
-                            case AttackType.HitScan:
-                                hitScanLogic(Towers[i].hexCell);
-                                break;
-                            case AttackType.GenerateCurrency:
-                                generateCurrencyLogic(Towers[i].hexCell);
-                                break;
+                            if (Towers[i].lastAttackTime + Towers[i].attackSpeed > Time.time)
+                                continue; // Skip to the next iteration of the loop
+                            Towers[i].lastAttackTime = Time.time;
+                            switch (Towers[i].attackType)
+                            {
+                                case AttackType.Projectile:
+                                    projectileLogic(Towers[i].hexCell, enemy);
+                                    break;
+                                case AttackType.Area:
+                                    areaLogic(Towers[i].hexCell);
+                                    break;
+                                case AttackType.HitScan:
+                                    hitScanLogic(Towers[i].hexCell);
+                                    break;
+                                case AttackType.GenerateCurrency:
+                                    generateCurrencyLogic(Towers[i].hexCell);
+                                    break;
+                            }
                         }
                     }
                 }

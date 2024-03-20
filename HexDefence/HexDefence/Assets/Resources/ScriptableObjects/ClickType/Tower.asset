@@ -12,9 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87f9d9c22dce9744db92ff6e9e0e4d61, type: 3}
   m_Name: Tower
   m_EditorClassIdentifier: 
-  pooledObject: {fileID: 8742055076427076384, guid: 55307b54cc1130d42a44d0518e2eed89,
-    type: 3}
+  pooledObject: {fileID: 0}
   layerMask:
     serializedVersion: 2
     m_Bits: 128
-  poolSize: 1
+  poolSize: 0

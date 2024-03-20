@@ -52,7 +52,22 @@ public class HexCell : MonoBehaviour
         _renderer.renderingLayerMask = _renderer.renderingLayerMask + 2;
         _renderer.material.SetFloat("_selected", 1);
         _renderer.material.SetFloat("_Temp", 1);
+    }
 
+
+    public void SetTempBuilding(HexBuilding Building)
+    {
+        HexBuilding = Building;
+        buildingPrefab = Instantiate(HexBuilding.Prefab,this.transform);
+        buildingPrefab.transform.position = this.transform.position;
+        StartCoroutine(AnimateScaleCoroutine(this.transform));
+    }
+
+    public void RevertTempBuilding()
+    {
+        Destroy(buildingPrefab.gameObject);
+        buildingPrefab = null;
+        HexBuilding = null;
     }
 
     public void SetNeighbors(List<Vector3> neighbors)

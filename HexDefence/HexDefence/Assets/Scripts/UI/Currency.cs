@@ -72,7 +72,6 @@ public class Currency : MonoBehaviour
                         currencyPosition,
                         CurrencyType.LifeCurrency
                     );
-
                 break;
             case CurrencyType.MaxLifeCurrency:
                 MaxLifeCurrency += amount;

@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: EnemyBlobGreen
   m_EditorClassIdentifier: 
   prefab: {fileID: 4741397612153782051, guid: 3a10b307579d6e34b8afaad325ba2eb5, type: 3}
+  deathEffect: {fileID: 2425776668354868693, guid: c223d9274c827494398ee8dd41ce10af,
+    type: 3}
   sprite: {fileID: 21300000, guid: 78aa55e13a518cc48aecaf26266702b3, type: 3}
   enemyName: Green Blob
   health: 4
@@ -20,4 +22,5 @@ MonoBehaviour:
   speed: 1
   slow: 0
   goldDrop: 10
-  movmentType: 0
+  enemyDeathAnimation: {fileID: 11400000, guid: 6a2de7bada2bec848baea771b752925f,
+    type: 2}

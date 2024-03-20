@@ -13,9 +13,10 @@ public class HexGridManager : MonoBehaviour
 
     [field: SerializeField]
     private HexCell _hexCellTemp;
+
+    public HexCell _baseHexCell;
     public static HexGridManager Instance;
 
-    [SerializeField]
     public bool showCoordinates;
 
     [field: SerializeField]
@@ -377,10 +378,6 @@ public class HexGridManager : MonoBehaviour
                         ClearTempHexGrid();
                         _selected = newHexCell;
                         Currency.Instance.UpdateCurrency(-1, CurrencyType.HexCurrency);
-                        if (Currency.Instance.HexCurrency == 0)
-                        {
-                            GameManager.Instance.SetGamePhase(GamePhase.Build);
-                        }
                     }
                     else
                     {

@@ -2,24 +2,27 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Dreamteck.Splines;
-using JetBrains.Annotations;
+using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class EnemyManager : MonoBehaviour
 {
     private int maxEnemies;
+    private bool doneSpawning = false;
     EnemyData[] enemies = new EnemyData[0];
     private List<GameObject> enemyPool = new();
-    public List<GameObject> activeEnemies = new();
-    public List<SphereCollider> colliders = new();
+    public Dictionary<GameObject, EnemyData> activeEnemies { get; private set; }
     private int _defeatedEnemies = 0;
-    public float spawnCooldown = 1.0f;
+    public float spawnCooldown = 0.75f;
     public Level currentLevel;
+
+    public event Action<GameObject> EnemyAdded;
+    public event Action<GameObject> EnemyRemoved;
 
     private void OnEnable()
     {
         StartCoroutine(WaitForGameManager());
+        activeEnemies = new Dictionary<GameObject, EnemyData>();
     }
 
     private IEnumerator WaitForGameManager()
@@ -38,16 +41,22 @@ public class EnemyManager : MonoBehaviour
 
     public void Update()
     {
-        if (GameManager.Instance.GamePhase == GamePhase.Defend && activeEnemies.Count > 0)
-            UpdateEnemies();
-
         if (
-            GameManager.Instance.GamePhase == GamePhase.Defend
-            && enemyPool.Count == _defeatedEnemies
+            GameManager.Instance != null
+            && GameManager.Instance.GamePhase == GamePhase.Defend
+            && activeEnemies != null
+            && activeEnemies.Count > 0
         )
+            UpdateEnemies();
+        
+        
+        // Update game phase Logic INCOME -> HEXPLACEMENT -> BUILD -> DEFEND
+        // DEFEND -> INCOME
+        if (GameManager.Instance.GamePhase == GamePhase.Defend && _defeatedEnemies >= maxEnemies)
         {
             Debug.Log("Level Complete");
             StartCoroutine(GameManager.Instance.LevelComplete());
+            doneSpawning = false;
             _defeatedEnemies = 0;
         }
     }
@@ -60,6 +69,7 @@ public class EnemyManager : MonoBehaviour
         currentLevel = _level;
         int _maxEnemies = 0;
         _defeatedEnemies = 0;
+        doneSpawning = false;
         foreach (var enemy in currentLevel.enemies)
         {
             _maxEnemies += enemy.amount;
@@ -82,20 +92,29 @@ public class EnemyManager : MonoBehaviour
                     Speed = enemy.enemy.speed,
                     Slow = enemy.enemy.slow,
                     GoldDrop = enemy.enemy.goldDrop,
+                    DeathEffect = enemy.enemy.deathEffect,
+                    EnemyDeathAnimation = enemy.enemy.enemyDeathAnimation,
                     SplinePercentage = 0f,
                     Spline = _spline,
                     SplineLength = _spline.CalculateLength(),
                 };
-                currentIndex++; 
+                currentIndex++;
             }
         }
+
         for (int i = 0; i < maxEnemies; i++)
         {
             GameObject enemy = Instantiate(enemies[i].Prefab, this.transform);
-            SphereCollider collider = enemy.GetComponent<SphereCollider>();
-            colliders.Add(collider);
-            enemy.SetActive(false); 
+            enemy.SetActive(false);
             enemyPool.Add(enemy);
+        }
+
+        foreach (var enemy in currentLevel.enemies)
+        {
+            PooledObjectManager.Instance.AddToPool(
+                enemy.enemy.deathEffect,
+                Mathf.FloorToInt(enemy.amount / 3) + 1
+            );
         }
 
         StartCoroutine(SpawnEnemiesCoroutine());
@@ -104,17 +123,25 @@ public class EnemyManager : MonoBehaviour
     private void UpdateEnemies()
     {
         // Using a copy of the activeEnemies list to avoid modifying the list while iterating
-        List<GameObject> activeEnemiesCopy = new List<GameObject>(activeEnemies);
+        List<GameObject> activeEnemiesCopy = new List<GameObject>(activeEnemies.Keys);
 
         for (int i = activeEnemiesCopy.Count - 1; i >= 0; i--)
         {
             GameObject enemy = activeEnemiesCopy[i];
             if (enemy != null && UpdateEnemy(enemy))
             {
-                enemy.SetActive(false); 
-                activeEnemies.Remove(enemy);
-                colliders.Remove(enemy.GetComponent<SphereCollider>());
-                _defeatedEnemies++;
+                int index = enemyPool.IndexOf(enemy);
+                if (enemies[index].SplinePercentage >= 1 || enemies[index].Health <= 0)
+                {
+                    if (enemies[index].Health <= 0)
+                    {
+                        HandleEnemyDeath(enemy, false);
+                    }
+                    if (enemies[index].SplinePercentage >= 1)
+                    {
+                        HandleEnemyDeath(enemy, true);
+                    }
+                }
             }
         }
     }
@@ -131,15 +158,6 @@ public class EnemyManager : MonoBehaviour
 
         if (enemies[index].SplinePercentage >= 1 || enemies[index].Health <= 0)
         {
-            if (enemies[index].Health <= 0)
-            {
-                Currency.Instance.UpdateCurrency(enemies[index].GoldDrop, CurrencyType.GoldCurrency);
-            }
-            if (enemies[index].SplinePercentage >= 1)
-            {
-                Currency.Instance.UpdateCurrency(-enemies[index].Damage, CurrencyType.LifeCurrency);
-            }
-            enemyPool[index].SetActive(false);
             return true;
         }
 
@@ -161,14 +179,19 @@ public class EnemyManager : MonoBehaviour
     public void ClearEnemies()
     {
         StopAllCoroutines();
-        colliders.Clear();
-        for (int i = 0; i < activeEnemies.Count; i++)
+        if (activeEnemies != null)
         {
-            DestroyImmediate(enemyPool[i]);
+            foreach (var enemy in activeEnemies)
+            {
+                if (enemy.Key != null)
+                {
+                    DestroyImmediate(enemy.Key);
+                }
+            }
+            enemies = new EnemyData[maxEnemies];
+            enemyPool.Clear();
+            activeEnemies.Clear();
         }
-        enemies = new EnemyData[maxEnemies];
-        enemyPool.Clear();
-        activeEnemies.Clear();
     }
 
     private IEnumerator SpawnEnemiesCoroutine()
@@ -178,11 +201,11 @@ public class EnemyManager : MonoBehaviour
             if (i < enemyPool.Count)
             {
                 yield return new WaitForSeconds(spawnCooldown);
-                GameObject enemy = SpawnEnemy(i);
-                activeEnemies.Add(enemy);
+                SpawnEnemy(i); // Spawn the enemy without adding it to the dictionary here
             }
             else
             {
+                doneSpawning = true;
                 yield break;
             }
         }
@@ -203,22 +226,73 @@ public class EnemyManager : MonoBehaviour
         Vector3 direction = (nextPosition - enemy.transform.position).normalized;
 
         enemy.transform.rotation = Quaternion.LookRotation(direction);
-
+        if (!activeEnemies.ContainsKey(enemy))
+        {
+            activeEnemies.Add(enemy, enemies[index]);
+            EnemyAdded?.Invoke(enemy);
+        }
         return enemy;
     }
 
-    public void  DamageEnemy(GameObject Enemy, float damage)
+    private void HandleEnemyDeath(GameObject Enemy, bool reachedEnd)
     {
-        int index = activeEnemies.IndexOf(Enemy);
-        enemies[index].Health -= damage;
-        // if (enemies[index].Health <= 0)
-        // {
-        //     Currency.Instance.UpdateCurrency(enemies[index].GoldDrop, CurrencyType.HexCurrency);
-        //     activeEnemies.Remove(Enemy);
-        //     colliders.Remove(Enemy.GetComponent<SphereCollider>());
-        //     _defeatedEnemies++;
-        //     Enemy.SetActive(false);
-        // }
+        if (activeEnemies.ContainsKey(Enemy))
+        {
+            EnemyData enemyData = activeEnemies[Enemy];
+            switch (enemyData.EnemyDeathAnimation.Name)
+            {
+                case "Fall":
+                    StartCoroutine(
+                        EnemyAnimationCoroutine.DeathAnimationFallCoroutine(
+                            Enemy,
+                            reachedEnd,
+                            enemyData
+                        )
+                    );
+                    break;
+                case "Explode":
+                    StartCoroutine(
+                        EnemyAnimationCoroutine.DeathAnimationExplodeCoroutine(
+                            Enemy,
+                            reachedEnd,
+                            enemyData
+                        )
+                    );
+                    break;
+                // case "burn":
+                //     StartCoroutine(DeathAnimationCoroutine(Enemy, reachedEnd, enemyData));
+                //     break;
+                // case "melt":
+                //     StartCoroutine(DeathAnimationCoroutine(Enemy, reachedEnd, enemyData));
+                //     break;
+                // case "vaporize":
+                //     StartCoroutine(DeathAnimationCoroutine(Enemy, reachedEnd, enemyData));
+                //     break;
+                default:
+                    break;
+            }
+            activeEnemies.Remove(Enemy);
+            EnemyRemoved?.Invoke(Enemy);
+            _defeatedEnemies++;
+        }
+    }
+
+    public void DamageEnemy(GameObject Enemy, float damage)
+    {
+        if (activeEnemies.ContainsKey(Enemy))
+        {
+            EnemyData enemyData = activeEnemies[Enemy];
+            enemyData.Health -= damage;
+            StartCoroutine(EnemyAnimationCoroutine.HitAnimationCoroutine(Enemy));
+            if (enemyData.Health <= 0)
+            {
+                HandleEnemyDeath(Enemy, false);
+            }
+            else
+            {
+                activeEnemies[Enemy] = enemyData; // Update the enemy data in the dictionary
+            }
+        }
     }
 
     /// <summary>
@@ -229,17 +303,17 @@ public class EnemyManager : MonoBehaviour
     /// <param name="data">The data requested</param>
     public float ProvideEnemyFloatData(GameObject enemy, string data)
     {
-        int index = enemyPool.IndexOf(enemy);
+        EnemyData enemyData = activeEnemies[enemy];
         switch (data)
         {
             case "Health":
-                return enemies[index].Health;
+                return enemyData.Health;
             case "MaxHealth":
-                return enemies[index].MaxHealth;
+                return enemyData.MaxHealth;
             case "Speed":
-                return enemies[index].Speed;
+                return enemyData.Speed;
             case "SplinePercentage":
-                return enemies[index].SplinePercentage;
+                return enemyData.SplinePercentage;
             default:
                 return 0;
         }
@@ -264,7 +338,6 @@ public class EnemyManager : MonoBehaviour
                 return 0;
         }
     }
-
 }
 
 public struct EnemyData
@@ -276,9 +349,10 @@ public struct EnemyData
     public float Speed;
     public float Slow;
     public int GoldDrop;
+    public PooledObject DeathEffect;
+    public EnemyAnimation EnemyDeathAnimation;
 
     public float SplinePercentage;
     public SplineComputer Spline;
     public float SplineLength;
-    public SphereCollider Collider;
 }

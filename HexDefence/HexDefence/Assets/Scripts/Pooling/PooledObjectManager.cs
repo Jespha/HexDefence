@@ -1,13 +1,17 @@
 using System;
 using System.Collections.Generic;
-using Unity.Entities;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class PooledObjectManager : MonoBehaviour
 {
     [SerializeField]
     private ClickManager _clickManager;
+    private int IndexOfHexBuildingInHexBuildings(PooledObject pooledObject)
+    {
+        // Implement your logic here to find the index of hex building in hex buildings
+        // For now, return -1 indicating not found
+        return -1;
+    }
 
     public PooledObject[] _prefab;
     public int[] _poolSize;
@@ -71,16 +75,14 @@ public class PooledObjectManager : MonoBehaviour
 
     public void ReturnToPool(PooledObject _pooledObject)
     {
-        for (int i = 0; i < _prefab.Length; i++)
+        for (int i = 0; i < _pools.Length; i++)
         {
-            if (_prefab[i] != null && _prefab[i] == _pooledObject)
+            for (int j = 0; j < _pools[i].Count; j++)
             {
-                for (int j = 0; j < _pools[i].Count; j++)
+                if (_pools[i][j] == _pooledObject)
                 {
-                    if (_pools[i][j] == _pooledObject)
-                    {
-                        _pools[i][j].gameObject.SetActive(false);
-                    }
+                    _pools[i][j].gameObject.SetActive(false);
+                    return; // Exit the function once the object is found and deactivated
                 }
             }
         }
@@ -117,12 +119,25 @@ public class PooledObjectManager : MonoBehaviour
     public void AddToPool(PooledObject _pooledObject, int _amount)
     {
         int index = Array.IndexOf(_prefab, _pooledObject);
+        
+        bool isBuilding = false;
+        foreach (HexBuilding hexBuilding in Resources.LoadAll<HexBuilding>("ScriptableObjects/HexBuildingType"))
+        {
+            if (hexBuilding.Prefab == _pooledObject)
+            {
+                isBuilding = true;
+                break;
+            }
+        }
+
         if (index != -1)
         {
             // If the object is already in the array, instantiate new ones and add them to the pool
             for (int j = 0; j < _amount; j++)
             {
                 PooledObject obj = Instantiate(_prefab[index], this.transform) as PooledObject;
+                if (isBuilding)
+                SetTempMaterials(obj);
                 obj.gameObject.SetActive(false);
                 _pools[index].Add(obj);
                 _tempObjects.Add(obj); // Keep track of added objects
@@ -148,6 +163,19 @@ public class PooledObjectManager : MonoBehaviour
             AddToPool(_pooledObject, _amount); // Recursive call
         }
     }
+
+    private void SetTempMaterials(PooledObject obj)
+    {
+        List<MeshRenderer> meshRenderers = new List<MeshRenderer>(obj.GetComponentsInChildren<MeshRenderer>());
+        if (obj.GetComponent<MeshRenderer>() != null)
+            meshRenderers.Add(obj.GetComponent<MeshRenderer>());
+        
+        foreach (MeshRenderer meshRenderer in meshRenderers)
+        {
+            meshRenderer.material = Resources.Load<Material>("ScriptableObjects/HexBuildingType/TowerTempMat");
+        }
+        obj.gameObject.layer = 10;
+    }
     
     public void LevelComplete()
     {
@@ -164,6 +192,18 @@ public class PooledObjectManager : MonoBehaviour
         }
         // Clear the list of added objects
         _tempObjects.Clear();
+    }
+
+    public bool IsInPool(PooledObject _pooledObject)
+    {
+        for (int i = 0; i < _prefab.Length; i++)
+        {
+            if (_prefab[i] != null && _prefab[i] == _pooledObject)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

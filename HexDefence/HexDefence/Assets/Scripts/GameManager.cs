@@ -27,7 +27,11 @@ public class GameManager : MonoBehaviour
 
     public Level CurrentLevel { get; private set; }
     public bool Buildmode { get; private set; }
+    public Action OnBuildmode;
+    public HexBuilding TempBuilding { get; private set; }
     public bool BuildHexmode { get; private set; } //TODO: Might use this later to show all possible Hexes to build on
+    public bool MultiBuildMode { get; private set; }
+    public bool UpgradeMode { get; private set; }
 
     /// GLOBAL GAME EVENTS
     public Action<int,Level> OnLevelStart;
@@ -41,6 +45,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        
         if (UIManager == null)
         {
             try
@@ -76,7 +81,10 @@ public class GameManager : MonoBehaviour
                 Debug.Log("PlayerInput not found in GameManager");
             }
         }
+
         StartGame();
+        PlayerInput.MultiBuildMode += SetMultiBuildMode;
+        PlayerInput.UpgradeBuildMode += SetUpgradeMode;
     }
 
     private void Update()
@@ -169,9 +177,33 @@ public class GameManager : MonoBehaviour
         FollowTarget.transform.position = new Vector3(hexCell.transform.position.x, FollowTarget.transform.position.y, -FollowTarget.transform.position.y + hexCell.transform.position.z);
     }
 
-    public void SetBuildMode(bool buildMode)
+    public void SetBuildMode(bool buildMode, HexBuilding hexBuilding = null)
     {
+        if (hexBuilding == null || buildMode == false)
+        {
+            Buildmode = false;
+            hexBuilding = null;
+            OnBuildmode?.Invoke();
+           return;
+        }
         Buildmode = buildMode;
+        TempBuilding = hexBuilding;
+        OnBuildmode?.Invoke();
+    }
+
+    public void SetBuildHexMode(bool buildHexMode)
+    {
+        BuildHexmode = buildHexMode;
+    }
+
+    private void SetMultiBuildMode(bool multiBuildMode)
+    {
+        MultiBuildMode = multiBuildMode;
+    }
+
+    private void SetUpgradeMode(bool upgradeMode)
+    {
+        UpgradeMode = upgradeMode;
     }
 
 }

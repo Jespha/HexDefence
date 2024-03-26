@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HexBuilding
   HexBuildingType: 2
   Name: MortarTower
-  Prefab: {fileID: 1540248428568090432, guid: fe9aa8ce1aa50ab49bd05795f6723de3, type: 3}
+  Prefab: {fileID: 4489316970894143791, guid: fe9aa8ce1aa50ab49bd05795f6723de3, type: 3}
+  ProjectilePrefab: {fileID: 0}
   Icon: {fileID: 21300000, guid: 01568e0dac459d842b670d1ca15ab02c, type: 3}
   Cost: 0
   TypeCollider: 0
@@ -25,3 +26,4 @@ MonoBehaviour:
   AttackRange: 1
   AttackDamage: 1
   TargetPriority: 0
+  Level: 0

@@ -15,9 +15,18 @@ public class BuildingButton : MonoBehaviour
     {
         _building = hexBuilding;
         _image.sprite = hexBuilding.Icon;
-        // _name.text = hexBuilding.Name;
         _uiManager = uiManager;
-        _button.onClick.AddListener(() => _uiManager.SetSelectedBuilding(hexBuilding));
+        _button.onClick.AddListener(() => SetBuildingBuildMode());
     }
 
+    public void SetBuildingBuildMode()
+    {
+
+        bool isInPool = PooledObjectManager.Instance.IsInPool(_building.Prefab);
+        if (!isInPool)
+            PooledObjectManager.Instance.AddToPool(_building.Prefab, 1);
+        
+        GameManager.Instance.SetBuildMode(true, _building);
+        HexGridManager.Instance.DeselectHexCell();
+    }
 }

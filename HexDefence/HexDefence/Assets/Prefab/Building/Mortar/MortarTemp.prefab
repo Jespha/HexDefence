@@ -11,9 +11,8 @@ GameObject:
   - component: {fileID: 3428159209334681323}
   - component: {fileID: 6083236483341774595}
   - component: {fileID: 6866749960475963969}
-  - component: {fileID: 4489316970894143791}
   m_Layer: 7
-  m_Name: Mortar
+  m_Name: MortarTemp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -62,7 +61,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 56612951ad50057429c6e745bf3d8e7c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -84,16 +83,3 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &4489316970894143791
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1540248428568090432}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 89f49afc3760b5f4dace8865e0a035ef, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  timeUntilReturn: 0

@@ -1,7 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Entities;
 using Unity.Mathematics;
+using Unity.VisualScripting;
+using UnityEditor.Rendering.BuiltIn.ShaderGraph;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
 
@@ -18,6 +21,7 @@ public class HexCell : MonoBehaviour
     public HexBuilding HexBuilding  { get; private set; }
     public List<Vector3> Neighbors;
     public bool IsTemp { get; private set; }
+    private bool _buildingIsTemp = false;
 
     public int RoadIndex { get; private set; }
     public HexCell RoadEntryPoint { get; private set; }
@@ -25,7 +29,7 @@ public class HexCell : MonoBehaviour
 
     [SerializeField]private AnimationCurve _clickCurve;
     [SerializeField]private float _duration = 1f;
-    private GameObject buildingPrefab;
+    private PooledObject buildingPrefab;
 
     public void Initialize(Vector3 position, int depth, float height, HexTerrain terrain, HexBuilding building, List<Vector3> neighbors, HexGridManager hexGridManager)
     {
@@ -55,19 +59,22 @@ public class HexCell : MonoBehaviour
     }
 
 
-    public void SetTempBuilding(HexBuilding Building)
+    public void SetTempBuilding()
     {
-        HexBuilding = Building;
-        buildingPrefab = Instantiate(HexBuilding.Prefab,this.transform);
+        _buildingIsTemp = true;
+        buildingPrefab = PooledObjectManager.Instance.Get(GameManager.Instance.TempBuilding.Prefab);
         buildingPrefab.transform.position = this.transform.position;
-        StartCoroutine(AnimateScaleCoroutine(this.transform));
+        // StartCoroutine(AnimateScaleCoroutine(this.transform));
     }
 
     public void RevertTempBuilding()
     {
-        Destroy(buildingPrefab.gameObject);
-        buildingPrefab = null;
-        HexBuilding = null;
+        PooledObjectManager.Instance.ReturnToPool(buildingPrefab);
+        if (_buildingIsTemp)
+        {
+            buildingPrefab = null;
+            HexBuilding = Resources.Load<HexBuilding>("ScriptableObjects/HexBuildingType/None");
+        }
     }
 
     public void SetNeighbors(List<Vector3> neighbors)
@@ -109,7 +116,9 @@ public class HexCell : MonoBehaviour
 
     public void BuildHexBuilding(HexBuilding hexBuilding)
     {
-        HexBuilding = hexBuilding;
+        _buildingIsTemp = false;
+        RevertTempBuilding();
+        HexBuilding = GameManager.Instance.TempBuilding;
         buildingPrefab = Instantiate(HexBuilding.Prefab,this.transform);
         buildingPrefab.transform.position = this.transform.position;
         StartCoroutine(AnimateScaleCoroutine(this.transform));
@@ -251,14 +260,6 @@ public class HexCell : MonoBehaviour
         Desert,
         Mountain,
         Road,
-    }
-
-    [Serializable]
-    public enum HexBuildingType
-    {
-        None,
-        Base,
-        BasicTower,
     }
 
     [Serializable]

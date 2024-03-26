@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5e63314eb4aacc943b4133348d2e6991, type: 3}
-  m_Name: _HexBuildings
+  m_Name: HexBuildings
   m_EditorClassIdentifier: 
   hexBuildings:
   - {fileID: 11400000, guid: 7909dd1d8f3858f4d8b2a34f1bf20831, type: 2}

@@ -8,7 +8,7 @@ public class HexBuilding : ScriptableObject
 {
     public HexBuildingType HexBuildingType;
     public string Name;
-    public GameObject Prefab;
+    public PooledObject Prefab;
     public Projectile ProjectilePrefab;
     public Sprite Icon;
     public int Cost;
@@ -20,6 +20,7 @@ public class HexBuilding : ScriptableObject
     public float AttackRange = 1.0f;
     public float AttackDamage = 1.0f;
     public AttackPriority TargetPriority;
+    public int Level = 0;
 }
 
 public enum AttackType
@@ -45,4 +46,11 @@ public enum AttackPriority
     Strongest,
     Weakest,
     Random
+}
+
+public enum HexBuildingType
+{
+    None,
+    Base,
+    BasicTower,
 }

@@ -204,6 +204,254 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": true
                 }
             ]
+        },
+        {
+            ""name"": ""BuildKeys"",
+            ""id"": ""29f5212c-db49-4355-82f9-fb66633d9914"",
+            ""actions"": [
+                {
+                    ""name"": ""MultiBuild"",
+                    ""type"": ""Button"",
+                    ""id"": ""6c21c3e9-2802-43bd-9ef3-d29af618ff17"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""One"",
+                    ""type"": ""Button"",
+                    ""id"": ""9481fac0-f3d4-4d89-9b5e-348b4716bc6d"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Two"",
+                    ""type"": ""Button"",
+                    ""id"": ""133f8869-717d-49a7-b356-56929c265ee9"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Three"",
+                    ""type"": ""Button"",
+                    ""id"": ""6d479b1a-908b-48b1-885f-e8376fceac88"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Four"",
+                    ""type"": ""Button"",
+                    ""id"": ""ac2f48d0-2653-4ace-8d0d-7496359bf1d2"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Five"",
+                    ""type"": ""Button"",
+                    ""id"": ""3698031e-6507-4426-9ffe-457d8a152f21"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Six"",
+                    ""type"": ""Button"",
+                    ""id"": ""7d95b92c-a534-49f8-92d8-ab1b3722e25d"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Seven"",
+                    ""type"": ""Button"",
+                    ""id"": ""d8ed9c72-6d7a-46cc-b6cd-6eb35df20dee"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Eight"",
+                    ""type"": ""Button"",
+                    ""id"": ""bff0a52e-a45e-4fc9-8629-239c5f22cfa1"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Nine"",
+                    ""type"": ""Button"",
+                    ""id"": ""77c3f1b8-78ab-41a4-9bd5-749163b4f4c6"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Zero"",
+                    ""type"": ""Button"",
+                    ""id"": ""6fdd3422-6d52-45e2-8663-5b4366216bab"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Upgrade"",
+                    ""type"": ""Button"",
+                    ""id"": ""1b550666-ec4e-408e-9099-2d367b50e474"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""5bd3f877-c03e-4b88-a87b-fe040ce6c90f"",
+                    ""path"": ""<Keyboard>/shift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""PC"",
+                    ""action"": ""MultiBuild"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""51d1d456-bda9-4b10-8949-f2c5b19eab0b"",
+                    ""path"": ""<Keyboard>/1"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""One"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2c9ddc20-fd53-4895-865b-98b195f88725"",
+                    ""path"": ""<Keyboard>/2"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Two"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e541f894-3005-4964-bf42-a5ed5a930e34"",
+                    ""path"": ""<Keyboard>/3"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Three"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""fd72bd21-3c25-4b8a-bb73-14a7e24bbe09"",
+                    ""path"": ""<Keyboard>/4"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Four"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e5013980-9f04-4368-87cb-36fbd6907afc"",
+                    ""path"": ""<Keyboard>/5"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Five"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""291a2d1e-c9d9-4e28-8703-e3cff78586ee"",
+                    ""path"": ""<Keyboard>/6"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Six"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""815e35b4-a397-4c3b-a33c-d66b931b0d36"",
+                    ""path"": ""<Keyboard>/ctrl"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Upgrade"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""0beac8ad-1e09-4281-81a3-c27a310e53ca"",
+                    ""path"": ""<Keyboard>/7"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Seven"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""293d9424-ac89-4a33-a486-078208c84856"",
+                    ""path"": ""<Keyboard>/8"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Eight"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""006616fd-3eb1-4546-b06f-6a6db0092e54"",
+                    ""path"": ""<Keyboard>/9"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Nine"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d7ebf2f6-385d-498c-9c7a-517896853f77"",
+                    ""path"": ""<Keyboard>/0"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Zero"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -223,6 +471,20 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_CameraInGame = asset.FindActionMap("CameraInGame", throwIfNotFound: true);
         m_CameraInGame_Move = m_CameraInGame.FindAction("Move", throwIfNotFound: true);
         m_CameraInGame_Zoom = m_CameraInGame.FindAction("Zoom", throwIfNotFound: true);
+        // BuildKeys
+        m_BuildKeys = asset.FindActionMap("BuildKeys", throwIfNotFound: true);
+        m_BuildKeys_MultiBuild = m_BuildKeys.FindAction("MultiBuild", throwIfNotFound: true);
+        m_BuildKeys_One = m_BuildKeys.FindAction("One", throwIfNotFound: true);
+        m_BuildKeys_Two = m_BuildKeys.FindAction("Two", throwIfNotFound: true);
+        m_BuildKeys_Three = m_BuildKeys.FindAction("Three", throwIfNotFound: true);
+        m_BuildKeys_Four = m_BuildKeys.FindAction("Four", throwIfNotFound: true);
+        m_BuildKeys_Five = m_BuildKeys.FindAction("Five", throwIfNotFound: true);
+        m_BuildKeys_Six = m_BuildKeys.FindAction("Six", throwIfNotFound: true);
+        m_BuildKeys_Seven = m_BuildKeys.FindAction("Seven", throwIfNotFound: true);
+        m_BuildKeys_Eight = m_BuildKeys.FindAction("Eight", throwIfNotFound: true);
+        m_BuildKeys_Nine = m_BuildKeys.FindAction("Nine", throwIfNotFound: true);
+        m_BuildKeys_Zero = m_BuildKeys.FindAction("Zero", throwIfNotFound: true);
+        m_BuildKeys_Upgrade = m_BuildKeys.FindAction("Upgrade", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -396,6 +658,140 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         }
     }
     public CameraInGameActions @CameraInGame => new CameraInGameActions(this);
+
+    // BuildKeys
+    private readonly InputActionMap m_BuildKeys;
+    private List<IBuildKeysActions> m_BuildKeysActionsCallbackInterfaces = new List<IBuildKeysActions>();
+    private readonly InputAction m_BuildKeys_MultiBuild;
+    private readonly InputAction m_BuildKeys_One;
+    private readonly InputAction m_BuildKeys_Two;
+    private readonly InputAction m_BuildKeys_Three;
+    private readonly InputAction m_BuildKeys_Four;
+    private readonly InputAction m_BuildKeys_Five;
+    private readonly InputAction m_BuildKeys_Six;
+    private readonly InputAction m_BuildKeys_Seven;
+    private readonly InputAction m_BuildKeys_Eight;
+    private readonly InputAction m_BuildKeys_Nine;
+    private readonly InputAction m_BuildKeys_Zero;
+    private readonly InputAction m_BuildKeys_Upgrade;
+    public struct BuildKeysActions
+    {
+        private @PlayerControls m_Wrapper;
+        public BuildKeysActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
+        public InputAction @MultiBuild => m_Wrapper.m_BuildKeys_MultiBuild;
+        public InputAction @One => m_Wrapper.m_BuildKeys_One;
+        public InputAction @Two => m_Wrapper.m_BuildKeys_Two;
+        public InputAction @Three => m_Wrapper.m_BuildKeys_Three;
+        public InputAction @Four => m_Wrapper.m_BuildKeys_Four;
+        public InputAction @Five => m_Wrapper.m_BuildKeys_Five;
+        public InputAction @Six => m_Wrapper.m_BuildKeys_Six;
+        public InputAction @Seven => m_Wrapper.m_BuildKeys_Seven;
+        public InputAction @Eight => m_Wrapper.m_BuildKeys_Eight;
+        public InputAction @Nine => m_Wrapper.m_BuildKeys_Nine;
+        public InputAction @Zero => m_Wrapper.m_BuildKeys_Zero;
+        public InputAction @Upgrade => m_Wrapper.m_BuildKeys_Upgrade;
+        public InputActionMap Get() { return m_Wrapper.m_BuildKeys; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(BuildKeysActions set) { return set.Get(); }
+        public void AddCallbacks(IBuildKeysActions instance)
+        {
+            if (instance == null || m_Wrapper.m_BuildKeysActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_BuildKeysActionsCallbackInterfaces.Add(instance);
+            @MultiBuild.started += instance.OnMultiBuild;
+            @MultiBuild.performed += instance.OnMultiBuild;
+            @MultiBuild.canceled += instance.OnMultiBuild;
+            @One.started += instance.OnOne;
+            @One.performed += instance.OnOne;
+            @One.canceled += instance.OnOne;
+            @Two.started += instance.OnTwo;
+            @Two.performed += instance.OnTwo;
+            @Two.canceled += instance.OnTwo;
+            @Three.started += instance.OnThree;
+            @Three.performed += instance.OnThree;
+            @Three.canceled += instance.OnThree;
+            @Four.started += instance.OnFour;
+            @Four.performed += instance.OnFour;
+            @Four.canceled += instance.OnFour;
+            @Five.started += instance.OnFive;
+            @Five.performed += instance.OnFive;
+            @Five.canceled += instance.OnFive;
+            @Six.started += instance.OnSix;
+            @Six.performed += instance.OnSix;
+            @Six.canceled += instance.OnSix;
+            @Seven.started += instance.OnSeven;
+            @Seven.performed += instance.OnSeven;
+            @Seven.canceled += instance.OnSeven;
+            @Eight.started += instance.OnEight;
+            @Eight.performed += instance.OnEight;
+            @Eight.canceled += instance.OnEight;
+            @Nine.started += instance.OnNine;
+            @Nine.performed += instance.OnNine;
+            @Nine.canceled += instance.OnNine;
+            @Zero.started += instance.OnZero;
+            @Zero.performed += instance.OnZero;
+            @Zero.canceled += instance.OnZero;
+            @Upgrade.started += instance.OnUpgrade;
+            @Upgrade.performed += instance.OnUpgrade;
+            @Upgrade.canceled += instance.OnUpgrade;
+        }
+
+        private void UnregisterCallbacks(IBuildKeysActions instance)
+        {
+            @MultiBuild.started -= instance.OnMultiBuild;
+            @MultiBuild.performed -= instance.OnMultiBuild;
+            @MultiBuild.canceled -= instance.OnMultiBuild;
+            @One.started -= instance.OnOne;
+            @One.performed -= instance.OnOne;
+            @One.canceled -= instance.OnOne;
+            @Two.started -= instance.OnTwo;
+            @Two.performed -= instance.OnTwo;
+            @Two.canceled -= instance.OnTwo;
+            @Three.started -= instance.OnThree;
+            @Three.performed -= instance.OnThree;
+            @Three.canceled -= instance.OnThree;
+            @Four.started -= instance.OnFour;
+            @Four.performed -= instance.OnFour;
+            @Four.canceled -= instance.OnFour;
+            @Five.started -= instance.OnFive;
+            @Five.performed -= instance.OnFive;
+            @Five.canceled -= instance.OnFive;
+            @Six.started -= instance.OnSix;
+            @Six.performed -= instance.OnSix;
+            @Six.canceled -= instance.OnSix;
+            @Seven.started -= instance.OnSeven;
+            @Seven.performed -= instance.OnSeven;
+            @Seven.canceled -= instance.OnSeven;
+            @Eight.started -= instance.OnEight;
+            @Eight.performed -= instance.OnEight;
+            @Eight.canceled -= instance.OnEight;
+            @Nine.started -= instance.OnNine;
+            @Nine.performed -= instance.OnNine;
+            @Nine.canceled -= instance.OnNine;
+            @Zero.started -= instance.OnZero;
+            @Zero.performed -= instance.OnZero;
+            @Zero.canceled -= instance.OnZero;
+            @Upgrade.started -= instance.OnUpgrade;
+            @Upgrade.performed -= instance.OnUpgrade;
+            @Upgrade.canceled -= instance.OnUpgrade;
+        }
+
+        public void RemoveCallbacks(IBuildKeysActions instance)
+        {
+            if (m_Wrapper.m_BuildKeysActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IBuildKeysActions instance)
+        {
+            foreach (var item in m_Wrapper.m_BuildKeysActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_BuildKeysActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public BuildKeysActions @BuildKeys => new BuildKeysActions(this);
     private int m_PCSchemeIndex = -1;
     public InputControlScheme PCScheme
     {
@@ -415,5 +811,20 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     {
         void OnMove(InputAction.CallbackContext context);
         void OnZoom(InputAction.CallbackContext context);
+    }
+    public interface IBuildKeysActions
+    {
+        void OnMultiBuild(InputAction.CallbackContext context);
+        void OnOne(InputAction.CallbackContext context);
+        void OnTwo(InputAction.CallbackContext context);
+        void OnThree(InputAction.CallbackContext context);
+        void OnFour(InputAction.CallbackContext context);
+        void OnFive(InputAction.CallbackContext context);
+        void OnSix(InputAction.CallbackContext context);
+        void OnSeven(InputAction.CallbackContext context);
+        void OnEight(InputAction.CallbackContext context);
+        void OnNine(InputAction.CallbackContext context);
+        void OnZero(InputAction.CallbackContext context);
+        void OnUpgrade(InputAction.CallbackContext context);
     }
 }

@@ -9,7 +9,7 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] private SelectedHexCell _selectedHexCell;
     private HexCell _lastSelectedHexCell;
-    private BuildingButtons _buildingButtons;
+    [SerializeField] private BuildingButtons _buildingButtons;
     public HexBuilding _selectedBuilding { get; private set; }
     [SerializeField]private AudioSource _audioSource;
     [SerializeField]private Currency _hexCurrency;

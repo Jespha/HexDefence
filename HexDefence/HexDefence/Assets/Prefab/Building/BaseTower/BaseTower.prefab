@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4549430338807357748}
   - component: {fileID: 3579947021505861530}
   - component: {fileID: 4467821368935227243}
+  - component: {fileID: 5600766178427440473}
   m_Layer: 7
   m_Name: BaseTower
   m_TagString: Untagged
@@ -84,6 +85,19 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &5600766178427440473
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3776552402057902990}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89f49afc3760b5f4dace8865e0a035ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  timeUntilReturn: 0
 --- !u!1 &8143876487420377460
 GameObject:
   m_ObjectHideFlags: 0

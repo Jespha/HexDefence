@@ -11,8 +11,9 @@ GameObject:
   - component: {fileID: 3591426861936744690}
   - component: {fileID: 7881026825101099748}
   - component: {fileID: 6654267939710593182}
+  - component: {fileID: 8451163983638390638}
   m_Layer: 0
-  m_Name: FishingWharfPrefab
+  m_Name: FishingWharf
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -83,3 +84,16 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &8451163983638390638
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3771730973247495088}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89f49afc3760b5f4dace8865e0a035ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  timeUntilReturn: 0

@@ -113,8 +113,7 @@ public class EnemyManager : MonoBehaviour
         {
             PooledObjectManager.Instance.AddToPool(
                 enemy.enemy.deathEffect,
-                Mathf.FloorToInt(enemy.amount / 3) + 1
-            );
+                Mathf.FloorToInt(enemy.amount / 3) + 1            );
         }
 
         StartCoroutine(SpawnEnemiesCoroutine());

@@ -20,20 +20,35 @@ public class PlayerInput : Singleton<PlayerInput>
     public Action OnRightMouseClick;
     public Action OnMiddleMouseClick;
     public Action <float> OnScrollWheel;
-    public Action<Vector2> onCameraMove;
-    
+    public Action <Vector2> onCameraMove;
+    public Action <bool> MultiBuildMode;
+    public Action <bool> UpgradeBuildMode;
+    public Action <int> BuildMode;
+
 
     private void OnEnable()
     {
         if(playerControls == null)
         {
             playerControls = new PlayerControls();
-
             playerControls.CameraInGame.Move.performed += i => _input = i.ReadValue<Vector2>();
             playerControls.CameraInGame.Zoom.performed += i => scrollInput = i.ReadValue<float>();
             playerControls.Mouse.Left.performed += i => OnLeftMouseClick?.Invoke();
             playerControls.Mouse.Right.performed += i => OnRightMouseClick?.Invoke();
-
+            playerControls.BuildKeys.MultiBuild.performed += i => MultiBuildMode?.Invoke(true);
+            playerControls.BuildKeys.MultiBuild.canceled += i => MultiBuildMode?.Invoke(false);
+            playerControls.BuildKeys.Upgrade.performed += i => UpgradeBuildMode?.Invoke(true);
+            playerControls.BuildKeys.Upgrade.canceled += i => UpgradeBuildMode?.Invoke(false);
+            playerControls.BuildKeys.One.performed += i => BuildMode?.Invoke(1);
+            playerControls.BuildKeys.Two.performed += i => BuildMode?.Invoke(2);
+            playerControls.BuildKeys.Three.performed += i => BuildMode?.Invoke(3);
+            playerControls.BuildKeys.Four.performed += i => BuildMode?.Invoke(4);
+            playerControls.BuildKeys.Five.performed += i => BuildMode?.Invoke(5);
+            playerControls.BuildKeys.Six.performed += i => BuildMode?.Invoke(6);
+            playerControls.BuildKeys.Seven.performed += i => BuildMode?.Invoke(7);
+            playerControls.BuildKeys.Eight.performed += i => BuildMode?.Invoke(8);
+            playerControls.BuildKeys.Nine.performed += i => BuildMode?.Invoke(9);
+            playerControls.BuildKeys.Zero.performed += i => BuildMode?.Invoke(0);
         }
 
         playerControls.Enable();
@@ -49,29 +64,7 @@ public class PlayerInput : Singleton<PlayerInput>
 
     public void HandleAllInputs()
     {
-        HandelMouseInput();
         HandleKeyboardInput();
-    }
-
-    private void HandelMouseInput()
-    {
-        if (eventSystem.IsPointerOverGameObject())
-            return;
-
-        if (Mouse.current.leftButton.wasPressedThisFrame)
-        {
-            OnLeftMouseClick?.Invoke();
-        }
-
-        if (Mouse.current.rightButton.wasPressedThisFrame)
-        {
-            OnRightMouseClick?.Invoke();
-        }
-
-        if (Mouse.current.middleButton.wasPressedThisFrame)
-        {
-            OnMiddleMouseClick?.Invoke();
-        }
     }
 
     private void HandleKeyboardInput()

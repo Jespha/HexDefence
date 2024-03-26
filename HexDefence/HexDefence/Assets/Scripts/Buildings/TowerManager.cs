@@ -21,7 +21,7 @@ public class TowerManager : MonoBehaviour
         }
     }
 
-    public void AddTower(HexCell hexCell, GameObject towerPrefab)
+    public void AddTower(HexCell hexCell, PooledObject towerPrefab)
     {
         TowerData[] temp = new TowerData[Towers.Length + 1];
         for (int i = 0; i < Towers.Length; i++)
@@ -41,7 +41,7 @@ public class TowerManager : MonoBehaviour
         temp[temp.Length - 1].attackPriority = hexCell.HexBuilding.TargetPriority;
         temp[temp.Length - 1].lastAttackTime = 0;
         Towers = temp;
-        _colliders.Add(AddColliderToTower(towerPrefab, Towers[Towers.Length - 1]));
+        // _colliders.Add(AddColliderToTower(towerPrefab, Towers[Towers.Length - 1]));
     }
 
     private Collider AddColliderToTower(GameObject towerPrefab, TowerData towerData)
@@ -142,7 +142,7 @@ public class TowerManager : MonoBehaviour
 struct TowerData
 {
     public HexCell hexCell;
-    public GameObject towerPrefab;
+    public PooledObject towerPrefab;
     public Vector3 position;
     public AttackType attackType;
     public TypeCollider TypeCollider;

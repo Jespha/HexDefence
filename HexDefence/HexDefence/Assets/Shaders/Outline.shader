@@ -79,11 +79,11 @@ Shader "Hidden/UnityFx/Outline"
 			float intensity = 0;
 		
 			// Replace _Width with a call to sin(time.y) to animate the outline width
-			int width = (int)(_Width * (sin(_Time.y * 8) + 2.0) / 2.0);
+			float width = (_Width * (sin(_Time.y * 6) + 1.0) / 2.0);
 
 			// width = Unity_Remap_float(width, float2(-1, 1), float2(0.5, 1));
 			float2 InMinMax = float2(-1, 1);
-			float2 OutMinMax = float2(0.5, 2);
+			float2 OutMinMax = float2(0, 2);
 			width = OutMinMax.x + (width - InMinMax.x) * (OutMinMax.y - OutMinMax.x) / (InMinMax.y - InMinMax.x);
 		
 			[unroll(32)]

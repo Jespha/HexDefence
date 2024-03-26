@@ -352,7 +352,7 @@ public class HexGridManager : MonoBehaviour
         }
     }
 
-    public void AddTower(HexCell hexCell, GameObject buildingPrefab)
+    public void AddTower(HexCell hexCell, PooledObject buildingPrefab)
     {
         _towerManager.AddTower(hexCell, buildingPrefab);
     }

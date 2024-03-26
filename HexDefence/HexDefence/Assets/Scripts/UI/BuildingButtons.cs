@@ -42,7 +42,7 @@ public class BuildingButtons : MonoBehaviour
 
     private void OnBuildMode()
     {
-        _buildModeImage.gameObject.SetActive(GameManager.Instance.Buildmode);
+            _buildModeImage.gameObject.SetActive(GameManager.Instance.Buildmode);
     }
 
     public void SetBuildingButtons()

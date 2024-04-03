@@ -97,6 +97,7 @@ public class EnemyManager : MonoBehaviour
                     SplinePercentage = 0f,
                     Spline = _spline,
                     SplineLength = _spline.CalculateLength(),
+                    SpawnOnDeath = enemy.enemy.spawnOnDeath
                 };
                 currentIndex++;
             }
@@ -257,6 +258,28 @@ public class EnemyManager : MonoBehaviour
                             enemyData
                         )
                     );
+                    if (enemyData.SpawnOnDeath != null)
+                    {
+                        GameObject newEnemy = Instantiate(enemyData.SpawnOnDeath.prefab, this.transform);
+                        newEnemy.SetActive(false);
+                        enemyPool.Add(newEnemy);
+                        activeEnemies.Add(newEnemy, new EnemyData
+                        {
+                            Prefab = enemyData.SpawnOnDeath.prefab,
+                            Health = enemyData.SpawnOnDeath.health,
+                            MaxHealth = enemyData.SpawnOnDeath.health,
+                            Damage = enemyData.SpawnOnDeath.damage,
+                            Speed = enemyData.SpawnOnDeath.speed,
+                            Slow = enemyData.SpawnOnDeath.slow,
+                            GoldDrop = enemyData.SpawnOnDeath.goldDrop,
+                            DeathEffect = enemyData.SpawnOnDeath.deathEffect,
+                            EnemyDeathAnimation = enemyData.SpawnOnDeath.enemyDeathAnimation,
+                            SplinePercentage = 0f,
+                            Spline = enemyData.Spline,
+                            SplineLength = enemyData.SplineLength
+                        });
+                        StartCoroutine(SpawnEnemiesCoroutine());
+                    }
                     break;
                 // case "burn":
                 //     StartCoroutine(DeathAnimationCoroutine(Enemy, reachedEnd, enemyData));
@@ -350,6 +373,7 @@ public struct EnemyData
     public int GoldDrop;
     public PooledObject DeathEffect;
     public EnemyAnimation EnemyDeathAnimation;
+    public Enemy SpawnOnDeath;
 
     public float SplinePercentage;
     public SplineComputer Spline;

@@ -5,7 +5,7 @@ using UnityEngine;
 public class ProjectileManager : MonoBehaviour
 {
 
-    public List<GameObject> activeProjectiles = new List<GameObject>();
+    public List<PooledObject> activeProjectiles = new List<PooledObject>();
     public List<GameObject> activeProjectilesTarget = new List<GameObject>();
     private ProjectileData[] projectileData = new ProjectileData[0];
 
@@ -31,7 +31,8 @@ public class ProjectileManager : MonoBehaviour
     public void AddProjectile(HexCell hexcell, GameObject enemy)
     {
         Projectile projectilePrefab = hexcell.HexBuilding.ProjectilePrefab;
-        GameObject projectile = Instantiate(projectilePrefab.ProjectilePrefab, this.transform.position, Quaternion.identity);
+        PooledObject projectile = PooledObjectManager.Instance.Get(projectilePrefab.ProjectilePrefab);
+        projectile.gameObject.transform.SetParent(this.transform);
         
         Vector3 startPosition = hexcell.Position + new Vector3(0, 1, 0);
         projectile.transform.position = startPosition;
@@ -59,7 +60,7 @@ public class ProjectileManager : MonoBehaviour
     {
         foreach (var projectile in activeProjectiles)
         {
-            Destroy(projectile);
+            PooledObjectManager.Instance.ReturnToPool(projectile);
         }
         activeProjectiles.Clear();
     }
@@ -86,11 +87,14 @@ public class ProjectileManager : MonoBehaviour
                 if (projectileData[i].impactVFX != null)
                 {
                     projectileData[i].projectile.transform.LookAt(projectileData[i].endPosition);
-                    Instantiate(projectileData[i].impactVFX, projectileData[i].endPosition, projectileData[i].projectile.transform.rotation * Quaternion.Euler(0, 180, 0));
+                    // Instantiate(projectileData[i].impactVFX, projectileData[i].endPosition, projectileData[i].projectile.transform.rotation * Quaternion.Euler(0, 180, 0));
+                    PooledObject impact = PooledObjectManager.Instance.Get(projectileData[i].impactVFX);
+                    impact.transform.position = projectileData[i].endPosition;
+                    impact.transform.LookAt(projectileData[i].startPosition);
                 }
                 GameManager.Instance.EnemyManager.DamageEnemy(activeProjectilesTarget[i], projectileData[i].damage);
                 activeProjectilesTarget.RemoveAt(i);
-                Destroy(projectileData[i].projectile);
+                PooledObjectManager.Instance.ReturnToPool(projectileData[i].projectile);
                 activeProjectiles.RemoveAt(i);
                 RemoveProjectileData(i);
             }
@@ -118,11 +122,11 @@ public class ProjectileManager : MonoBehaviour
 
 struct ProjectileData
 {
-    public GameObject projectile;
+    public PooledObject projectile;
     public Vector3 startPosition;
     public Vector3 endPosition;
     public float speed;
     public float damage;
-    public GameObject launchVFX;
-    public GameObject impactVFX;
+    public PooledObject launchVFX;
+    public PooledObject impactVFX;
 }

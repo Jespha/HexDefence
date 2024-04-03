@@ -1,12 +1,44 @@
 using System.Collections;
 using System.Collections.Generic;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Upgrade", menuName = "ScriptableObjects/Upgrade", order = 20)]
 public class Upgrade : ScriptableObject
 {
-
+    public string upgradeName;
+    public string upgradeDescription;
+    public Sprite upgradeIcon;
+    public bool isUnlocked;
+    public Upgrade[] prerequisites;
+    [EnumToggleButtons]
     public UpgradeType upgradeType;
+
+    [ShowIfGroup("TowerGroup", Condition = "@upgradeType == UpgradeType.Tower")]
+    [BoxGroup("TowerGroup")]
+    public HexBuilding _building;
+    [BoxGroup("TowerGroup/Stats")]
+    public float AttackSpeedUpgrade = 0;
+    [BoxGroup("TowerGroup/Stats")]
+    public float AttackRangeUpgrade = 0;
+    [BoxGroup("TowerGroup/Stats")]
+    public float AttackDamageUpgrade = 0;
+
+    [ShowIfGroup("HexGroup", Condition = "@upgradeType == UpgradeType.Hex")]
+    [BoxGroup("HexGroup/Show HexBox")]
+    public HexTerrain _hex;
+
+    [ShowIfGroup("EnemyGroup", Condition = "@upgradeType == UpgradeType.Enemy")]
+    [BoxGroup("EnemyGroup/Show EnemyBox")]
+    public Enemy _enemy;
+
+
+
+    
+    // [ShowIfGroup("upgradeType", UpgradeType.Enemy)]
+    // [BoxGroup("upgradeType/Show EnemyBox")]
+    // public Enemy _enemy;
+
 
 
     public void SetUpgradeType()

@@ -16,14 +16,14 @@ public class LevelDisplay : MonoBehaviour
     private TextMeshProUGUI _levelTitleText;
 
     [SerializeField]
-    private RectTransform AnimationParent;
+    private RectTransform animationParent;
 
     [Header("Animation")]
     [SerializeField]
-    private AnimationCurve _curve;
+    private AnimationCurve curve;
 
     [SerializeField]
-    private Vector2 _updateOffset;
+    private Vector2 updateOffset;
 
     [SerializeField]
     private CanvasGroup _gameStateCanvasGroup;
@@ -43,7 +43,7 @@ public class LevelDisplay : MonoBehaviour
     public void UpdateLevel(int level)
     {
         StartCoroutine(
-            AnimationCoroutine.SetPositionVec2Coroutine(this.AnimationParent, _updateOffset, _curve, 0.5f)
+            AnimationCoroutine.SetPositionVec2Coroutine(this.animationParent, updateOffset, curve, 0.5f)
         );
         _levelText.text = "Level: " + level;
         _levelText.GetComponent<TextMeshAnimator>().RunText();

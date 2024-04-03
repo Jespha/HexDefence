@@ -805,7 +805,7 @@ PlayerSettings:
   webGLPowerPreference: 2
   scriptingDefineSymbols:
     Standalone: DREAMTECK_SPLINES
-    WebGL: DREAMTECK_SPLINES
+    WebGL: DREAMTECK_SPLINES;ODIN_INSPECTOR;ODIN_INSPECTOR_3;ODIN_INSPECTOR_3_1
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend: {}

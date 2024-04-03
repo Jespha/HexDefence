@@ -28,5 +28,12 @@ public class BuildingButton : MonoBehaviour
         
         GameManager.Instance.SetBuildMode(true, _building);
         HexGridManager.Instance.DeselectHexCell();
+        _button.animator.SetTrigger("Highlighted");
     }
+
+    public void ResetButton()
+    {
+        _button.animator.SetTrigger("Normal");
+    }
+
 }

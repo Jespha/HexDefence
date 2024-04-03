@@ -9,6 +9,7 @@ public class Enemy : ScriptableObject
     public Sprite sprite;
     public string enemyName;
     public float health;
+    public float armor;
     [Range(0, 100)]
     public int damage;
     [Range(0, 10)]
@@ -19,6 +20,7 @@ public class Enemy : ScriptableObject
     public int goldDrop;
     // public movmentType movmentType;
     public EnemyAnimation enemyDeathAnimation;
+    public Enemy spawnOnDeath;
 }
 
 public enum movmentType

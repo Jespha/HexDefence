@@ -114,6 +114,16 @@ public class PooledObjectManager : MonoBehaviour
                 _pools[j].Add(obj);
             }
         }
+
+        foreach (HexBuilding hexBuilding in Resources.LoadAll<HexBuilding>("ScriptableObjects/HexBuildingType"))
+        {
+            if (hexBuilding.Level >= 1)
+            {
+                AddToPool(hexBuilding.ProjectilePrefab.ProjectilePrefab, 4);
+                AddToPool(hexBuilding.ProjectilePrefab.ImpactVFXPrefab, 4);
+                AddToPool(hexBuilding.ProjectilePrefab.LaunchVFXPrefab, 4);
+            }
+        }
     }
 
     public void AddToPool(PooledObject _pooledObject, int _amount)

@@ -15,10 +15,15 @@ public class BuildingButtons : MonoBehaviour
 
     private void Start()
     {
+
         if (_uiManager == null)
+        {
             _uiManager = FindObjectOfType<UIManager>();
-        else
-            Debug.Log("UIManager not found");
+            if (_uiManager == null)
+            {
+                Debug.Log("UIManager not found");
+            }
+        }
 
         HexBuilding[] scriptableObjects = Resources.LoadAll<HexBuilding>("");
         hexBuilding = new List<HexBuilding>(scriptableObjects);
@@ -42,7 +47,13 @@ public class BuildingButtons : MonoBehaviour
 
     private void OnBuildMode()
     {
-            _buildModeImage.gameObject.SetActive(GameManager.Instance.Buildmode);
+        _buildModeImage.gameObject.SetActive(GameManager.Instance.Buildmode);
+
+        if (GameManager.Instance.Buildmode == false)
+        foreach (var button in _buttons)
+        {
+            button.ResetButton();
+        }    
     }
 
     public void SetBuildingButtons()

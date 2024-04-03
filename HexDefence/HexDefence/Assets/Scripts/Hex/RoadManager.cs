@@ -10,8 +10,8 @@ public class RoadManager : MonoBehaviour
     private Material _roadMaterial;
 
     [SerializeField]
-    private GameObject _portalPrefab;
-    private List<GameObject> _portals = new();
+    private PooledObject _portalPrefab;
+    private List<PooledObject> _portals = new();
 
     [SerializeField]
     private GameObject _roadPrefab;
@@ -22,13 +22,13 @@ public class RoadManager : MonoBehaviour
     void OnEnable()
     {
         GameManager.Instance.OnLevelStart += OnLevelStart;
-        GameManager.Instance.OnLevelStart += OnLevelComplete;
+        GameManager.Instance.OnLevelComplete += OnLevelComplete;
     }
 
     void OnDisable()
     {
         GameManager.Instance.OnLevelStart -= OnLevelStart;
-        GameManager.Instance.OnLevelStart -= OnLevelComplete;
+        GameManager.Instance.OnLevelComplete -= OnLevelComplete;
     }
 
     void Awake()
@@ -125,16 +125,12 @@ public class RoadManager : MonoBehaviour
         {
             if (Roads[i].gameObject != null)
             {
-                GameObject portal = Instantiate(
-                    _portalPrefab,
-                    Roads[i]
-                        .splineComputer.GetPointPosition(
-                            Roads[i].splineComputer.pointCount - 1,
-                            SplineComputer.Space.World
-                        ),
-                    Quaternion.identity
-                );
-                Debug.Log("portal: " + portal.transform.position);
+                PooledObject portal = PooledObjectManager.Instance.Get(_portalPrefab);
+                portal.transform.position = Roads[i]
+                    .splineComputer.GetPointPosition(
+                        Roads[i].splineComputer.pointCount - 1,
+                        SplineComputer.Space.World
+                    );
                 _portals.Add(portal);
             }
         }
@@ -144,9 +140,10 @@ public class RoadManager : MonoBehaviour
     {
         if (_portals.Count > 0)
         {
-            foreach (GameObject portal in _portals)
+            Debug.Log("Returning portals to pool");
+            foreach (PooledObject portal in _portals)
             {
-                Destroy(portal);
+                PooledObjectManager.Instance.ReturnToPool(portal);
             }
         }
     }

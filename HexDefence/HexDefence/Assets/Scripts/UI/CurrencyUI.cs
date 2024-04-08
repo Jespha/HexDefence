@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,62 +14,86 @@ public class CurrencyUI : MonoBehaviour
     [SerializeField] private AnimationCurve _currencyScaleGainCurve;
     [SerializeField] private PooledObject _currency;
     [SerializeField] private List<PooledObject> _currencySprites = new List<PooledObject>();
-    private int _finalCurrencyAmount; // TODO: Replace with the actual type of the final currency amount
+    private int _finalCurrencyAmount;
+    private int _currentCurrencyAmount;
 
-    private IEnumerator GainCurrencyAnimation(int amount, CurrencyType currencyType, Vector3 startPosition = new Vector3())
+    private IEnumerator GainCurrencyAnimation(int amount, int perAmount, CurrencyType currencyType, Vector2 startPosition)
     {
         yield return new WaitUntil(() => PooledObjectManager.Instance != null);
-        Vector2 _startPos = new Vector2(0, -50);
-        Vector2 _endPos = new Vector2(0, 0);
+        // Vector2 _startPos = AnimationCoroutine.RectTransformToScreenSpace(startPosition).position;
+        Vector2 _startPos = new Vector2(startPosition.x, -startPosition.y);
 
         if (amount == 0)
             yield return null;
         
         for (int i = 0; i < amount; i++)
         {
-            // Increase the duration as the index increases
-            float _duration = 0.2f + (i * 0.001f);
-
+            float _duration = Math.Min(0.2f, 0f + (0.4f * i / amount));
             float _time = 0;
-            Vector3 _endRoation = Vector3.forward * (-45 + i);
+            Vector3 _endRotation = Vector3.forward * (-45 + i);
             PooledObject newCurrencySprite = PooledObjectManager.Instance.Get(_currency);
+            Vector2 localStartPosition = _this.InverseTransformPoint(startPosition);
+            Vector2 _endPos = _this.anchoredPosition;
             newCurrencySprite.transform.SetParent(_this);
-            newCurrencySprite.GetComponent<RectTransform>().anchoredPosition = _startPos;
-            newCurrencySprite.gameObject.SetActive(false); // Set the newCurrencySprite to inactive
+            newCurrencySprite.gameObject.SetActive(false); 
             while (_time < _duration)
             {
-                newCurrencySprite.gameObject.SetActive(true); // Set the newCurrencySprite to active just before the animation starts
+                newCurrencySprite.gameObject.SetActive(true);
                 _time += Time.deltaTime;
                 float _t = _time / _duration;
                 RectTransform _rect = newCurrencySprite.GetComponent<RectTransform>();
-                newCurrencySprite.GetComponent<Image>().color = new Color(1, 1, 1, 1 - (_t*0.75f));
-                _rect.anchoredPosition = Vector2.Lerp(_startPos, _endPos, _currencyGainCurve.Evaluate(_t));
+                newCurrencySprite.GetComponent<Image>().color = new Color(1, 1, 1, 1.5f - (_t*0.1f));
+                _rect.anchoredPosition = AnimationCoroutine.Vector2LerpUnClamped(localStartPosition, _endPos, _currencyGainCurve.Evaluate(_t));
                 if(currencyType == CurrencyType.LifeCurrency)
                 _rect.localScale = Vector3.Lerp(Vector3.one*1.5f,Vector3.one * 0.5f, _currencyScaleGainCurve.Evaluate(_t));
                 else
                 _rect.localScale = Vector3.Lerp(Vector3.one, Vector3.one * 0.5f, _currencyScaleGainCurve.Evaluate(_t));
-                _rect.localEulerAngles = Vector3.Lerp(_endRoation , Vector3.zero, _currencyGainCurve.Evaluate(_t));
+                _rect.localEulerAngles = Vector3.Lerp(Vector3.zero, _endRotation, _currencyGainCurve.Evaluate(_t));
                 yield return null;
             }
             newCurrencySprite.gameObject.SetActive(false);
             _currencyAnimator.SetTrigger("AddCurrencyChange");
-        }
 
-        yield return null; 
+            if (currencyType != CurrencyType.MaxLifeCurrency)
+            {   
+                if (currencyType == CurrencyType.LifeCurrency)
+                {
+                    _currentCurrencyAmount += perAmount;
+                    _currencyText.text = _currentCurrencyAmount.ToString() + "/" + Currency.Instance.MaxLifeCurrency.ToString();
+                }
+                else
+                {
+                    _currentCurrencyAmount += perAmount;
+                    _currencyText.text = _currentCurrencyAmount.ToString();
+                }
+            }
+
+            yield return null; 
+        }
     }
 
-    public void UpdateCurrency(int amount, String CurrencyText, Vector3 currencyPosition = new Vector3(), CurrencyType currencyType = CurrencyType.HexCurrency)
+    public void UpdateCurrency(int amount, String CurrencyText, Vector3 currencyPosition, CurrencyType currencyType = CurrencyType.HexCurrency)
     {
+        _currentCurrencyAmount = Currency.Instance.CurrencyDictionary[currencyType];
+        int _amount = 0;
+
         if (amount > 0)
         {
-            _currencyText.text = CurrencyText;
             if (currencyType == CurrencyType.GoldCurrency)
-            amount = Mathf.RoundToInt(amount * .1f);
+            {
+                _amount = Mathf.RoundToInt(amount/10);
+                amount = Mathf.RoundToInt(amount * .1f);
+            }
+
+            if (currencyType == CurrencyType.HexCurrency || currencyType == CurrencyType.LifeCurrency)
+            {
+                _amount = 1;
+            }
+
             if (currencyType != CurrencyType.MaxLifeCurrency)
-            StartCoroutine(GainCurrencyAnimation(amount, currencyType, currencyPosition));
+            StartCoroutine(GainCurrencyAnimation(amount,_amount, currencyType, currencyPosition));
             else
             {
-                _currencyText.text = CurrencyText;
                 _currencyAnimator.SetTrigger("AddCurrencyChange");
             }
         }
@@ -77,7 +102,6 @@ public class CurrencyUI : MonoBehaviour
             _currencyText.text = CurrencyText;
             _currencyAnimator.SetTrigger("RemoveCurrencyChange");
         }
-
     }
 
 }

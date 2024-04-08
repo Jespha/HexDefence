@@ -7,34 +7,6 @@ public static class AnimationCoroutine
 {
     public static IEnumerator SetPositionVec2Coroutine(
         RectTransform rectTransform,
-        HexCell hexCell,
-        Vector2 offset,
-        AnimationCurve curve
-    )
-    {
-        float _time = 0;
-        float _duration = 0.2f;
-
-        while (_time < _duration)
-        {
-            Vector2 position = Camera.main.WorldToScreenPoint(hexCell.transform.position);
-            position -= new Vector2(Screen.width / 2, Screen.height / 2); // Adjust the screen position
-
-            float y = curve.Evaluate(_time / _duration);
-            float x = curve.Evaluate(_time / _duration);
-
-            rectTransform.anchoredPosition = position + new Vector2(x * offset.x, y * offset.y);
-            _time += Time.deltaTime;
-            yield return null;
-        }
-
-        Vector2 finalPosition = Camera.main.WorldToScreenPoint(hexCell.transform.position);
-        finalPosition -= new Vector2(Screen.width / 2, Screen.height / 2); // Adjust the final screen position
-        rectTransform.anchoredPosition = finalPosition + new Vector2(offset.x, offset.y);
-    }
-
-    public static IEnumerator SetPositionVec2Coroutine(
-        RectTransform rectTransform,
         Vector2 targetPosition,
         AnimationCurve curve,
         float _duration,
@@ -125,12 +97,52 @@ public static class AnimationCoroutine
 
     }
 
+    public static IEnumerator SetPositionVec3Coroutine(
+        RectTransform rectTransform,
+        Vector2 targetPosition,
+        AnimationCurve curve,
+        float _duration,
+        float _waitTime = 0
+    )
+    {
+
+        float _time = 0;
+        Vector2 _startPosition = rectTransform.position;
+        yield return new WaitForSeconds(_waitTime);
+
+        while (_time < _duration)
+        {
+            Debug.Log("SetPositionVec3Coroutine");
+            float t = curve.Evaluate(_time / _duration);
+            rectTransform.position = Vector2LerpUnClamped(_startPosition, targetPosition, t);
+            _time += Time.deltaTime;
+            yield return null;
+        }
+    }
+
+    public static Vector3 WorldToUISpace(Canvas parentCanvas, Vector3 worldPos)
+    {
+        
+        Vector3 screenPos = Camera.main.WorldToScreenPoint(worldPos);
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(parentCanvas.transform as RectTransform, screenPos, parentCanvas.worldCamera, out Vector2 movePos);
+        return parentCanvas.transform.TransformPoint(movePos);
+    }
+
     public static Vector2 Vector2LerpUnClamped( Vector2 a, Vector2 b, float t ){
         return t*b + (1-t)*a;
     }
 
     public static float3 FloatLerpUnClamped( float3 a, float3 b, float t ){
         return t*b + (1-t)*a;
+    }
+
+    public static Rect RectTransformToScreenSpace(RectTransform transform)
+    {
+        Vector2 size = Vector2.Scale(transform.rect.size, transform.lossyScale);
+        Vector2 position = (Vector2)transform.position;
+        position.y += size.y * 0.5f; // Adjust the y position to account for the height
+        position.x -= size.x * 0.5f; // Adjust the x position to account for the width
+        return new Rect(position, size);
     }
 
 }

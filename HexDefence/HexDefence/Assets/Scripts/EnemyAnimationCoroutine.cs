@@ -45,11 +45,19 @@ public static class EnemyAnimationCoroutine
     {
         if (reachedEnd)
         {
-            Currency.Instance.UpdateCurrency(-enemyData.Damage, CurrencyType.LifeCurrency);
+            Currency.Instance.UpdateCurrency(
+                -enemyData.Damage,
+                CurrencyType.LifeCurrency,
+                Enemy.transform.position
+            );
         }
         else
         {
-            Currency.Instance.UpdateCurrency(enemyData.GoldDrop, CurrencyType.GoldCurrency);
+            Currency.Instance.UpdateCurrency(
+                enemyData.GoldDrop,
+                CurrencyType.GoldCurrency,
+                Enemy.transform.position
+            );
         }
 
         float time = 0;
@@ -79,12 +87,22 @@ public static class EnemyAnimationCoroutine
     {
         if (reachedEnd)
         {
-            Currency.Instance.UpdateCurrency(-enemyData.Damage, CurrencyType.LifeCurrency);
+            Currency.Instance.UpdateCurrency(
+                -enemyData.Damage,
+                CurrencyType.LifeCurrency,
+                Enemy.transform.position
+            );
         }
         else
         {
-            Currency.Instance.UpdateCurrency(enemyData.GoldDrop, CurrencyType.GoldCurrency);
-            PooledObjectManager.Instance.Get(enemyData.DeathEffect).transform.position = Enemy.transform.position;
+            Currency.Instance.UpdateCurrency(
+                enemyData.GoldDrop,
+                CurrencyType.GoldCurrency,
+                Enemy.transform.position
+            );
+            PooledObjectManager.Instance.Get(enemyData.DeathEffect).transform.position = Enemy
+                .transform
+                .position;
         }
 
         float time = 0;

@@ -107,14 +107,14 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1527342865584553495}
   - {fileID: 339759410464815429}
+  - {fileID: 1527342865584553495}
   - {fileID: 2388587420775596682}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0.000056743622, y: -105.000046}
+  m_AnchoredPosition: {x: 0.000061035156, y: -105.000046}
   m_SizeDelta: {x: 203, y: 105}
   m_Pivot: {x: 0, y: 0}
 --- !u!222 &8150189283314988025
@@ -137,7 +137,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a718170e4850bf48acf2d53fa97692a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _this: {fileID: 1527342865584553495}
+  _this: {fileID: 339759410464815429}
   _currencyText: {fileID: 4285399288000124772}
   _currencyAnimator: {fileID: 7137659349999618175}
   _currencyGainCurve:
@@ -198,7 +198,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6030963144750441855}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -211,7 +211,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: af0898af9bb58c540b135a020b1bec76, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 3f804f94ffd790b4bba2672a940dc40d, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -220,7 +220,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 2
+  m_PixelsPerUnitMultiplier: 8
 --- !u!95 &7137659349999618175
 Animator:
   serializedVersion: 5
@@ -259,7 +259,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &339759410464815429
 RectTransform:
   m_ObjectHideFlags: 0
@@ -294,7 +294,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8307323348933640480}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -333,7 +333,7 @@ PrefabInstance:
     - target: {fileID: 2392713991140805472, guid: af4669157868690418198ee09d1841c9,
         type: 3}
       propertyPath: m_fontSize
-      value: 34.55
+      value: 33
       objectReference: {fileID: 0}
     - target: {fileID: 2392713991140805472, guid: af4669157868690418198ee09d1841c9,
         type: 3}
@@ -358,7 +358,12 @@ PrefabInstance:
     - target: {fileID: 2392713991140805472, guid: af4669157868690418198ee09d1841c9,
         type: 3}
       propertyPath: m_fontSizeMax
-      value: 100
+      value: 33
+      objectReference: {fileID: 0}
+    - target: {fileID: 2392713991140805472, guid: af4669157868690418198ee09d1841c9,
+        type: 3}
+      propertyPath: m_VerticalAlignment
+      value: 512
       objectReference: {fileID: 0}
     - target: {fileID: 4281125383873519246, guid: af4669157868690418198ee09d1841c9,
         type: 3}

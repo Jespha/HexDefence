@@ -377,7 +377,7 @@ public class HexGridManager : MonoBehaviour
                         _selected.Deselected();
                         ClearTempHexGrid();
                         _selected = newHexCell;
-                        Currency.Instance.UpdateCurrency(-1, CurrencyType.HexCurrency);
+                        Currency.Instance.UpdateCurrency(-1, CurrencyType.HexCurrency, hexCell.Position);
                     }
                     else
                     {

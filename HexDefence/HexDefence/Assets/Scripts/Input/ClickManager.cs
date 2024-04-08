@@ -206,7 +206,7 @@ public class ClickManager : MonoBehaviour
             if( Currency.Instance.GoldCurrency >= GameManager.Instance.TempBuilding.Cost)
             {
                 _currentBuildHexCell.BuildHexBuilding(GameManager.Instance.TempBuilding);
-                Currency.Instance.UpdateCurrency(-GameManager.Instance.TempBuilding.Cost, CurrencyType.GoldCurrency);
+                Currency.Instance.UpdateCurrency(-GameManager.Instance.TempBuilding.Cost, CurrencyType.GoldCurrency, hexCell.Position);
                 if (!GameManager.Instance.MultiBuildMode)
                 {
                 GameManager.Instance.SetBuildMode(false, null);

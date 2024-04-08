@@ -29,6 +29,8 @@ public class UpgradeUI : MonoBehaviour
     private void Start()
     {
         confirmButton.interactable = false;
+        canvasGroup.interactable = false;
+        canvasGroup.blocksRaycasts = false;
         canvasGroup.alpha = 0;
         confirmButton.onClick.AddListener(() => OnUpgradeConfirmed(selectedUpgrade));
     }
@@ -36,6 +38,8 @@ public class UpgradeUI : MonoBehaviour
     [Button("Add Upgrades")]
     public void PopulateUpgrades()
     {   
+        canvasGroup.interactable = true;
+        canvasGroup.blocksRaycasts = true;
         ClearUpgrades();
         upgradesToAdd = upgradeAmountToChooseFrom;
         upgradesUnlocked = Resources.Load<UpgradesUnlocked>("ScriptableObjects/Upgrade/UpgradesUnlocked");
@@ -98,6 +102,7 @@ public class UpgradeUI : MonoBehaviour
         );  
 
         confirmButton.interactable = false;
+        canvasGroup.blocksRaycasts = false;
 
     }
     

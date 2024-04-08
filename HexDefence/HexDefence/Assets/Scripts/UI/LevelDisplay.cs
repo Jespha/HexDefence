@@ -34,6 +34,15 @@ public class LevelDisplay : MonoBehaviour
     [SerializeField]
     private List<Image> _gameStateImage;
 
+    [Header("Level Complete Screen")]
+    [SerializeField]
+    private RectTransform levelCompleteAnimationParent;
+
+    [SerializeField]
+    private CanvasGroup _levelCompleteCanvasGroup;
+
+    public List<RectTransform> LevelCompleteCurrencyAnimationParent;
+
     private void Start()
     {
         _nextLevelButtonCanvasGroup.alpha = 0;
@@ -104,6 +113,7 @@ public class LevelDisplay : MonoBehaviour
         _levelTitleText.color = new Color(1, 1, 1, 0);
         _levelText.text = "Income Phase";
         AnimationCoroutine.FadeCanvasGroup(1, _gameStateCanvasGroup, 1, 0);
+
         yield return new WaitForSeconds(3);
         GameManager.Instance.SetGamePhase(GamePhase.HexPlacement);
     }

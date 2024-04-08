@@ -9,6 +9,9 @@ public class SelectedHexCell : MonoBehaviour
     public HexCell _selectedHexCell { get; private set; }
 
     [SerializeField]
+    private Canvas canvas;
+
+    [SerializeField]
     private UnityEngine.UI.Image _hexIcon;
 
     [SerializeField]
@@ -31,6 +34,11 @@ public class SelectedHexCell : MonoBehaviour
 
     private Vector2 zoomOffset;
     private bool isZooming = false;
+    private Vector2 offset;
+    private Coroutine setPositionCoroutine;
+
+    [SerializeField]private float targetOffset;
+    private Vector2 hexCellScreenPos;
 
     private void Start()
     {
@@ -41,6 +49,14 @@ public class SelectedHexCell : MonoBehaviour
     private void OnEnable()
     {
         StartCoroutine(WaitForPlayerInput());
+    }
+
+    void Update()
+    {
+        if (_selectedHexCell != null)
+        {
+            _rectTransform.position = AnimationCoroutine.WorldToUISpace(canvas, (_selectedHexCell.transform.position + new Vector3(0, 0, targetOffset)));
+        }
     }
 
     private IEnumerator WaitForPlayerInput()
@@ -80,18 +96,26 @@ public class SelectedHexCell : MonoBehaviour
 
         if (hexCell != null)
         {
-
+            hexCellScreenPos = AnimationCoroutine.WorldToUISpace(canvas, (hexCell.transform.position + new Vector3(0, 0, targetOffset)));
             _selectedHexCell = hexCell;
             _hexIcon.sprite = _selectedHexCell.HexTerrain.Icon;
             _canvasGroup.alpha = 1;
             _canvasGroup.blocksRaycasts = true;
-            _rectTransform.anchoredPosition = hexCellScreenPosition;
-            StartCoroutine(
-                AnimationCoroutine.SetPositionVec2Coroutine(
+            // Vector2 _rectOffset = hexCellScreenPos + new Vector2(50, 50);
+            Vector2 _offset = AnimationCoroutine.WorldToUISpace(canvas, (hexCell.transform.position + (SetOffset(hexCell)*3)));;
+            _rectTransform.position = _offset;
+            
+            if (setPositionCoroutine != null)
+            {
+                StopCoroutine(setPositionCoroutine);
+            }
+            
+            setPositionCoroutine = StartCoroutine(
+                AnimationCoroutine.SetPositionVec3Coroutine(
                     _rectTransform,
-                    hexCell,
-                    SetOffset(hexCell),
-                    _clickCurve
+                    hexCellScreenPos,
+                    _clickCurve,
+                    _duration: 0.5f
                 )
             );
 
@@ -111,42 +135,70 @@ public class SelectedHexCell : MonoBehaviour
         }
     }
 
-    Vector2 SetOffset(HexCell hexCell)
+    Vector3 SetOffset(HexCell hexCell)
     {
-        Vector2 _offset = Vector2.zero;
+        Vector3 _offset = Vector2.zero;
 
-        switch (hexCell.Position.y)
+        if (Mathf.Round(hexCell.Position.x) % 2 == 0)
+        _offset.z =  baseOffset.y * 0.5f;
+        else
         {
-            case float n when n == 0:
-                _offset.y = baseOffset.y * 1;
+            switch (hexCell.Position.z)
+            {
+                case float n when n == 0:
+                    _offset.z = baseOffset.y * 1;
+                    break;
+                case float n when n < 0:
+                    _offset.z = baseOffset.y;
+                    break;
+                case float n when n > 0:
+                    _offset.z = 0;
+                    break;
+                default:
+                    _offset.z = 0;
                 break;
-            case float n when n < 0:
-                _offset.y = baseOffset.y;
-                break;
-            case float n when n > 0:
-                _offset.y = baseOffset.y * -1;
-                break;
-            default:
-                _offset.y = baseOffset.y * 1;
-            break;
+            }
         }
 
-        switch (hexCell.Position.x)
+        if (Mathf.Round(hexCell.Position.x) % 2 == 0)
         {
-            case float n when n == 0:
-                _offset.x = 0;
+            switch (hexCell.Position.x)
+            {
+                case float n when n < 0:
+                    _offset.x = baseOffset.x;
+                    break;
+                case float n when n > 0:
+                    _offset.x = baseOffset.x * -1;
+                    break;
+                default:
+                    _offset.x = 0;
+                    _offset.z = 1;
                 break;
-            case float n when n < 0:
-                _offset.x = baseOffset.x;
-                break;
-            case float n when n > 0:
-                _offset.x = baseOffset.x * -1;
-                break;
-            default:
-                _offset.x = 0;
-            break;
+            }
         }
-
+        else
+        { 
+            switch (hexCell.Position.x)
+            {
+                case float n when Mathf.Round(n) % 2 == 0:
+                    _offset.x = 0;
+                    break;
+                case float n when n == 0:
+                    _offset.x = 0;
+                    break;
+                case float n when n < 0:
+                    _offset.x = baseOffset.x;
+                    break;
+                case float n when n > 0:
+                    _offset.x = baseOffset.x * -1;
+                    break;
+                default:
+                    _offset.x = 0;
+                break;
+            }
+        }
+        
         return _offset;
+    
     }
 }

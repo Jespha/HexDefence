@@ -112,8 +112,8 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
-        Currency.Instance.UpdateCurrency(25, CurrencyType.LifeCurrency);
-        Currency.Instance.UpdateCurrency(25, CurrencyType.MaxLifeCurrency);
+        Currency.Instance.UpdateCurrency(25, CurrencyType.LifeCurrency, AnimationCoroutine.RectTransformToScreenSpace(UIManager.levelDisplay.LevelCompleteCurrencyAnimationParent[0]).position);
+        Currency.Instance.UpdateCurrency(25, CurrencyType.MaxLifeCurrency, AnimationCoroutine.RectTransformToScreenSpace(UIManager.levelDisplay.LevelCompleteCurrencyAnimationParent[0]).position);
         CurrentLevel = Levels.LevelList[0];
         StartCoroutine(LevelComplete());
     }
@@ -137,9 +137,10 @@ public class GameManager : MonoBehaviour
         OnLevelComplete?.Invoke(Levels.LevelList.IndexOf(CurrentLevel), CurrentLevel);
         GamePhase = GamePhase.Income;
         UpdateGamePhase?.Invoke(GamePhase);
-        yield return new WaitForSeconds(1);
-        Currency.Instance.UpdateCurrency(CurrentLevel.hexCurrency, CurrencyType.HexCurrency);
-        Currency.Instance.UpdateCurrency(CurrentLevel.goldCurrency, CurrencyType.GoldCurrency);
+        Currency.Instance.UpdateCurrency(CurrentLevel.hexCurrency, CurrencyType.HexCurrency, 
+        AnimationCoroutine.RectTransformToScreenSpace(UIManager.levelDisplay.LevelCompleteCurrencyAnimationParent[1]).position);
+        Currency.Instance.UpdateCurrency(CurrentLevel.goldCurrency, CurrencyType.GoldCurrency,
+        AnimationCoroutine.RectTransformToScreenSpace(UIManager.levelDisplay.LevelCompleteCurrencyAnimationParent[2]).position);;
         yield return null;
     }
 

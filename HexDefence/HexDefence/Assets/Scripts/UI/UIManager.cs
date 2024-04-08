@@ -20,8 +20,7 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private Currency hexCurrency;
 
-    [SerializeField]
-    private LevelDisplay levelDisplay;
+    public LevelDisplay levelDisplay;
 
     [SerializeField]
     private UpgradeUI upgradeUI;

@@ -17,10 +17,12 @@ MonoBehaviour:
     type: 3}
   sprite: {fileID: 21300000, guid: 78aa55e13a518cc48aecaf26266702b3, type: 3}
   enemyName: Red Blob
-  health: 6
+  health: 20
+  armor: 0
   damage: 10
   speed: 0.8
   slow: 0
   goldDrop: 20
   enemyDeathAnimation: {fileID: 11400000, guid: 6a2de7bada2bec848baea771b752925f,
     type: 2}
+  spawnOnDeath: {fileID: 0}

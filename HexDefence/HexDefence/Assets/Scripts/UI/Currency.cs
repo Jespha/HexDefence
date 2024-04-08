@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,6 +11,8 @@ public class Currency : MonoBehaviour
     public int LifeCurrency { get; private set; }
     public int MaxLifeCurrency { get; private set; }
 
+    public Dictionary<CurrencyType, int> CurrencyDictionary { get; private set; }
+    
     // Locally linked objects
     [SerializeField]
     private List<CurrencyUI> _currencyUI = new List<CurrencyUI>();
@@ -28,10 +31,12 @@ public class Currency : MonoBehaviour
 
     private void Start()
     {
+
         if (_currencyUI.Count <= 1)
         {
             Debug.Log("CurrencyUI not found in Currency");
         }
+
     }
 
     private void Update()
@@ -46,7 +51,23 @@ public class Currency : MonoBehaviour
         // }
     }
 
-    private void Awake() => Instance = this;
+
+    private void Awake()
+    {
+        Instance = this;
+
+        CurrencyDictionary = new Dictionary<CurrencyType, int>();
+
+        foreach (CurrencyType type in Enum.GetValues(typeof(CurrencyType)))
+        {
+            var property = GetType().GetProperty(type.ToString());
+            if (property != null)
+            {
+                CurrencyDictionary[type] = (int)property.GetValue(this);
+            }
+        }
+
+    }
 
     ///<summary>Add currency to the player's inventory</summary>
     /// <param name="amount"></param>
@@ -54,12 +75,12 @@ public class Currency : MonoBehaviour
     public void UpdateCurrency(
         int amount,
         CurrencyType currencyType,
-        Vector3 currencyPosition = default
+        Vector3 currencyPosition
     )
     {
         if (currencyPosition == null)
         {
-            currencyPosition = new Vector3(0, 0, 0);
+            currencyPosition = new Vector3();
         }
         switch (currencyType)
         {
@@ -78,7 +99,7 @@ public class Currency : MonoBehaviour
                 _currencyUI[0]
                     .UpdateCurrency(
                         amount,
-                        LifeCurrency.ToString() + "/" + MaxLifeCurrency.ToString(),currencyPosition,CurrencyType.MaxLifeCurrency
+                        LifeCurrency.ToString() + "/" + MaxLifeCurrency.ToString(), currencyPosition,CurrencyType.MaxLifeCurrency
 
                     );
                 break;

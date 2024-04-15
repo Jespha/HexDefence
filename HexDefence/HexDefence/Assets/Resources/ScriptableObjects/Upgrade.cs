@@ -13,6 +13,10 @@ public class Upgrade : ScriptableObject
     public Upgrade[] prerequisites;
     [EnumToggleButtons]
     public UpgradeType upgradeType;
+    [EnumToggleButtons]
+    public Rarity rarity; 
+    
+    // TODO: Add rarity modifier to the upgrade in randomizer and border color in UpgradeUI - make ita scritable object or dictionary with color and modifier
 
     [ShowIfGroup("TowerGroup", Condition = "@upgradeType == UpgradeType.Tower")]
     [BoxGroup("TowerGroup")]
@@ -53,4 +57,13 @@ public enum UpgradeType
     Tower,
     Hex,
     Enemy
+}
+
+public enum Rarity
+{
+    Common,
+    Uncommon,
+    Rare,
+    Epic,
+    Legendary
 }

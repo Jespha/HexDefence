@@ -16,3 +16,4 @@ MonoBehaviour:
   levelName: It Begins
   hexCurrency: 3
   goldCurrency: 200
+  lifeCurrency: 25

@@ -46,4 +46,30 @@ public class UpgradesUnlocked : ScriptableObject
         upgradesUnlocked.Clear();
     }
 
+    public void UnlockUpgrade(Upgrade upgrade)
+    {
+        if (!upgradesUnlocked.Contains(upgrade))
+        {
+            upgradesUnlocked.Add(upgrade);
+        }
+    }
+
+    public int UnlockedTowerUpgradesCount(HexBuilding hexBuilding)
+    {
+        int count = 0;
+        foreach (Upgrade upgrade in upgradesUnlocked)
+        {
+            if (upgrade.upgradeType == UpgradeType.Tower && upgrade._building == hexBuilding)
+            {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public void AddUpgrade(Upgrade upgrade)
+    {
+        upgradesUnlocked.Add(upgrade);
+    }
+
 }

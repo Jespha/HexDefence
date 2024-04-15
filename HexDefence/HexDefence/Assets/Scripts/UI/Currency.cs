@@ -86,30 +86,30 @@ public class Currency : MonoBehaviour
         {
             case CurrencyType.LifeCurrency:
                 LifeCurrency += amount;
-                _currencyUI[0]
+                StartCoroutine(_currencyUI[0]
                     .UpdateCurrency(
                         amount,
                         LifeCurrency.ToString() + "/" + MaxLifeCurrency.ToString(),
                         currencyPosition,
                         CurrencyType.LifeCurrency
-                    );
+                    ));
                 break;
             case CurrencyType.MaxLifeCurrency:
                 MaxLifeCurrency += amount;
-                _currencyUI[0]
+                StartCoroutine(_currencyUI[0]
                     .UpdateCurrency(
                         amount,
                         LifeCurrency.ToString() + "/" + MaxLifeCurrency.ToString(), currencyPosition,CurrencyType.MaxLifeCurrency
 
-                    );
+                ));
                 break;
             case CurrencyType.HexCurrency:
                 HexCurrency += amount;
-                _currencyUI[1].UpdateCurrency(amount, HexCurrency.ToString(), currencyPosition,CurrencyType.HexCurrency);
+                StartCoroutine(_currencyUI[1].UpdateCurrency(amount, HexCurrency.ToString(), currencyPosition,CurrencyType.HexCurrency));
                 break;
             case CurrencyType.GoldCurrency:
                 GoldCurrency += amount;
-                _currencyUI[2].UpdateCurrency(amount, GoldCurrency.ToString(), currencyPosition,CurrencyType.GoldCurrency);
+                StartCoroutine(_currencyUI[2].UpdateCurrency(amount, GoldCurrency.ToString(), currencyPosition,CurrencyType.GoldCurrency));
                 break;
         }
     }

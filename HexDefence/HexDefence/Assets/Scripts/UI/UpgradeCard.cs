@@ -48,11 +48,11 @@ public class UpgradeCard : MonoBehaviour
     {
         if (value == true)
         {
-            if (isSelected == true && value == true)
-            {
-                StopCoroutine(AnimationCoroutine.IdleFloatRotate(animationParent,loopSpeed,MaxRotation,loopCurve));
-                upgradeUI.OnUpgradeConfirmed(upgrade);
-            }
+            // if (isSelected == true && value == true)
+            // {
+            //     StopCoroutine(AnimationCoroutine.IdleFloatRotate(animationParent,loopSpeed,MaxRotation,loopCurve));
+            //     upgradeUI.TriggerOnUpgradeConfirmed(upgrade);
+            // }
             isSelected = true;
             upgradeUI.OnUpgradeSelected(true, upgrade);
         }

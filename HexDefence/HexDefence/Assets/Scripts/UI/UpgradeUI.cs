@@ -1,6 +1,7 @@
 
-using System.Collections;
+using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
@@ -21,10 +22,11 @@ public class UpgradeUI : MonoBehaviour
     [SerializeField] private float duration = 0.5f;
     [SerializeField] private CanvasGroup canvasGroup;
     private Upgrade selectedUpgrade;
+    private TaskCompletionSource<bool> tcs;
+private bool isListenerAdded = false;
 
     private int upgradesToAdd = 0;
     private int upgradeAmountToChooseFrom = 3;
-
 
     private void Start()
     {
@@ -32,12 +34,13 @@ public class UpgradeUI : MonoBehaviour
         canvasGroup.interactable = false;
         canvasGroup.blocksRaycasts = false;
         canvasGroup.alpha = 0;
-        confirmButton.onClick.AddListener(() => OnUpgradeConfirmed(selectedUpgrade));
+        
     }
 
     [Button("Add Upgrades")]
-    public void PopulateUpgrades()
+    public async Task AddUpgradeAsync()
     {   
+        tcs = null;
         canvasGroup.interactable = true;
         canvasGroup.blocksRaycasts = true;
         ClearUpgrades();
@@ -49,7 +52,7 @@ public class UpgradeUI : MonoBehaviour
 
         for (int i = 0; i < upgradesToAdd; i++)
         {
-            int randomUpgradeIndex = Random.Range(0, upgradesToChooseFrom.Count);
+            int randomUpgradeIndex = UnityEngine.Random.Range(0, upgradesToChooseFrom.Count);
             Upgrade upgrade = upgradesUnlocked.upgradesUnlocked[randomUpgradeIndex];
             upgradesToChooseFrom.RemoveAt(randomUpgradeIndex);
             upgrades.Add(upgrade);
@@ -71,6 +74,45 @@ public class UpgradeUI : MonoBehaviour
         AnimationCoroutine.FadeCanvasGroup(duration, canvasGroup, 1)
         );  
 
+    if (!isListenerAdded)
+    {
+        confirmButton.onClick.AddListener(OnConfirmButtonClicked);
+        isListenerAdded = true;
+    }
+
+    tcs = new TaskCompletionSource<bool>();
+
+    await tcs.Task;
+
+    // Remove the listener here after the task has completed
+    confirmButton.onClick.RemoveListener(OnConfirmButtonClicked);
+    isListenerAdded = false;
+    }
+
+    [Button("Queue up all Upgrades")]
+    public async void AddMultipleUpgradesAsync(int numberOfUpgrades)
+    {
+        // var tasks = new List<Task>();
+        for (int i = 0; i < numberOfUpgrades; i++)
+        {
+            await AddUpgradeAsync();
+        }
+
+        // await Task.WhenAll(tasks);
+
+        OnCloseUpgradeWindow();
+    }
+
+    private void OnConfirmButtonClicked()
+    {
+
+        if (selectedUpgrade != null)
+        {
+            upgradesUnlocked.AddUpgrade(selectedUpgrade);
+            upgrades.Remove(selectedUpgrade);
+        }
+
+        tcs?.SetResult(true);
     }
 
     private void ClearUpgrades()
@@ -89,22 +131,16 @@ public class UpgradeUI : MonoBehaviour
     }
 
     [Button("Confirm Upgrade")]
-    public void OnUpgradeConfirmed(Upgrade _upgrade)
+    public void OnCloseUpgradeWindow()
     {
-        
-        Debug.Log("Upgrade Confirmed: " + _upgrade.upgradeName); 
+        confirmButton.interactable = false;
+        canvasGroup.blocksRaycasts = false;
         StartCoroutine(
         AnimationCoroutine.SetPositionVec2Coroutine(animationParent, -animaitonOffset, curve, duration, 0.5f)
         );
-
         StartCoroutine(
         AnimationCoroutine.FadeCanvasGroup(duration, canvasGroup, 0f, 0.5f)
         );  
-
-        confirmButton.interactable = false;
-        canvasGroup.blocksRaycasts = false;
-
     }
-    
 
 }

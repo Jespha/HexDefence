@@ -32,6 +32,7 @@ public class GameManager : MonoBehaviour
     public bool BuildHexmode { get; private set; } //TODO: Might use this later to show all possible Hexes to build on
     public bool MultiBuildMode { get; private set; }
     public bool UpgradeMode { get; private set; }
+    public static UpgradesUnlocked upgradesUnlockedInstance;
 
     /// GLOBAL GAME EVENTS
     public Action<int,Level> OnLevelStart;
@@ -112,10 +113,8 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
-        Currency.Instance.UpdateCurrency(25, CurrencyType.LifeCurrency, AnimationCoroutine.RectTransformToScreenSpace(UIManager.levelDisplay.LevelCompleteCurrencyAnimationParent[0]).position);
-        Currency.Instance.UpdateCurrency(25, CurrencyType.MaxLifeCurrency, AnimationCoroutine.RectTransformToScreenSpace(UIManager.levelDisplay.LevelCompleteCurrencyAnimationParent[0]).position);
-        CurrentLevel = Levels.LevelList[0];
-        StartCoroutine(LevelComplete());
+        upgradesUnlockedInstance = Resources.Load<UpgradesUnlocked>("ScriptableObjects/Upgrade/UpgradesUnlocked");
+        StartCoroutine(StartGameCoroutine());
     }
 
     public void LoadNextLevel()
@@ -131,16 +130,27 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private IEnumerator StartGameCoroutine()
+    {
+        yield return new WaitUntil(() => GameManager.Instance != null);
+        yield return new WaitForSeconds(1); 
+        
+        CurrentLevel = Levels.LevelList[0];
+        Currency.Instance.UpdateCurrency(25, CurrencyType.MaxLifeCurrency, AnimationCoroutine.RectTransformToScreenSpace(UIManager.levelDisplay.LevelCompleteCurrencyAnimationParent[0].LocalRect).position);
+        StartCoroutine(LevelComplete());
+    }
+
     public IEnumerator LevelComplete()
     {   
-        yield return new WaitForSeconds(1); //TODO: Make it wait for initialization of all managers
         OnLevelComplete?.Invoke(Levels.LevelList.IndexOf(CurrentLevel), CurrentLevel);
         GamePhase = GamePhase.Income;
         UpdateGamePhase?.Invoke(GamePhase);
-        Currency.Instance.UpdateCurrency(CurrentLevel.hexCurrency, CurrencyType.HexCurrency, 
-        AnimationCoroutine.RectTransformToScreenSpace(UIManager.levelDisplay.LevelCompleteCurrencyAnimationParent[1]).position);
+        Currency.Instance.UpdateCurrency(CurrentLevel.lifeCurrency, CurrencyType.LifeCurrency,
+        AnimationCoroutine.RectTransformToScreenSpace(UIManager.levelDisplay.LevelCompleteCurrencyAnimationParent[0].LocalRect).position);
+        Currency.Instance.UpdateCurrency(CurrentLevel.hexCurrency, CurrencyType.HexCurrency,
+        AnimationCoroutine.RectTransformToScreenSpace(UIManager.levelDisplay.LevelCompleteCurrencyAnimationParent[1].LocalRect).position);
         Currency.Instance.UpdateCurrency(CurrentLevel.goldCurrency, CurrencyType.GoldCurrency,
-        AnimationCoroutine.RectTransformToScreenSpace(UIManager.levelDisplay.LevelCompleteCurrencyAnimationParent[2]).position);;
+        AnimationCoroutine.RectTransformToScreenSpace(UIManager.levelDisplay.LevelCompleteCurrencyAnimationParent[2].LocalRect).position);;
         yield return null;
     }
 
@@ -212,6 +222,7 @@ public class GameManager : MonoBehaviour
 public enum GamePhase
 {
     Income,
+    SelectUpgrade,
     HexPlacement,
     Build,
     Defend

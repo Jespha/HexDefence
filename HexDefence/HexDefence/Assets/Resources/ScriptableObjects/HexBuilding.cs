@@ -26,10 +26,16 @@ public class HexBuilding : ScriptableObject
 public enum AttackType
 {
     Projectile,
+    Splash,
     Area,
-    HitScan,
-    GenerateCurrency,
-    None
+    Economy,
+    Beam,
+    Buff,
+    Debuff,
+    Summon,
+    Trap,
+    Turret,
+    None,
 }
 
 public enum TypeCollider
@@ -52,5 +58,5 @@ public enum HexBuildingType
 {
     None,
     Base,
-    BasicTower,
+    Tower,
 }

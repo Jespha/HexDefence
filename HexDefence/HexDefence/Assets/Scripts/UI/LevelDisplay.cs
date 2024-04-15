@@ -40,13 +40,16 @@ public class LevelDisplay : MonoBehaviour
 
     [SerializeField]
     private CanvasGroup _levelCompleteCanvasGroup;
-
-    public List<RectTransform> LevelCompleteCurrencyAnimationParent;
+    [SerializeField]
+    private AnimationCurve _levelCompleteCurve;
+    public List<CurrencyUI> LevelCompleteCurrencyAnimationParent;
 
     private void Start()
     {
         _nextLevelButtonCanvasGroup.alpha = 0;
         _nextLevelButtonCanvasGroup.blocksRaycasts = false;
+        _levelCompleteCanvasGroup.alpha = 0;
+        _levelCompleteCanvasGroup.blocksRaycasts = false;
     }
 
     public void UpdateLevel(int level)
@@ -74,6 +77,7 @@ public class LevelDisplay : MonoBehaviour
             _levelText.text = "Level: " + level + "<br> COMPLETE!";
             _levelText.ForceMeshUpdate();
             _levelText.GetComponent<TextMeshAnimator>().RunText();
+            StartCoroutine(LevelCompleteScreen());
         }
         else
         {
@@ -107,6 +111,59 @@ public class LevelDisplay : MonoBehaviour
         }
     }
 
+    private IEnumerator LevelCompleteScreen()
+    {
+        
+        if (GameManager.Instance.CurrentLevel.lifeCurrency > 0)
+            LevelCompleteCurrencyAnimationParent[0].SetTempCurrencyText(GameManager.Instance.CurrentLevel.lifeCurrency, CurrencyType.LifeCurrency);
+        if (GameManager.Instance.CurrentLevel.hexCurrency > 0)
+            LevelCompleteCurrencyAnimationParent[1].SetTempCurrencyText(GameManager.Instance.CurrentLevel.hexCurrency, CurrencyType.HexCurrency);
+        if (GameManager.Instance.CurrentLevel.goldCurrency > 0)
+            LevelCompleteCurrencyAnimationParent[2].SetTempCurrencyText(GameManager.Instance.CurrentLevel.goldCurrency, CurrencyType.GoldCurrency);
+
+        StartCoroutine(AnimationCoroutine.FadeCanvasGroup(0.3f, _levelCompleteCanvasGroup, 1));
+        levelCompleteAnimationParent.anchoredPosition = new Vector2(0, -100);
+        StartCoroutine(AnimationCoroutine.SetPositionVec2Coroutine(levelCompleteAnimationParent, new Vector2(0,0), _levelCompleteCurve, 0.5f, 0.1f));
+
+        yield return new WaitForSeconds(0.3f);
+
+        if (GameManager.Instance.CurrentLevel.lifeCurrency > 0)
+            LevelCompleteCurrencyAnimationParent[0].NullCurrency(CurrencyType.LifeCurrency);
+        else
+            LevelCompleteCurrencyAnimationParent[0].LocalRect.gameObject.SetActive(false);
+        if (GameManager.Instance.CurrentLevel.hexCurrency > 0)
+            LevelCompleteCurrencyAnimationParent[1].NullCurrency(CurrencyType.HexCurrency);
+        else
+            LevelCompleteCurrencyAnimationParent[1].LocalRect.gameObject.SetActive(false);
+
+        if (GameManager.Instance.CurrentLevel.goldCurrency > 0)
+            LevelCompleteCurrencyAnimationParent[2].NullCurrency(CurrencyType.GoldCurrency);
+        else
+            LevelCompleteCurrencyAnimationParent[1].LocalRect.gameObject.SetActive(false);
+
+        StartCoroutine(WaitForNullCurrency());
+    }
+
+    private IEnumerator WaitForNullCurrency()
+    {
+        bool allInactive = false;
+        while (!allInactive)
+        {
+            allInactive = true;
+            foreach (var parent in LevelCompleteCurrencyAnimationParent)
+            {
+                if (parent.CurrentCurrencyAmount>0)
+                {
+                    allInactive = false;
+                    break;
+                }
+            }
+            yield return null; 
+        }
+        GameManager.Instance.SetGamePhase(GamePhase.SelectUpgrade);
+        StartCoroutine(AnimationCoroutine.FadeCanvasGroup(1, _levelCompleteCanvasGroup, 0, 1f));
+    }
+
     private IEnumerator IncomePhase()
     {
         StartCoroutine(FillGameStateImage(_gameStateImage[0], 1));
@@ -115,7 +172,6 @@ public class LevelDisplay : MonoBehaviour
         AnimationCoroutine.FadeCanvasGroup(1, _gameStateCanvasGroup, 1, 0);
 
         yield return new WaitForSeconds(3);
-        GameManager.Instance.SetGamePhase(GamePhase.HexPlacement);
     }
 
     private IEnumerator FillGameStateImage(Image image, float fillAmount)

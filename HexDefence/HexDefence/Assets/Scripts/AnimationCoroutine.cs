@@ -132,6 +132,10 @@ public static class AnimationCoroutine
         return t*b + (1-t)*a;
     }
 
+    public static Vector3 Vector3LerpUnClamped( Vector3 a, Vector3 b, float t ){
+        return t*b + (1-t)*a;
+    }
+
     public static float3 FloatLerpUnClamped( float3 a, float3 b, float t ){
         return t*b + (1-t)*a;
     }
@@ -140,8 +144,8 @@ public static class AnimationCoroutine
     {
         Vector2 size = Vector2.Scale(transform.rect.size, transform.lossyScale);
         Vector2 position = (Vector2)transform.position;
-        position.y += size.y * 0.5f; // Adjust the y position to account for the height
-        position.x -= size.x * 0.5f; // Adjust the x position to account for the width
+        position.y -= 0; // Adjust the y position to account for the height
+        position.x += 0; // Adjust the x position to account for the width
         return new Rect(position, size);
     }
 

@@ -8,6 +8,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -7906955127606124555, guid: 25b26c005f2798a44952d12c21f1e9fd,
+        type: 3}
+      propertyPath: timeUntilReturn
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 7377326320267136157, guid: 25b26c005f2798a44952d12c21f1e9fd,
         type: 3}
       propertyPath: m_Pivot.x
@@ -117,7 +122,7 @@ PrefabInstance:
     - target: {fileID: 9021008589650957859, guid: 25b26c005f2798a44952d12c21f1e9fd,
         type: 3}
       propertyPath: m_Name
-      value: Currency_Gold Variant
+      value: Currency_UI_Gold Variant
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

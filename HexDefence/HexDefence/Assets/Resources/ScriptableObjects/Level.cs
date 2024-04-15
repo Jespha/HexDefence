@@ -18,5 +18,6 @@ public class Level : ScriptableObject
     public string levelName = "Fresh Start";
     public int hexCurrency = 5;
     public int goldCurrency = 100;
+    public int lifeCurrency = 0;
 
 }

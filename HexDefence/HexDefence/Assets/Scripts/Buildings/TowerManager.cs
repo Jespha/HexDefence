@@ -100,10 +100,10 @@ public class TowerManager : MonoBehaviour
                                 case AttackType.Area:
                                     areaLogic(Towers[i].hexCell);
                                     break;
-                                case AttackType.HitScan:
+                                case AttackType.Beam:
                                     hitScanLogic(Towers[i].hexCell);
                                     break;
-                                case AttackType.GenerateCurrency:
+                                case AttackType.Economy:
                                     generateCurrencyLogic(Towers[i].hexCell);
                                     break;
                             }

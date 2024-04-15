@@ -443,8 +443,8 @@ MonoBehaviour:
       _removeInnerFaces: 0
       _flipFaces: 0
       _doubleSided: 0
-    _clipFrom: 0.15151509642601013
-    _clipTo: 0.8787878155708313
+    _clipFrom: 0.10000000149011612
+    _clipTo: 0.8999999761581421
     _randomOrder: 0
     _overrideUVs: 0
     _uvScale: {x: 1, y: 1}
@@ -835,7 +835,7 @@ MonoBehaviour:
       _removeInnerFaces: 0
       _flipFaces: 0
       _doubleSided: 0
-    _clipFrom: 0.8787878155708313
+    _clipFrom: 0.8999999761581421
     _clipTo: 1
     _randomOrder: 0
     _overrideUVs: 0
@@ -1189,7 +1189,7 @@ MonoBehaviour:
       _flipFaces: 0
       _doubleSided: 0
     _clipFrom: 0
-    _clipTo: 0.15151512622833252
+    _clipTo: 0.10000000149011612
     _randomOrder: 0
     _overrideUVs: 0
     _uvScale: {x: 1, y: 1}

@@ -107,6 +107,9 @@ public class UIManager : MonoBehaviour
             case GamePhase.Income:
                 levelDisplay.UpdateGamePhaseUI(gamePhase);
                 break;
+            case GamePhase.SelectUpgrade:
+                upgradeUI.AddMultipleUpgradesAsync(3);
+                break;
             case GamePhase.HexPlacement:
                 levelDisplay.UpdateGamePhaseUI(gamePhase);
                 break;

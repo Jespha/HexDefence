@@ -48,7 +48,7 @@ public static class EnemyAnimationCoroutine
             Currency.Instance.UpdateCurrency(
                 -enemyData.Damage,
                 CurrencyType.LifeCurrency,
-                Enemy.transform.position
+                Camera.main.WorldToScreenPoint(Enemy.transform.position)
             );
         }
         else
@@ -56,7 +56,7 @@ public static class EnemyAnimationCoroutine
             Currency.Instance.UpdateCurrency(
                 enemyData.GoldDrop,
                 CurrencyType.GoldCurrency,
-                Enemy.transform.position
+                Camera.main.WorldToScreenPoint(Enemy.transform.position)
             );
         }
 
@@ -90,15 +90,16 @@ public static class EnemyAnimationCoroutine
             Currency.Instance.UpdateCurrency(
                 -enemyData.Damage,
                 CurrencyType.LifeCurrency,
-                Enemy.transform.position
+                Camera.main.WorldToScreenPoint(Enemy.transform.position)
             );
         }
         else
         {
+            
             Currency.Instance.UpdateCurrency(
                 enemyData.GoldDrop,
                 CurrencyType.GoldCurrency,
-                Enemy.transform.position
+                Camera.main.WorldToScreenPoint(Enemy.transform.position)
             );
             PooledObjectManager.Instance.Get(enemyData.DeathEffect).transform.position = Enemy
                 .transform

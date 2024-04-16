@@ -8,7 +8,7 @@ public class BuildingButton : MonoBehaviour
     public HexBuilding _building { get; private set; }
     [SerializeField] private Image _image;
     [SerializeField] private TextMeshProUGUI _name;
-    [SerializeField] private Button _button;
+    [SerializeField] private Toggle toggle;
     private UIManager _uiManager;
 
     public void Initialization(HexBuilding hexBuilding, UIManager uiManager)
@@ -16,10 +16,10 @@ public class BuildingButton : MonoBehaviour
         _building = hexBuilding;
         _image.sprite = hexBuilding.Icon;
         _uiManager = uiManager;
-        _button.onClick.AddListener(() => SetBuildingBuildMode());
+        toggle.onValueChanged.AddListener(isOn => SetBuildingBuildMode(isOn));
     }
 
-    public void SetBuildingBuildMode()
+    public void SetBuildingBuildMode(bool isOn)
     {
 
         bool isInPool = PooledObjectManager.Instance.IsInPool(_building.Prefab);
@@ -28,12 +28,12 @@ public class BuildingButton : MonoBehaviour
         
         GameManager.Instance.SetBuildMode(true, _building);
         HexGridManager.Instance.DeselectHexCell();
-        _button.animator.SetTrigger("Highlighted");
+        toggle.animator.SetTrigger("Highlighted");
     }
 
     public void ResetButton()
     {
-        _button.animator.SetTrigger("Normal");
+        toggle.animator.SetTrigger("Normal");
     }
 
 }

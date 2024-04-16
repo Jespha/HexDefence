@@ -9,7 +9,11 @@ public class Upgrade : ScriptableObject
     public string upgradeName;
     public string upgradeDescription;
     public Sprite upgradeIcon;
-    public bool isUnlocked;
+    /// <summary>    
+    /// NOTE: "isUnlock" in the indevidual upgrade is profile specific not game specific        
+    /// </summary>
+    [Header("Is Unlocked in Profile")]
+    public bool IsUnlockedInProfile;
     public Upgrade[] prerequisites;
     [EnumToggleButtons]
     public UpgradeType upgradeType;
@@ -35,19 +39,14 @@ public class Upgrade : ScriptableObject
     [ShowIfGroup("EnemyGroup", Condition = "@upgradeType == UpgradeType.Enemy")]
     [BoxGroup("EnemyGroup/Show EnemyBox")]
     public Enemy _enemy;
-
-
-
     
     // [ShowIfGroup("upgradeType", UpgradeType.Enemy)]
     // [BoxGroup("upgradeType/Show EnemyBox")]
     // public Enemy _enemy;
 
-
-
-    public void SetUpgradeType()
+    public void SetIsUnlockedInProfile(bool isUnlockedInProfile)
     {
-
+        IsUnlockedInProfile = isUnlockedInProfile;
     }
 
 }

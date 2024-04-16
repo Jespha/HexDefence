@@ -108,7 +108,7 @@ public class UIManager : MonoBehaviour
                 levelDisplay.UpdateGamePhaseUI(gamePhase);
                 break;
             case GamePhase.SelectUpgrade:
-                upgradeUI.AddMultipleUpgradesAsync(3);
+                upgradeUI.AddMultipleUpgradesAsync(GameManager.Instance.UpgradesToAdd);
                 break;
             case GamePhase.HexPlacement:
                 levelDisplay.UpdateGamePhaseUI(gamePhase);

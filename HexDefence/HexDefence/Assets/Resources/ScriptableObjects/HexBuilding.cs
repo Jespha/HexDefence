@@ -21,7 +21,29 @@ public class HexBuilding : ScriptableObject
     public float AttackDamage = 1.0f;
     public AttackPriority TargetPriority;
     public int Level = 0;
+    // public Dictionary<AttackType, string> AttackTypeToSprite = new Dictionary<AttackType, string>();
+
+    // public void Awake()
+    // {
+    //     // initalize dictionary AttackTypeToSprite
+    //     AttackTypeToSprite.Add(AttackType.Projectile , "<sprite name=\"Projectile\">");
+    //     AttackTypeToSprite.Add(AttackType.Splash, "<sprite name=\"Splash\">");
+    //     AttackTypeToSprite.Add(AttackType.Area, "<sprite name=\"Area\">");
+    //     AttackTypeToSprite.Add(AttackType.Beam, "<sprite name=\"Beam\">");
+    //     AttackTypeToSprite.Add(AttackType.Buff, "<sprite name=\"Buff\">");
+    //     AttackTypeToSprite.Add(AttackType.Debuff, "<sprite name=\"Debuff\">");
+    //     AttackTypeToSprite.Add(AttackType.Summon, "<sprite name=\"Summon\">");
+    //     AttackTypeToSprite.Add(AttackType.Trap, "<sprite name=\"Trap\">");
+    //     AttackTypeToSprite.Add(AttackType.Turret, "<sprite name=\"Turret\">");
+    // }
+
+    public static string AttackTypeToSprite(AttackType attackType)
+    {
+        return "<sprite name=\"" + attackType + "\">";
+    }
+
 }
+
 
 public enum AttackType
 {

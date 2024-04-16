@@ -7,41 +7,45 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
-    [SerializeField]
     public UIManager UIManager;
 
-    [SerializeField]
     public EnemyManager EnemyManager;
 
-    [SerializeField]
     public CameraManager CameraManager;
 
-    [SerializeField]
     public PlayerInput PlayerInput;
 
-    [field: SerializeField]
-    public Levels Levels { get; private set; }
-
-    [SerializeField]
     public GameObject FollowTarget;
 
+    [field: Header ("Levels")]
+    [SerializeField]
+    public Levels Levels { get; private set; }
     public Level CurrentLevel { get; private set; }
+
+    [field:Header("Selection Modes")]
     public bool Buildmode { get; private set; }
     public Action OnBuildmode;
     public HexBuilding TempBuilding { get; private set; }
     public bool BuildHexmode { get; private set; } //TODO: Might use this later to show all possible Hexes to build on
     public bool MultiBuildMode { get; private set; }
     public bool UpgradeMode { get; private set; }
-    public static UpgradesUnlocked upgradesUnlockedInstance;
 
-    /// GLOBAL GAME EVENTS
+    [field:Header("Upgrades")]
+    public static UpgradesUnlocked UpgradesUnlockedInstance;
+    public int UpgradesToAdd = 1;
+
+    [field:Header("Game Events")]
     public Action<int,Level> OnLevelStart;
     public Action<int,Level> OnLevelComplete;
     public Action<GamePhase> UpdateGamePhase;
     public Action NoMoreLives;
     public GamePhase GamePhase = GamePhase.Income;
 
-    void Awake() => Instance = this;
+    void Awake() {
+        Instance = this;
+        Levels = Resources.Load<Levels>("ScriptableObjects/LEVELS/LEVELS");
+        UpgradesUnlockedInstance = Resources.Load<UpgradesUnlocked>("ScriptableObjects/Upgrade/UpgradesUnlocked");
+    }
 
 
     private void Start()
@@ -113,7 +117,6 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
-        upgradesUnlockedInstance = Resources.Load<UpgradesUnlocked>("ScriptableObjects/Upgrade/UpgradesUnlocked");
         StartCoroutine(StartGameCoroutine());
     }
 
@@ -134,7 +137,8 @@ public class GameManager : MonoBehaviour
     {
         yield return new WaitUntil(() => GameManager.Instance != null);
         yield return new WaitForSeconds(1); 
-        
+
+        UpgradesUnlockedInstance.InitializeCurrentUpgradesUnlocked();
         CurrentLevel = Levels.LevelList[0];
         Currency.Instance.UpdateCurrency(25, CurrencyType.MaxLifeCurrency, AnimationCoroutine.RectTransformToScreenSpace(UIManager.levelDisplay.LevelCompleteCurrencyAnimationParent[0].LocalRect).position);
         StartCoroutine(LevelComplete());
@@ -142,6 +146,8 @@ public class GameManager : MonoBehaviour
 
     public IEnumerator LevelComplete()
     {   
+        UpdateUpgradesToAdd(1); //TODO: Make this dynamic or at least get from level scriptable object
+
         OnLevelComplete?.Invoke(Levels.LevelList.IndexOf(CurrentLevel), CurrentLevel);
         GamePhase = GamePhase.Income;
         UpdateGamePhase?.Invoke(GamePhase);
@@ -215,6 +221,11 @@ public class GameManager : MonoBehaviour
     private void SetUpgradeMode(bool upgradeMode)
     {
         UpgradeMode = upgradeMode;
+    }
+
+    public void UpdateUpgradesToAdd(int amount)
+    {
+        UpgradesToAdd += amount;
     }
 
 }

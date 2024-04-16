@@ -14,7 +14,7 @@ public class UpgradeUI : MonoBehaviour
     [SerializeField] private List<Upgrade> upgradesToChooseFrom;
     [SerializeField] private UpgradeCard upgradeCard;
     [SerializeField] private Button confirmButton;
-    [SerializeField] private UpgradesUnlocked upgradesUnlocked;
+    // [SerializeField] private CurrentUpgradesUnlocked CurrentUpgradesUnlocked;
     [Header("Animation")]
     [SerializeField] private RectTransform animationParent;
     [SerializeField] private Vector2 animaitonOffset;
@@ -23,7 +23,6 @@ public class UpgradeUI : MonoBehaviour
     [SerializeField] private CanvasGroup canvasGroup;
     private Upgrade selectedUpgrade;
     private TaskCompletionSource<bool> tcs;
-private bool isListenerAdded = false;
 
     private int upgradesToAdd = 0;
     private int upgradeAmountToChooseFrom = 3;
@@ -45,15 +44,12 @@ private bool isListenerAdded = false;
         canvasGroup.blocksRaycasts = true;
         ClearUpgrades();
         upgradesToAdd = upgradeAmountToChooseFrom;
-        upgradesUnlocked = Resources.Load<UpgradesUnlocked>("ScriptableObjects/Upgrade/UpgradesUnlocked");
-        upgradesUnlocked.RemoveAllUpgrades();
-        upgradesUnlocked.AddAllUpgrades();
-        upgradesToChooseFrom = upgradesUnlocked.upgradesUnlocked;
+        upgradesToChooseFrom = GameManager.UpgradesUnlockedInstance.CurrentUpgradesPossibilities;
 
         for (int i = 0; i < upgradesToAdd; i++)
         {
             int randomUpgradeIndex = UnityEngine.Random.Range(0, upgradesToChooseFrom.Count);
-            Upgrade upgrade = upgradesUnlocked.upgradesUnlocked[randomUpgradeIndex];
+            Upgrade upgrade = GameManager.UpgradesUnlockedInstance.CurrentUpgradesPossibilities[randomUpgradeIndex];
             upgradesToChooseFrom.RemoveAt(randomUpgradeIndex);
             upgrades.Add(upgrade);
             UpgradeCard upgradeCardtoAdd = Instantiate(upgradeCard, upgradeToggleGroup.transform);
@@ -74,31 +70,21 @@ private bool isListenerAdded = false;
         AnimationCoroutine.FadeCanvasGroup(duration, canvasGroup, 1)
         );  
 
-    if (!isListenerAdded)
-    {
         confirmButton.onClick.AddListener(OnConfirmButtonClicked);
-        isListenerAdded = true;
-    }
+        tcs = new TaskCompletionSource<bool>();
 
-    tcs = new TaskCompletionSource<bool>();
-
-    await tcs.Task;
-
-    // Remove the listener here after the task has completed
-    confirmButton.onClick.RemoveListener(OnConfirmButtonClicked);
-    isListenerAdded = false;
+        await tcs.Task;
+        confirmButton.interactable = false;
+        confirmButton.onClick.RemoveListener(OnConfirmButtonClicked);
     }
 
     [Button("Queue up all Upgrades")]
     public async void AddMultipleUpgradesAsync(int numberOfUpgrades)
     {
-        // var tasks = new List<Task>();
         for (int i = 0; i < numberOfUpgrades; i++)
         {
             await AddUpgradeAsync();
         }
-
-        // await Task.WhenAll(tasks);
 
         OnCloseUpgradeWindow();
     }
@@ -108,8 +94,7 @@ private bool isListenerAdded = false;
 
         if (selectedUpgrade != null)
         {
-            upgradesUnlocked.AddUpgrade(selectedUpgrade);
-            upgrades.Remove(selectedUpgrade);
+            GameManager.UpgradesUnlockedInstance.AddUpgrade(selectedUpgrade);
         }
 
         tcs?.SetResult(true);
@@ -117,7 +102,6 @@ private bool isListenerAdded = false;
 
     private void ClearUpgrades()
     {
-        upgrades.Clear();
         foreach (Transform child in upgradeToggleGroup.transform)
         {
             Destroy(child.gameObject);
@@ -141,6 +125,11 @@ private bool isListenerAdded = false;
         StartCoroutine(
         AnimationCoroutine.FadeCanvasGroup(duration, canvasGroup, 0f, 0.5f)
         );  
+
+        if (GameManager.Instance.GamePhase == GamePhase.SelectUpgrade)
+        {
+            GameManager.Instance.SetGamePhase(GamePhase.HexPlacement);
+        }
     }
 
 }

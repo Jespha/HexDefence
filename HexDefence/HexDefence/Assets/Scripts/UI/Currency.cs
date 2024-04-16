@@ -41,9 +41,9 @@ public class Currency : MonoBehaviour
 
     private void Update()
     {
-        int _levelIndex = GameManager.Instance.Levels.LevelList.IndexOf(
-            GameManager.Instance.CurrentLevel
-        );
+        // int _levelIndex = GameManager.Instance.Levels.LevelList.IndexOf(
+        //     GameManager.Instance.CurrentLevel
+        // );
         //TODO: IMPLIMENT GAME OVER
         // if (LifeCurrency <= 0 && _levelIndex > 0)
         // {

@@ -1,63 +1,99 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "UpgradesUnlocked", menuName = "ScriptableObjects/UpgradesUnlocked", order = 22)]
+[CreateAssetMenu(fileName = "CurrentUpgradesPossibilities", menuName = "ScriptableObjects/CurrentUpgradesPossibilities", order = 22)]
 public class UpgradesUnlocked : ScriptableObject
 {
+    /// <summary>
+    /// Stores all upgrades that are unlocked in profile 
+    /// AND
+    /// have their prerequisists met so they can be purchased in a game. 
+    /// Updated recursivly after each purchas to show new upgrades
+    /// NOTE: the bool"isUnlockedInProfile" in the indevidual upgrade is across all games not just the current game
+    /// </summary>
+    public List<Upgrade> CurrentUpgradesPossibilities ;
+    /// <summary>
+    /// Stores all purchased unlocks for this game
+    /// </summary>
+     public List<Upgrade> CurrentUpgrades ;
 
-    public List<Upgrade> upgradesUnlocked;
-
-    [Button("Add All Upgrades")]
-    public void AddAllUpgrades()
+    [Button("Initialize CurrentUpgradesPossibilities")]
+    public void InitializeCurrentUpgradesUnlocked()
     {
+        ClearAllPossibleUpgrades();
+        ClearAllCurrentUpgrades();
+        CurrentUpgradesPossibilities = new List<Upgrade>();
+        CurrentUpgrades = new List<Upgrade>();
+
+        foreach (Upgrade upgrade in Resources.LoadAll<Upgrade>("ScriptableObjects/Upgrade"))
+        {
+            if (upgrade.prerequisites.Count() == 0 && upgrade.IsUnlockedInProfile)
+            {
+                CurrentUpgradesPossibilities.Add(upgrade);
+            }
+        }
+    }
+
+    [Button("Update CurrentUpgradesPossibilities")]
+    public void UpdateCurrentUpgradesUnlocked()
+    {
+        ClearAllPossibleUpgrades();
         foreach (Upgrade upgrade in Resources.LoadAll<Upgrade>("ScriptableObjects/Upgrade"))
         {
             if (ArePrerequisitesMet(upgrade))
             {
-                upgradesUnlocked.Add(upgrade);
+                if (!CurrentUpgrades.Contains(upgrade))
+                CurrentUpgradesPossibilities.Add(upgrade);
+                else
+                continue;
             }
         }
     }
 
     private bool ArePrerequisitesMet(Upgrade upgrade)
     {
-        // If prerequisites list is null, return true
-        if (upgrade.prerequisites == null)
+        // If the upgrade is not unlocked, return false
+        if (!upgrade.IsUnlockedInProfile)
         {
-            return true;
+            return false;
         }
 
-        foreach (Upgrade prerequisite in upgrade.prerequisites)
+        // If the upgrade has prerequisites, check if all prerequisites are met
+        if (upgrade.prerequisites != null && upgrade.prerequisites.Count() > 0)
         {
-            // Check if the prerequisite is unlocked and if all its prerequisites are met
-            if (!prerequisite.isUnlocked || !ArePrerequisitesMet(prerequisite))
+            foreach (Upgrade prerequisite in upgrade.prerequisites)
             {
-                return false;
+                // If any prerequisite is not met or not in CurrentUpgrades, return false
+                if (!ArePrerequisitesMet(prerequisite) || !CurrentUpgrades.Contains(prerequisite))
+                {
+                    return false;
+                }
             }
         }
+
+        // If the upgrade is unlocked and either has no prerequisites or all prerequisites are met and in CurrentUpgrades, return true
         return true;
     }
 
-    [Button("Remove All Upgrades")]
-    public void RemoveAllUpgrades()
+    [Button("Clear All CurrentUpgradesPossibilities")]
+    public void ClearAllPossibleUpgrades()
     {
-        upgradesUnlocked.Clear();
+        CurrentUpgradesPossibilities?.Clear();
     }
 
-    public void UnlockUpgrade(Upgrade upgrade)
+    [Button("Clear All CurrentUpgrades")]
+    public void ClearAllCurrentUpgrades()
     {
-        if (!upgradesUnlocked.Contains(upgrade))
-        {
-            upgradesUnlocked.Add(upgrade);
-        }
+        CurrentUpgrades?.Clear();
     }
 
     public int UnlockedTowerUpgradesCount(HexBuilding hexBuilding)
     {
         int count = 0;
-        foreach (Upgrade upgrade in upgradesUnlocked)
+        foreach (Upgrade upgrade in CurrentUpgradesPossibilities)
         {
             if (upgrade.upgradeType == UpgradeType.Tower && upgrade._building == hexBuilding)
             {
@@ -69,7 +105,9 @@ public class UpgradesUnlocked : ScriptableObject
 
     public void AddUpgrade(Upgrade upgrade)
     {
-        upgradesUnlocked.Add(upgrade);
+        CurrentUpgrades.Add(upgrade);
+        UpdateCurrentUpgradesUnlocked();
+        GameManager.Instance.UpdateUpgradesToAdd(-1);
     }
 
 }

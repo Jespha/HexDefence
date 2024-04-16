@@ -19,7 +19,6 @@ public class BuildingButtons : MonoBehaviour
     [SerializeField] private RectTransform infoPanelrect;
     [SerializeField] private List<TextMeshProUGUI> buildingDescription;
     [SerializeField] private AnimationCurve infoPanelCurve;
-    [SerializeField] private Dictionary<AttackType, string> _attacktype = new Dictionary<AttackType, string>();
     
     private void Start()
     {
@@ -39,16 +38,6 @@ public class BuildingButtons : MonoBehaviour
         GameManager.Instance.PlayerInput.BuildMode += BuildMode;
         GameManager.Instance.OnBuildmode += OnBuildMode;
 
-    // initalize dictionary _attacktype
-        _attacktype.Add(AttackType.Projectile , "Projectile");
-        _attacktype.Add(AttackType.Splash, "Splash");
-        _attacktype.Add(AttackType.Area, "Area");
-        _attacktype.Add(AttackType.Beam, "Beam");
-        _attacktype.Add(AttackType.Buff, "Buff");
-        _attacktype.Add(AttackType.Debuff, "Debuff");
-        _attacktype.Add(AttackType.Summon, "Summon");
-        _attacktype.Add(AttackType.Trap, "Trap");
-        _attacktype.Add(AttackType.Turret, "Turret");
 
     }
 
@@ -61,12 +50,15 @@ public class BuildingButtons : MonoBehaviour
     {
         if (_buttons.Count == button)
         {
-            _buttons[button - 1].SetBuildingBuildMode();
+            _buttons[button - 1].SetBuildingBuildMode(true);
         }
     }
 
     private void OnBuildMode()
     {
+        if (GameManager.Instance.TempBuilding == null) //TODO: BUG Find out why Tempbuilding is null on first click
+        return;
+
         _buildModeActive.gameObject.SetActive(GameManager.Instance.Buildmode);
 
         if (GameManager.Instance.Buildmode == false)
@@ -74,14 +66,14 @@ public class BuildingButtons : MonoBehaviour
         {
             button.ResetButton();
         }    
-    
+
         infoPanelrect.anchoredPosition = new Vector2(0, GameManager.Instance.Buildmode ? 0 : 65);
         StartCoroutine(AnimationCoroutine.SetPositionVec2Coroutine(infoPanelrect , new Vector2 (0, GameManager.Instance.Buildmode ? 65 : 0), infoPanelCurve, 0.3f));
         StartCoroutine(AnimationCoroutine.FadeCanvasGroup(0.2f, infoPanelCanvasGroup, GameManager.Instance.Buildmode ? 1 : 0));
         buildingDescription[0].text = GameManager.Instance.TempBuilding.Name.ToString();
         buildingDescription[1].text = "<sprite name=\"Gold\"> " + GameManager.Instance.TempBuilding.Cost.ToString();
-        buildingDescription[2].text = "<sprite name=\"" + _attacktype[GameManager.Instance.TempBuilding.AttackType] + "\"> " + GameManager.Instance.TempBuilding.AttackType.ToString();
-        buildingDescription[3].text = "<sprite name=\"Upgrade\"> " + GameManager.upgradesUnlockedInstance.UnlockedTowerUpgradesCount(GameManager.Instance.TempBuilding).ToString();
+        buildingDescription[2].text =  HexBuilding.AttackTypeToSprite(GameManager.Instance.TempBuilding.AttackType) + " " + GameManager.Instance.TempBuilding.AttackType.ToString();
+        buildingDescription[3].text = "<sprite name=\"Upgrade\"> " + GameManager.UpgradesUnlockedInstance.UnlockedTowerUpgradesCount(GameManager.Instance.TempBuilding).ToString();
     }
 
     public void SetBuildingButtons()

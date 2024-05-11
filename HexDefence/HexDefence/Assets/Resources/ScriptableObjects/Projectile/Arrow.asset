@@ -16,7 +16,7 @@ MonoBehaviour:
   Name: Arrow
   ProjectilePrefab: {fileID: 8420792880743980288, guid: 0a42719ba49de6a4c8b86f2c8de4e2c5,
     type: 3}
-  LaunchVFXPrefab: {fileID: 1350798216526708452, guid: f27132b94cbf76049bc7d1eef32f8470,
+  LaunchVFXPrefab: {fileID: 311458382296458924, guid: 9a7e39442bf041947bec37333010c345,
     type: 3}
   ImpactVFXPrefab: {fileID: 1350798216526708452, guid: f27132b94cbf76049bc7d1eef32f8470,
     type: 3}

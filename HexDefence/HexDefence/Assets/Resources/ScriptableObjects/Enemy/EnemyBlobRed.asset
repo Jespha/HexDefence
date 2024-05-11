@@ -18,7 +18,7 @@ MonoBehaviour:
   sprite: {fileID: 21300000, guid: 78aa55e13a518cc48aecaf26266702b3, type: 3}
   enemyName: Red Blob
   health: 20
-  armor: 0
+  armor: 20
   damage: 10
   speed: 0.8
   slow: 0

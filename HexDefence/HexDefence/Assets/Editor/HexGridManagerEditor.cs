@@ -30,6 +30,10 @@ public class HexGridManagerEditor : Editor
         {
             _hexGridManager.ClearTempHexGrid();
         }
+        if (GUILayout.Button("AnimateIn"))
+        {
+            _hexGridManager.AnimateIn();
+        }
     }
 
     void OnSceneGUI()

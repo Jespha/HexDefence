@@ -19,5 +19,6 @@ public class Level : ScriptableObject
     public int hexCurrency = 5;
     public int goldCurrency = 100;
     public int lifeCurrency = 0;
+    public int upgrades = 1;
 
 }

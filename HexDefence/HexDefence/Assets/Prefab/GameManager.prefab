@@ -50,8 +50,9 @@ MonoBehaviour:
   EnemyManager: {fileID: 0}
   CameraManager: {fileID: 3304202165717143405}
   PlayerInput: {fileID: 6763451754998639032}
-  <Levels>k__BackingField: {fileID: 11400000, guid: 337ac3a084c6a2d46aa7852679bece5f,
-    type: 2}
+  StartMenu: {fileID: 0}
+  FollowTarget: {fileID: 0}
+  UpgradesToAdd: 0
 --- !u!114 &3304202165717143405
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -66,6 +67,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _cinemachineBrain: {fileID: 0}
   _inputManager: {fileID: 6763451754998639032}
+  _activeVirtualCamera: {fileID: 0}
+  _preGameVCam: {fileID: 0}
+  _minZoomRange: 0
+  _maxZoomRange: 30
+  _minLimitZoomRange: 0
+  _maxLimitZoomRange: 32
 --- !u!114 &6763451754998639032
 MonoBehaviour:
   m_ObjectHideFlags: 0

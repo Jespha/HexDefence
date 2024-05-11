@@ -21,7 +21,7 @@ MonoBehaviour:
     _outlineWidth: 6
     _outlineIntensity: 1.8
     _outlineAlphaCutoff: 0.9
-    _outlineMode: 0
+    _outlineMode: 1
     _filterMode: 1
     _layerMask:
       serializedVersion: 2
@@ -41,18 +41,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f62c9c65cf3354c93be831c8bc075510, type: 3}
   m_Name: SSAO
   m_EditorClassIdentifier: 
-  m_Active: 1
+  m_Active: 0
   m_Settings:
     AOMethod: 1
     Downsample: 0
     AfterOpaque: 1
     Source: 1
-    NormalSamples: 0
-    Intensity: 1
-    DirectLightingStrength: 0.223
-    Radius: 1
+    NormalSamples: 2
+    Intensity: 0
+    DirectLightingStrength: 0.439
+    Radius: 1.8
     Samples: 1
-    BlurQuality: 0
+    BlurQuality: 1
     Falloff: 100
     SampleCount: -1
   m_BlueNoise256Textures:
@@ -152,7 +152,7 @@ MonoBehaviour:
     _filterMode: 1
     _layerMask:
       serializedVersion: 2
-      m_Bits: 4224
+      m_Bits: 4096
     _renderingLayerMask: 1
   _renderPassEvent: 1000
   _shaderPassNames: []

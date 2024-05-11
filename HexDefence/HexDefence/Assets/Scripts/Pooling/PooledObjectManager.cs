@@ -34,8 +34,6 @@ public class PooledObjectManager : MonoBehaviour
                 gameObject.SetActive(false);
             }
         }
-
-        InitalizePools();
     }
 
     public PooledObject Get(PooledObject _pooledObject)
@@ -88,7 +86,7 @@ public class PooledObjectManager : MonoBehaviour
         }
     }
 
-    public void InitalizePools()
+    public void InitializePools()
     {
         ClickType[] _clickTypes = _clickManager.clickTypes;
 
@@ -115,14 +113,22 @@ public class PooledObjectManager : MonoBehaviour
             }
         }
 
-        foreach (HexBuilding hexBuilding in Resources.LoadAll<HexBuilding>("ScriptableObjects/HexBuildingType"))
+        foreach (HexBuilding hexBuilding in GameManager.Instance.TowerManager.HexBuildings)
         {
-            if (hexBuilding.Level >= 1)
-            {
-                AddToPool(hexBuilding.ProjectilePrefab.ProjectilePrefab, 4);
-                AddToPool(hexBuilding.ProjectilePrefab.ImpactVFXPrefab, 4);
-                AddToPool(hexBuilding.ProjectilePrefab.LaunchVFXPrefab, 4);
-            }
+            AddToPool(hexBuilding.ProjectilePrefab.ProjectilePrefab, 4);
+            AddToPool(hexBuilding.ProjectilePrefab.ImpactVFXPrefab, 4);
+            AddToPool(hexBuilding.ProjectilePrefab.LaunchVFXPrefab, 4);
+        }
+    }
+
+    public void AddTowerToPool(HexBuilding hexBuilding)
+    {
+        if (!IsInPool(hexBuilding.Prefab))
+        {
+            AddToPool(hexBuilding.Prefab, 4);
+            AddToPool(hexBuilding.ProjectilePrefab.ProjectilePrefab, 4);
+            AddToPool(hexBuilding.ProjectilePrefab.ImpactVFXPrefab, 4);
+            AddToPool(hexBuilding.ProjectilePrefab.LaunchVFXPrefab, 4);
         }
     }
 
@@ -131,7 +137,7 @@ public class PooledObjectManager : MonoBehaviour
         int index = Array.IndexOf(_prefab, _pooledObject);
         
         bool isBuilding = false;
-        foreach (HexBuilding hexBuilding in Resources.LoadAll<HexBuilding>("ScriptableObjects/HexBuildingType"))
+        foreach (HexBuilding hexBuilding in Resources.LoadAll<HexBuilding>("ScriptableObjects/HexBuilding"))
         {
             if (hexBuilding.Prefab == _pooledObject)
             {
@@ -182,7 +188,7 @@ public class PooledObjectManager : MonoBehaviour
         
         foreach (MeshRenderer meshRenderer in meshRenderers)
         {
-            meshRenderer.material = Resources.Load<Material>("ScriptableObjects/HexBuildingType/TowerTempMat");
+            meshRenderer.material = Resources.Load<Material>("ScriptableObjects/HexBuilding/TowerTempMat");
         }
         obj.gameObject.layer = 10;
     }

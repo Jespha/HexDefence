@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: OutlineSettings_TEMP
   m_EditorClassIdentifier: 
   _outlineColor: {r: 1, g: 1, b: 1, a: 1}
-  _outlineWidth: 18
+  _outlineWidth: 6
   _outlineIntensity: 2
   _outlineAlphaCutoff: 1
   _outlineMode: 0

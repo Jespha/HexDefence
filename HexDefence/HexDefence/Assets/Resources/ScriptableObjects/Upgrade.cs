@@ -16,11 +16,11 @@ public class Upgrade : ScriptableObject
     public bool IsUnlockedInProfile;
     public Upgrade[] prerequisites;
     [EnumToggleButtons]
-    public UpgradeType upgradeType;
+    public Rarity rarity;
+    [Space(10)] 
     [EnumToggleButtons]
-    public Rarity rarity; 
-    
-    // TODO: Add rarity modifier to the upgrade in randomizer and border color in UpgradeUI - make ita scritable object or dictionary with color and modifier
+    public UpgradeType upgradeType;
+
 
     [ShowIfGroup("TowerGroup", Condition = "@upgradeType == UpgradeType.Tower")]
     [BoxGroup("TowerGroup")]
@@ -48,7 +48,6 @@ public class Upgrade : ScriptableObject
     {
         IsUnlockedInProfile = isUnlockedInProfile;
     }
-
 }
 
 public enum UpgradeType
@@ -56,13 +55,4 @@ public enum UpgradeType
     Tower,
     Hex,
     Enemy
-}
-
-public enum Rarity
-{
-    Common,
-    Uncommon,
-    Rare,
-    Epic,
-    Legendary
 }

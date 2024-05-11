@@ -1,10 +1,6 @@
 using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
 using Cinemachine;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
 
 public class CameraManager : MonoBehaviour
 {
@@ -13,7 +9,8 @@ public class CameraManager : MonoBehaviour
 
     [SerializeField]
     private PlayerInput _inputManager;
-    private CinemachineVirtualCamera _activeVirtualCamera;
+    [SerializeField] private CinemachineVirtualCamera _activeVirtualCamera;
+    [SerializeField] private GameObject _preGameVCam;
     private CinemachineTransposer _transposer;
     public float _minZoomRange;
     public float _maxZoomRange;
@@ -24,9 +21,16 @@ public class CameraManager : MonoBehaviour
     private const float duration = 0.2f;
     private float targetOffset = 0f;
 
-    private void OnEnable()
+    public void StartInGameCamera()
     {
-        StartCoroutine(WaitForActiveCamera());
+        _inputManager.onCameraMove += MoveCamera;
+        _inputManager.OnScrollWheel += ZoomCamera;
+    }
+
+    public void EndInGameCamera()
+    {
+        _inputManager.onCameraMove -= MoveCamera;
+        _inputManager.OnScrollWheel -= ZoomCamera;
     }
 
     private void OnDisable()
@@ -60,31 +64,23 @@ public class CameraManager : MonoBehaviour
         }
     }
 
-    private IEnumerator WaitForActiveCamera()
+    public void SetActiveVirtualCamera(CameraState cameraState)
     {
-        // Wait until the active camera is set
-        while (_cinemachineBrain.ActiveVirtualCamera == null)
+        switch (cameraState)
         {
-            yield return null; // Wait for next frame
+            case CameraState.PreGame:
+                _preGameVCam.SetActive(true);
+                break;
+            case CameraState.InGame:
+                _preGameVCam.SetActive(false);
+                break;
         }
+    }
 
-        // Get the active camera from the CinemachineBrain
-        ICinemachineCamera activeCamera = _cinemachineBrain.ActiveVirtualCamera;
-
-        // Cast the active camera to CinemachineVirtualCamera
-        _activeVirtualCamera = activeCamera as CinemachineVirtualCamera;
-
-        // Check if the active camera was successfully cast
-        if (_activeVirtualCamera == null)
-        {
-            Debug.LogError(
-                "ActiveVirtualCamera could not be cast to CinemachineVirtualCamera in CameraManager"
-            );
-            yield break;
-        }
-
-        _inputManager.onCameraMove += MoveCamera;
-        _inputManager.OnScrollWheel += ZoomCamera;
+    public enum CameraState
+    {
+        PreGame,
+        InGame
     }
 
 }

@@ -5,7 +5,7 @@ using UnityEngine;
 
 public static class AnimationCoroutine
 {
-    public static IEnumerator SetPositionVec2Coroutine(
+    public static IEnumerator SetAnchoredPositionVec2Coroutine(
         RectTransform rectTransform,
         Vector2 targetPosition,
         AnimationCurve curve,
@@ -21,6 +21,29 @@ public static class AnimationCoroutine
         {
             float t = curve.Evaluate(_time / _duration);
             rectTransform.anchoredPosition = Vector2LerpUnClamped(_startPosition, targetPosition, t);
+            _time += Time.deltaTime;
+            yield return null;
+        }
+    }
+
+
+    public static IEnumerator SetPositionVec2Coroutine(
+        RectTransform rectTransform,
+        Vector2 targetPosition,
+        AnimationCurve curve,
+        float _duration,
+        float _waitTime = 0
+    )
+    {
+
+        float _time = 0;
+        Vector2 _startPosition = rectTransform.position;
+        yield return new WaitForSeconds(_waitTime);
+
+        while (_time < _duration)
+        {
+            float t = curve.Evaluate(_time / _duration);
+            rectTransform.position = Vector2LerpUnClamped(_startPosition, targetPosition, t);
             _time += Time.deltaTime;
             yield return null;
         }
@@ -46,7 +69,8 @@ public static class AnimationCoroutine
             _time += Time.deltaTime;
             yield return null;
         }
-
+    
+        canvasGroup.alpha = targetAlpha;
     }
 
     public static IEnumerator SetScaleVec2Coroutine(
@@ -70,6 +94,29 @@ public static class AnimationCoroutine
         }
 
         rectTransform.localScale = targetScale;
+    }
+
+    public static IEnumerator SetScaleVec3Coroutine(
+        Transform transform,
+        Vector3 _startScale,
+        Vector3 targetScale,
+        AnimationCurve curve,
+        float _duration,
+        float _waitTime = 0
+    )
+    {
+        float _time = 0;
+        yield return new WaitForSeconds(_waitTime);
+
+        while (_time < _duration)
+        {
+            float t = curve.Evaluate(_time / _duration);
+            transform.localScale = Vector3LerpUnClamped(_startScale, targetScale, t);
+            _time += Time.deltaTime;
+            yield return null;
+        }
+
+        transform.localScale = targetScale;
     }
 
     public static IEnumerator IdleFloatRotate(RectTransform rectTransform, float speed, float maxRotation, AnimationCurve curve)
@@ -97,25 +144,44 @@ public static class AnimationCoroutine
 
     }
 
-    public static IEnumerator SetPositionVec3Coroutine(
-        RectTransform rectTransform,
-        Vector2 targetPosition,
-        AnimationCurve curve,
-        float _duration,
-        float _waitTime = 0
-    )
+
+    public static IEnumerator AnimatePositionCoroutine(Transform _transform, Vector3 offset, float _wait, float _duration, AnimationCurve _curve)
     {
+        float time = 0;
+        Vector3 originalPosition = _transform.localPosition;
+        Vector3 targetPosition = originalPosition + offset;
 
-        float _time = 0;
-        Vector2 _startPosition = rectTransform.position;
-        yield return new WaitForSeconds(_waitTime);
+        if (_wait != 0)
+            yield return new WaitForSeconds(_wait);
 
-        while (_time < _duration)
+        while (time < _duration)
         {
-            Debug.Log("SetPositionVec3Coroutine");
-            float t = curve.Evaluate(_time / _duration);
-            rectTransform.position = Vector2LerpUnClamped(_startPosition, targetPosition, t);
-            _time += Time.deltaTime;
+            Vector3 newPosition = Vector3LerpUnClamped(targetPosition, originalPosition, _curve.Evaluate(time / _duration));
+            _transform.localPosition = newPosition;
+            time += Time.deltaTime;
+            yield return null;
+        }
+    }
+
+    public static IEnumerator AnimatePositionCoroutine(Transform _transform, Vector3 offset, float _wait, float _duration, AnimationCurve _curve, MeshRenderer _meshRenderer = null)
+    {
+        float time = 0;
+        Vector3 originalPosition = _transform.localPosition;
+        Vector3 targetPosition = originalPosition + offset;
+
+        if (_wait != 0)
+        {
+            _meshRenderer.enabled = false;
+            yield return new WaitForSeconds(_wait);
+        }
+
+        _meshRenderer.enabled = true;
+
+        while (time < _duration)
+        {
+            Vector3 newPosition = Vector3LerpUnClamped(targetPosition, originalPosition, _curve.Evaluate(time / _duration));
+            _transform.localPosition = newPosition;
+            time += Time.deltaTime;
             yield return null;
         }
     }
@@ -144,8 +210,8 @@ public static class AnimationCoroutine
     {
         Vector2 size = Vector2.Scale(transform.rect.size, transform.lossyScale);
         Vector2 position = (Vector2)transform.position;
-        position.y -= 0; // Adjust the y position to account for the height
-        position.x += 0; // Adjust the x position to account for the width
+        position.y -= 0;
+        position.x += 0;
         return new Rect(position, size);
     }
 

@@ -37,8 +37,13 @@ public class UpgradeUI : MonoBehaviour
     }
 
     [Button("Add Upgrades")]
-    public async Task AddUpgradeAsync()
+    public async Task<bool> AddUpgradeAsync()
     {   
+        if (GameManager.UpgradesUnlockedInstance.CurrentUpgradesPossibilities.Count == 0)
+        {
+            return false;
+        }
+        
         tcs = null;
         canvasGroup.interactable = true;
         canvasGroup.blocksRaycasts = true;
@@ -59,7 +64,7 @@ public class UpgradeUI : MonoBehaviour
         }
 
         StartCoroutine(
-        AnimationCoroutine.SetPositionVec2Coroutine(animationParent, animaitonOffset, curve, duration)
+        AnimationCoroutine.SetAnchoredPositionVec2Coroutine(animationParent, animaitonOffset, curve, duration)
         );
 
         StartCoroutine(
@@ -76,16 +81,21 @@ public class UpgradeUI : MonoBehaviour
         await tcs.Task;
         confirmButton.interactable = false;
         confirmButton.onClick.RemoveListener(OnConfirmButtonClicked);
+        return true;
     }
 
     [Button("Queue up all Upgrades")]
     public async void AddMultipleUpgradesAsync(int numberOfUpgrades)
     {
-        for (int i = 0; i < numberOfUpgrades; i++)
+        for (int i = 1; i < numberOfUpgrades; i++)
         {
-            await AddUpgradeAsync();
+            bool success = await AddUpgradeAsync();
+            if (!success)
+            {
+                OnCloseUpgradeWindow();
+                return;
+            }
         }
-
         OnCloseUpgradeWindow();
     }
 
@@ -117,10 +127,11 @@ public class UpgradeUI : MonoBehaviour
     [Button("Confirm Upgrade")]
     public void OnCloseUpgradeWindow()
     {
+        GameManager.Instance.UpgradesToAdd = 0;
         confirmButton.interactable = false;
         canvasGroup.blocksRaycasts = false;
         StartCoroutine(
-        AnimationCoroutine.SetPositionVec2Coroutine(animationParent, -animaitonOffset, curve, duration, 0.5f)
+        AnimationCoroutine.SetAnchoredPositionVec2Coroutine(animationParent, -animaitonOffset, curve, duration, 0.5f)
         );
         StartCoroutine(
         AnimationCoroutine.FadeCanvasGroup(duration, canvasGroup, 0f, 0.5f)
@@ -130,6 +141,7 @@ public class UpgradeUI : MonoBehaviour
         {
             GameManager.Instance.SetGamePhase(GamePhase.HexPlacement);
         }
+        ClearUpgrades(); //TODO: Check if this removes invisible ugrades so they dont animate in the background
     }
 
 }

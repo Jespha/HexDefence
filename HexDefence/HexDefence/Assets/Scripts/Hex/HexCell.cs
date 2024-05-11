@@ -1,12 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Entities;
-using Unity.Mathematics;
-using Unity.VisualScripting;
-using UnityEditor.Rendering.BuiltIn.ShaderGraph;
 using UnityEngine;
-using UnityEngine.PlayerLoop;
 
 /// <summary>
 /// HexCell class is responsible hexagon cells and their properties
@@ -28,9 +23,11 @@ public class HexCell : MonoBehaviour
     public HexCell RoadEndPoint { get; private set; }
 
     [SerializeField]private AnimationCurve _clickCurve;
+    [SerializeField]private AnimationCurve _introCurve;
     [SerializeField]private float _duration = 1f;
     private PooledObject buildingPrefab;
-
+    [SerializeField]private MeshRenderer _meshRenderer;
+    
     public void Initialize(Vector3 position, int depth, float height, HexTerrain terrain, HexBuilding building, List<Vector3> neighbors, HexGridManager hexGridManager)
     {
         Position = position;
@@ -52,10 +49,10 @@ public class HexCell : MonoBehaviour
         IsTemp = isTemp;
         StartCoroutine(AnimateScaleHeightCoroutine(this.transform, offset));
         this.gameObject.layer = 10;
-        MeshRenderer _renderer = this.GetComponent<MeshRenderer>();
-        _renderer.renderingLayerMask = _renderer.renderingLayerMask + 2;
-        _renderer.material.SetFloat("_selected", 1);
-        _renderer.material.SetFloat("_Temp", 1);
+        
+        _meshRenderer.renderingLayerMask = _meshRenderer.renderingLayerMask + 2;
+        _meshRenderer.material.SetFloat("_selected", 1);
+        _meshRenderer.material.SetFloat("_Temp", 1);
     }
 
 
@@ -73,7 +70,7 @@ public class HexCell : MonoBehaviour
         if (_buildingIsTemp)
         {
             buildingPrefab = null;
-            HexBuilding = Resources.Load<HexBuilding>("ScriptableObjects/HexBuildingType/None");
+            HexBuilding = Resources.Load<HexBuilding>("ScriptableObjects/HexBuilding/None");
         }
     }
 
@@ -147,7 +144,7 @@ public class HexCell : MonoBehaviour
     public void Selected()
     {
         StartCoroutine(AnimateScaleCoroutine(this.transform));
-        this.GetComponent<MeshRenderer>().material.SetFloat("_Selected", 1);
+        _meshRenderer.material.SetFloat("_Selected", 1);
 
         if (!IsTemp)
         {
@@ -162,11 +159,12 @@ public class HexCell : MonoBehaviour
     {
         if (IsTemp)
         {
-            this.GetComponent<MeshRenderer>().material.SetFloat("_Selected", 0);
+        _meshRenderer.material.SetFloat("_Selected", 0);
             return;
         }
         else{
-            this.GetComponent<MeshRenderer>().material.SetFloat("_Selected", 0);
+            _meshRenderer.material = null;
+            _meshRenderer.sharedMaterial = HexTerrain.Material;
             this.gameObject.layer = 6;
         }
     }
@@ -217,10 +215,8 @@ public class HexCell : MonoBehaviour
             time += Time.deltaTime;
             yield return null;
         }
-        // ensure the final scale is set correctly
-        // float finalScale = _clickCurve.Evaluate(1);
-        // _transform.localPosition =  new Vector3(_transform.localPosition.x, y, _transform.localPosition.z);
     }
+
 
     private void ScaleParentObjectButNotChild(GameObject parentObject, GameObject childObject, Vector3 initialChildScale)
     {
@@ -231,6 +227,7 @@ public class HexCell : MonoBehaviour
         childObject.transform.localScale = newChildScale;
         childObject.transform.localPosition = new Vector3(0, -1 + Mathf.Pow(Height, 0.12f));
     }
+
     private bool IsValidParentChild(GameObject parentObject, GameObject childObject)
     {
         if (childObject.transform.parent == parentObject.transform)
@@ -248,19 +245,33 @@ public class HexCell : MonoBehaviour
         }
     }
 
+    public void AnimateIn(float _wait = 0.0f)
+    {
+        Transform _endPos = this.transform;
+        Vector3 _startPos = new Vector3(0, -6, 0);
+        _meshRenderer.enabled = false;
+        StartCoroutine(AnimationCoroutine.AnimatePositionCoroutine( _endPos, _startPos, _wait*0.025f, 0.55f, _introCurve, _meshRenderer));
+    }
+
+    public void AnimateFallIn()
+    {
+        Transform _endPos = this.transform;
+        Vector3 _startPos = new Vector3(0, 15, 0);
+        _meshRenderer.enabled = true;
+        buildingPrefab.gameObject.SetActive(true);
+        StartCoroutine(AnimationCoroutine.AnimatePositionCoroutine(_endPos, _startPos, 0, 0.6f, _introCurve));
+    }
+
+    public void HideHexCell()
+    {
+        _meshRenderer.enabled = false;
+        if (buildingPrefab != null)
+        buildingPrefab.gameObject.SetActive(false);
+    }
+
 
 }
 
-    [Serializable]
-    public enum HexTerrainType
-    {
-        Grass,
-        GrassArrid,
-        GrassLush,
-        Desert,
-        Mountain,
-        Road,
-    }
 
     [Serializable]
     public enum RoadType

@@ -6,7 +6,6 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "HexTerrain", menuName = "ScriptableObjects/HexTerrain", order = 1)]
 public class HexTerrain : ScriptableObject
 {
-    public HexTerrainType HexTerrainType;
     public string Name;
     public Material Material;
     public Sprite Icon;

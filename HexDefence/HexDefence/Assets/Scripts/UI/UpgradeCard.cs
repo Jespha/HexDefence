@@ -35,7 +35,7 @@ public class UpgradeCard : MonoBehaviour
     public void SetUpgrade(Upgrade upgrade, UpgradeUI upgradeUI)
     {
         StartCoroutine(
-        AnimationCoroutine.SetPositionVec2Coroutine(animationParent, updateOffset, curve, duration)
+        AnimationCoroutine.SetAnchoredPositionVec2Coroutine(animationParent, updateOffset, curve, duration)
         );
         this.upgradeUI = upgradeUI;
         this.upgrade = upgrade;

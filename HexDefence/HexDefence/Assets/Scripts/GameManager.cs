@@ -1,6 +1,6 @@
 using System;
 using System.Collections;
-using Unity.VisualScripting;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -11,9 +11,15 @@ public class GameManager : MonoBehaviour
 
     public EnemyManager EnemyManager;
 
+    public TowerManager TowerManager;
+
     public CameraManager CameraManager;
 
+    public ClickManager ClickManager;
+
     public PlayerInput PlayerInput;
+
+    public StartMenu StartMenu;
 
     public GameObject FollowTarget;
 
@@ -32,18 +38,19 @@ public class GameManager : MonoBehaviour
 
     [field:Header("Upgrades")]
     public static UpgradesUnlocked UpgradesUnlockedInstance;
-    public int UpgradesToAdd = 1;
+    public int UpgradesToAdd = 0;
 
     [field:Header("Game Events")]
     public Action<int,Level> OnLevelStart;
     public Action<int,Level> OnLevelComplete;
     public Action<GamePhase> UpdateGamePhase;
     public Action NoMoreLives;
-    public GamePhase GamePhase = GamePhase.Income;
+    public Action OnStartGame;
+    public GamePhase GamePhase {get; private set; }
 
     void Awake() {
         Instance = this;
-        Levels = Resources.Load<Levels>("ScriptableObjects/LEVELS/LEVELS");
+        Levels = Resources.Load<Levels>("ScriptableObjects/Level/Levels");
         UpgradesUnlockedInstance = Resources.Load<UpgradesUnlocked>("ScriptableObjects/Upgrade/UpgradesUnlocked");
     }
 
@@ -87,9 +94,34 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        StartGame();
+        if (TowerManager == null)
+        {
+            try
+            {
+                UIManager = FindObjectOfType<UIManager>();
+            }
+            catch
+            {
+                Debug.Log("UIManager not found in GameManager");
+            }
+        }
+
+        if (ClickManager == null)
+        {
+            try
+            {
+                ClickManager = FindObjectOfType<ClickManager>();
+            }
+            catch
+            {
+                Debug.Log("ClickManager not found in GameManager");
+            }
+        }
+
+        StartCoroutine(StartProgam());
         PlayerInput.MultiBuildMode += SetMultiBuildMode;
         PlayerInput.UpgradeBuildMode += SetUpgradeMode;
+        OnStartGame += StartGame;
     }
 
     private void Update()
@@ -108,15 +140,16 @@ public class GameManager : MonoBehaviour
         {
             PlayerInput.HandleAllInputs();
         }
-        else
+        else if (CurrentLevel != null && Currency.Instance.LifeCurrency <= 0)
         {
-           FollowTarget.transform.position = new Vector3(0, 0, 0);
+           FollowTarget.transform.position = new Vector3(0, 30, -30);
         }
 
     }
 
     public void StartGame()
     {
+        CameraManager.SetActiveVirtualCamera(CameraManager.CameraState.InGame);
         StartCoroutine(StartGameCoroutine());
     }
 
@@ -125,6 +158,7 @@ public class GameManager : MonoBehaviour
         if (Levels.LevelList.IndexOf(CurrentLevel) + 1 < Levels.LevelList.Count)
         {
             CurrentLevel = Levels.LevelList[Levels.LevelList.IndexOf(CurrentLevel) + 1];
+            UpdateUpgradesToAdd(CurrentLevel.upgrades);
             OnLevelStart?.Invoke(Levels.LevelList.IndexOf(CurrentLevel), CurrentLevel);
         }
         else
@@ -133,23 +167,40 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private IEnumerator StartGameCoroutine()
+    private IEnumerator StartProgam()
     {
         yield return new WaitUntil(() => GameManager.Instance != null);
-        yield return new WaitForSeconds(1); 
+        CameraManager.SetActiveVirtualCamera(CameraManager.CameraState.PreGame);
+        yield return new WaitForSeconds(0.25f);
+        HexGridManager.Instance.HideHexGridCells();
+        RoadManager.Instance.HideRoads();
+        TowerManager.ClearHexBuildings();
+        HexBuilding _startTower = Resources.Load<HexBuilding>("ScriptableObjects/HexBuilding/ArrowTower");
+        TowerManager.UnlockTower(_startTower);
+    }
 
+    private IEnumerator StartGameCoroutine()
+    {
+        yield return new WaitForSeconds(1.5f);
+        HexGridManager.Instance.AnimateIn();
         UpgradesUnlockedInstance.InitializeCurrentUpgradesUnlocked();
         CurrentLevel = Levels.LevelList[0];
+        yield return new WaitForSeconds(1f);
+        RoadManager.Instance.AnimateRoads();
+        CameraManager.StartInGameCamera();
         Currency.Instance.UpdateCurrency(25, CurrencyType.MaxLifeCurrency, AnimationCoroutine.RectTransformToScreenSpace(UIManager.levelDisplay.LevelCompleteCurrencyAnimationParent[0].LocalRect).position);
+        PooledObjectManager.Instance.InitializePools();
+        UIManager.buildingButtons.SetBuildingButtons(true);
+        ClickManager.Enable3DClicks();
         StartCoroutine(LevelComplete());
+        yield return null;
     }
 
     public IEnumerator LevelComplete()
     {   
-        UpdateUpgradesToAdd(1); //TODO: Make this dynamic or at least get from level scriptable object
-
+        UpdateUpgradesToAdd(CurrentLevel.upgrades);
         OnLevelComplete?.Invoke(Levels.LevelList.IndexOf(CurrentLevel), CurrentLevel);
-        GamePhase = GamePhase.Income;
+        SetGamePhase(GamePhase.Income);
         UpdateGamePhase?.Invoke(GamePhase);
         Currency.Instance.UpdateCurrency(CurrentLevel.lifeCurrency, CurrencyType.LifeCurrency,
         AnimationCoroutine.RectTransformToScreenSpace(UIManager.levelDisplay.LevelCompleteCurrencyAnimationParent[0].LocalRect).position);

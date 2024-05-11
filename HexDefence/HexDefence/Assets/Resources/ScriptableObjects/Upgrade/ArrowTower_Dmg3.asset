@@ -18,8 +18,8 @@ MonoBehaviour:
   IsUnlockedInProfile: 1
   prerequisites:
   - {fileID: 11400000, guid: 5deecdd4f73ac6f479e254d7a4d0df81, type: 2}
+  rarity: 2
   upgradeType: 0
-  rarity: 0
   _building: {fileID: 11400000, guid: 7909dd1d8f3858f4d8b2a34f1bf20831, type: 2}
   AttackSpeedUpgrade: 0
   AttackRangeUpgrade: 0

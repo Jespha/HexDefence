@@ -34,16 +34,8 @@ public class BuildingButtons : MonoBehaviour
 
         HexBuilding[] scriptableObjects = Resources.LoadAll<HexBuilding>("");
         hexBuilding = new List<HexBuilding>(scriptableObjects);
-        SetBuildingButtons();
         GameManager.Instance.PlayerInput.BuildMode += BuildMode;
         GameManager.Instance.OnBuildmode += OnBuildMode;
-
-
-    }
-
-    private void Update()
-    {
-
     }
 
     private void BuildMode(int button)
@@ -68,7 +60,7 @@ public class BuildingButtons : MonoBehaviour
         }    
 
         infoPanelrect.anchoredPosition = new Vector2(0, GameManager.Instance.Buildmode ? 0 : 65);
-        StartCoroutine(AnimationCoroutine.SetPositionVec2Coroutine(infoPanelrect , new Vector2 (0, GameManager.Instance.Buildmode ? 65 : 0), infoPanelCurve, 0.3f));
+        StartCoroutine(AnimationCoroutine.SetAnchoredPositionVec2Coroutine(infoPanelrect , new Vector2 (0, GameManager.Instance.Buildmode ? 65 : 0), infoPanelCurve, 0.3f));
         StartCoroutine(AnimationCoroutine.FadeCanvasGroup(0.2f, infoPanelCanvasGroup, GameManager.Instance.Buildmode ? 1 : 0));
         buildingDescription[0].text = GameManager.Instance.TempBuilding.Name.ToString();
         buildingDescription[1].text = "<sprite name=\"Gold\"> " + GameManager.Instance.TempBuilding.Cost.ToString();
@@ -76,7 +68,7 @@ public class BuildingButtons : MonoBehaviour
         buildingDescription[3].text = "<sprite name=\"Upgrade\"> " + GameManager.UpgradesUnlockedInstance.UnlockedTowerUpgradesCount(GameManager.Instance.TempBuilding).ToString();
     }
 
-    public void SetBuildingButtons()
+    public void SetBuildingButtons(bool resetBuildings)
     {
         if (_buttons.Count > 0)
         {
@@ -87,12 +79,25 @@ public class BuildingButtons : MonoBehaviour
             _buttons.Clear();
         }
 
-        foreach (HexBuilding building in hexBuilding)
+        foreach (HexBuilding building in GameManager.Instance.TowerManager.HexBuildings)
         {   
-            if (building.Level <= 0)
-            {
-                continue; // Skip this iteration and move to the next building
-            }
+            // if (resetBuildings)
+            // {
+            //     if (building.Name != "Arrow Tower")
+            //     {
+            //         building.Level = 0;
+            //     }
+            //     else
+            //     {
+            //         building.Level = 1;
+            //     }
+            // }
+
+            // if (building.Level <= 0)
+            // {
+            //     continue; 
+            // }
+
 
             var button = Instantiate(_buildingButtonPrefab, _horizontalLayoutGroup.transform);
             button.Initialization(building, _uiManager);

@@ -1,5 +1,7 @@
+using System.Collections;
 using System.Collections.Generic;
 using Dreamteck.Splines;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 public class RoadManager : MonoBehaviour
@@ -16,6 +18,9 @@ public class RoadManager : MonoBehaviour
     [SerializeField]
     private GameObject _roadPrefab;
     RoadParent[] Roads = new RoadParent[6];
+
+    [SerializeField]
+    AnimationCurve _roadIntroCurve;
 
     private void Start() { }
 
@@ -54,12 +59,12 @@ public class RoadManager : MonoBehaviour
         road.TryGetComponent(out SplineMesh _splinMesh);
         _splineComputer.SetPoint(
             0,
-            new SplinePoint(StartPoint.transform.position + new Vector3(0,0.35f,0)),
+            new SplinePoint(StartPoint.transform.position + new Vector3(0, 0.35f, 0)),
             SplineComputer.Space.World
         );
         _splineComputer.SetPoint(
             1,
-            new SplinePoint(EndPoint.transform.position + new Vector3(0,0.35f,0)),
+            new SplinePoint(EndPoint.transform.position + new Vector3(0, 0.35f, 0)),
             SplineComputer.Space.World
         );
         _splinMesh.Rebuild();
@@ -84,9 +89,10 @@ public class RoadManager : MonoBehaviour
         Roads[roadIndex]
             .splineComputer.SetPoint(
                 pointCount,
-                new SplinePoint(end.Position + new Vector3(0,0.35f,0)),
+                new SplinePoint(end.Position + new Vector3(0, 0.35f, 0)),
                 SplineComputer.Space.World
             );
+        Roads[roadIndex].splineMesh.GetChannel(0).count = pointCount + 1;
         Roads[roadIndex].splineMesh.Rebuild();
     }
 
@@ -119,7 +125,7 @@ public class RoadManager : MonoBehaviour
         return randomRoad;
     }
 
-    private void OnLevelStart(int level,Level _level)
+    private void OnLevelStart(int level, Level _level)
     {
         for (int i = 0; i < Roads.Length; i++)
         {
@@ -136,17 +142,60 @@ public class RoadManager : MonoBehaviour
         }
     }
 
-    private void OnLevelComplete(int level,Level _level)
+    private void OnLevelComplete(int level, Level _level)
     {
         if (_portals.Count > 0)
         {
-            Debug.Log("Returning portals to pool");
             foreach (PooledObject portal in _portals)
             {
                 PooledObjectManager.Instance.ReturnToPool(portal);
             }
         }
     }
+
+    [Button("Animate Roads")]
+    public void AnimateRoads()
+    {
+        for (int i = 0; i < Roads.Length; i++)
+        {
+            if (Roads[i].gameObject != null)
+            {
+                StartCoroutine(AnimateRoad(Roads[i]));
+            }
+        }
+    }
+
+    private IEnumerator AnimateRoad(RoadParent road)
+    {
+        float t = 0;
+        Vector3 start = road.splineComputer.GetPointPosition(0, SplineComputer.Space.World);
+        Vector3 end = road.splineComputer.GetPointPosition(1, SplineComputer.Space.World);
+        road.splineComputer.SetPoint(1, new SplinePoint(end), SplineComputer.Space.World);
+        MeshRenderer _meshRender = road.gameObject.GetComponent<MeshRenderer>();
+        _meshRender.enabled = true;
+        while (t < 1)
+        {
+            t += Time.deltaTime;
+            float curveValue = _roadIntroCurve.Evaluate(t);
+            Vector3 position = Vector3.Lerp(start, end, curveValue);
+            road.splineComputer.SetPoint(1, new SplinePoint(position), SplineComputer.Space.World);
+            road.splineMesh.Rebuild();
+            yield return null;
+        }
+    }
+
+    public void HideRoads()
+    {
+        for (int i = 0; i < Roads.Length; i++)
+        {
+            if (Roads[i].gameObject != null)
+            {
+                MeshRenderer _meshRender = Roads[i].gameObject.GetComponent<MeshRenderer>();
+                _meshRender.enabled = false;
+            }
+        }
+    }
+
 }
 
 public struct RoadParent

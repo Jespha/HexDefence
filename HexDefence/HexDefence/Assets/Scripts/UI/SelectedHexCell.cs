@@ -111,7 +111,7 @@ public class SelectedHexCell : MonoBehaviour
             }
             
             setPositionCoroutine = StartCoroutine(
-                AnimationCoroutine.SetPositionVec3Coroutine(
+                AnimationCoroutine.SetPositionVec2Coroutine(
                     _rectTransform,
                     hexCellScreenPos,
                     _clickCurve,
@@ -125,13 +125,13 @@ public class SelectedHexCell : MonoBehaviour
         {
             _towerIcon.sprite = _selectedHexCell.HexBuilding.Icon;
             _towerIcon.color = Color.white;
-            _name.text = _selectedHexCell.HexBuilding.Name.ToString();
+            _name.text = _selectedHexCell.HexBuilding.Name;
         }
         else
         {
             _towerIcon.sprite = null;
             _towerIcon.color = Color.clear;
-            _name.text = _selectedHexCell.HexTerrain.HexTerrainType.ToString();
+            _name.text = _selectedHexCell.HexTerrain.Name;
         }
     }
 

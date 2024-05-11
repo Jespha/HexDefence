@@ -1,8 +1,6 @@
 using System.Collections;
-using System.Collections.Generic;
-using BBX.Dialogue.GUI;
-using TMPro;
 using UnityEngine;
+using FMODUnity;
 
 public class UIManager : MonoBehaviour
 {
@@ -11,11 +9,8 @@ public class UIManager : MonoBehaviour
     private HexCell lastSelectedHexCell;
 
     [SerializeField]
-    private BuildingButtons buildingButtons;
+    public BuildingButtons buildingButtons;
     public HexBuilding selectedBuilding { get; private set; }
-
-    [SerializeField]
-    private AudioSource audioSource;
 
     [SerializeField]
     private Currency hexCurrency;
@@ -27,6 +22,16 @@ public class UIManager : MonoBehaviour
 
     [SerializeField]
     private Canvas canvas;
+
+    [SerializeField]
+    private CanvasGroup _canvasGroup;
+
+    [SerializeField] private EventReference buildSound;
+    
+    private void Awake()
+    {
+        _canvasGroup.alpha = 0;
+    }
 
     private void Start()
     {
@@ -70,6 +75,7 @@ public class UIManager : MonoBehaviour
         GameManager.Instance.OnLevelStart += SetLevel;
         GameManager.Instance.OnLevelComplete += SetLevelComplete;
         GameManager.Instance.UpdateGamePhase += UpdateGamePhase;
+        GameManager.Instance.OnStartGame += StartGameUI;
     }
 
     private void OnDisable()
@@ -81,6 +87,7 @@ public class UIManager : MonoBehaviour
         ClickManager.OnHexSelected -= OnHexSelectedUI;
         GameManager.Instance.OnLevelComplete -= SetLevel;
         GameManager.Instance.UpdateGamePhase -= UpdateGamePhase;
+        GameManager.Instance.OnStartGame -= StartGameUI;
     }
 
     private void OnHexSelectedUI(HexCell hexCell, RaycastHit hit)
@@ -93,6 +100,11 @@ public class UIManager : MonoBehaviour
     public void SetLevel(int level, Level _level)
     {
         levelDisplay.UpdateLevel(level);
+    }
+
+    private void StartGameUI()
+    {
+        _canvasGroup.alpha = 1;
     }
 
     private void SetLevelComplete(int level, Level _level)
@@ -130,7 +142,7 @@ public class UIManager : MonoBehaviour
             // TODO: Show a message to the player
             return;
         }
-        audioSource.Play();
+        AudioManager.instance.PlayOneShot(buildSound, this.transform.position);
         lastSelectedHexCell.BuildHexBuilding(selectedBuilding);
     }
 

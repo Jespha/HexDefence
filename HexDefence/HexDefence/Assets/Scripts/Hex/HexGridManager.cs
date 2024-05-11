@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 /// <summary>
@@ -424,4 +425,22 @@ public class HexGridManager : MonoBehaviour
             ClearTempHexGrid();
         }
     }
+
+    public void AnimateIn()
+    {
+        HexCells[0].AnimateFallIn();
+        for (int i = 1; i < HexCells.Count; i++)
+        {
+            HexCells[i].AnimateIn(i);
+        }
+    }
+
+    public void HideHexGridCells()
+    {
+        for (int i = 0; i < HexCells.Count; i++)
+        {
+            HexCells[i].HideHexCell();
+        }
+    }
+
 }

@@ -8,6 +8,7 @@ public class ProjectileManager : MonoBehaviour
     public List<PooledObject> activeProjectiles = new List<PooledObject>();
     public List<GameObject> activeProjectilesTarget = new List<GameObject>();
     private ProjectileData[] projectileData = new ProjectileData[0];
+    [SerializeField] private GameObject _projectileParent;
 
     private void OnEnable()
     {
@@ -32,11 +33,15 @@ public class ProjectileManager : MonoBehaviour
     {
         Projectile projectilePrefab = hexcell.HexBuilding.ProjectilePrefab;
         PooledObject projectile = PooledObjectManager.Instance.Get(projectilePrefab.ProjectilePrefab);
-        projectile.gameObject.transform.SetParent(this.transform);
+        projectile.gameObject.transform.SetParent(_projectileParent.transform);
         
         Vector3 startPosition = hexcell.Position + new Vector3(0, 1, 0);
         projectile.transform.position = startPosition;
         projectile.transform.LookAt(enemy.transform);
+
+        PooledObject launch = PooledObjectManager.Instance.Get(hexcell.HexBuilding.ProjectilePrefab.LaunchVFXPrefab);
+        launch.transform.position = startPosition;
+        launch.transform.LookAt(enemy.transform);
 
         ProjectileData[] temp = new ProjectileData[projectileData.Length + 1];
         for (int i = 0; i < projectileData.Length; i++)
@@ -49,7 +54,7 @@ public class ProjectileManager : MonoBehaviour
         temp[temp.Length - 1].endPosition = enemy.transform.position + new Vector3(0, 0.5f, 0);
         temp[temp.Length - 1].speed = hexcell.HexBuilding.ProjectilePrefab.AttackSpeed;
         temp[temp.Length - 1].damage = hexcell.HexBuilding.ProjectilePrefab.AttackDamage;
-        temp[temp.Length - 1].launchVFX = hexcell.HexBuilding.ProjectilePrefab.LaunchVFXPrefab;
+        temp[temp.Length - 1].launchVFX = launch;
         temp[temp.Length - 1].impactVFX = hexcell.HexBuilding.ProjectilePrefab.ImpactVFXPrefab;
         projectileData = temp;
         activeProjectiles.Add(projectile);
@@ -87,7 +92,6 @@ public class ProjectileManager : MonoBehaviour
                 if (projectileData[i].impactVFX != null)
                 {
                     projectileData[i].projectile.transform.LookAt(projectileData[i].endPosition);
-                    // Instantiate(projectileData[i].impactVFX, projectileData[i].endPosition, projectileData[i].projectile.transform.rotation * Quaternion.Euler(0, 180, 0));
                     PooledObject impact = PooledObjectManager.Instance.Get(projectileData[i].impactVFX);
                     impact.transform.position = projectileData[i].endPosition;
                     impact.transform.LookAt(projectileData[i].startPosition);

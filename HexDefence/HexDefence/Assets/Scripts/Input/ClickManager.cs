@@ -41,10 +41,16 @@ public class ClickManager : MonoBehaviour
         }
     }
 
-    private void OnEnable()
+    public void Enable3DClicks()
     {
         PlayerInput.Instance.OnLeftMouseClick += OnLeftMouseClick;
         PlayerInput.Instance.OnRightMouseClick += OnRightMouseClick;
+    }
+
+    public void Disable3DClicks()
+    {
+        PlayerInput.Instance.OnLeftMouseClick -= OnLeftMouseClick;
+        PlayerInput.Instance.OnRightMouseClick -= OnRightMouseClick;
     }
 
     private void OnDisable()
@@ -55,6 +61,7 @@ public class ClickManager : MonoBehaviour
 
     private void Update()
     {
+        //TODO Refactor this to not requre to be in update
         if (GameManager.Instance.GamePhase != GamePhase.Defend && GameManager.Instance.Buildmode)
         {
             Buildmode();
@@ -248,5 +255,8 @@ public class ClickManager : MonoBehaviour
             return;
     }
 
-    private void OnRightMouseClick() { }
+    private void OnRightMouseClick() { 
+
+        GameManager.Instance.SetBuildMode(false);
+    }
 }

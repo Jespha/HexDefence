@@ -15,12 +15,12 @@ MonoBehaviour:
   upgradeName: ' ArrowTower <br> Range III'
   upgradeDescription: '<color=lightblue><b>+1 Range</b></color> '
   upgradeIcon: {fileID: 21300000, guid: 6b6517953738af443b638c990da145f8, type: 3}
-  isUnlockedInProfile: 0
+  IsUnlockedInProfile: 0
   prerequisites:
   - {fileID: 11400000, guid: 79323655e8e7d7d4d91b35b066ce47c0, type: 2}
+  rarity: 2
   upgradeType: 0
-  rarity: 0
-  _building: {fileID: 0}
+  _building: {fileID: 11400000, guid: 7909dd1d8f3858f4d8b2a34f1bf20831, type: 2}
   AttackSpeedUpgrade: 0
   AttackRangeUpgrade: 1
   AttackDamageUpgrade: 0

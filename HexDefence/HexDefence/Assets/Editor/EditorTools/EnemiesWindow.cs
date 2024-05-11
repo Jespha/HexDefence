@@ -17,11 +17,11 @@ public class EnemiesWindow : EditorWindow
     /// <summary>
     /// Initialize window state.
     /// </summary>
-    [MenuItem("Window/EnemiesWindow")]
+    [MenuItem("Window/Enemies")]
     internal static void Init()
     {
 
-        var window = (EnemiesWindow)GetWindow(typeof(EnemiesWindow), false, "EnemiesWindow");
+        var window = (EnemiesWindow)GetWindow(typeof(EnemiesWindow), false, "Enemies");
         window.position = new Rect(window.position.xMin + 100f, window.position.yMin + 100f, 200f, 400f);
     }
 

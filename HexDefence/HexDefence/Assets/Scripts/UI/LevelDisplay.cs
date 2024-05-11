@@ -39,7 +39,11 @@ public class LevelDisplay : MonoBehaviour
     private RectTransform levelCompleteAnimationParent;
 
     [SerializeField]
+    private Button levelCompleteButton;
+
+    [SerializeField]
     private CanvasGroup _levelCompleteCanvasGroup;
+
     [SerializeField]
     private AnimationCurve _levelCompleteCurve;
     public List<CurrencyUI> LevelCompleteCurrencyAnimationParent;
@@ -55,12 +59,17 @@ public class LevelDisplay : MonoBehaviour
     public void UpdateLevel(int level)
     {
         StartCoroutine(
-            AnimationCoroutine.SetPositionVec2Coroutine(this.animationParent, updateOffset, curve, 0.5f)
+            AnimationCoroutine.SetAnchoredPositionVec2Coroutine(
+                this.animationParent,
+                updateOffset,
+                curve,
+                0.5f
+            )
         );
         _levelText.text = "Level: " + level;
         _levelText.GetComponent<TextMeshAnimator>().RunText();
         if (GameManager.Instance.Levels.LevelList.IndexOf(GameManager.Instance.CurrentLevel) != 0)
-        StartCoroutine(AnimationCoroutine.FadeCanvasGroup(1, _nextLevelButtonCanvasGroup, 0));
+            StartCoroutine(AnimationCoroutine.FadeCanvasGroup(1, _nextLevelButtonCanvasGroup, 0));
         if (GameManager.Instance.CurrentLevel != null)
             _levelTitleText.text = GameManager.Instance.CurrentLevel.levelName;
         else
@@ -113,17 +122,38 @@ public class LevelDisplay : MonoBehaviour
 
     private IEnumerator LevelCompleteScreen()
     {
-        
+        Coroutine waitForNullCurrencyCoroutine = null;
+
         if (GameManager.Instance.CurrentLevel.lifeCurrency > 0)
-            LevelCompleteCurrencyAnimationParent[0].SetTempCurrencyText(GameManager.Instance.CurrentLevel.lifeCurrency, CurrencyType.LifeCurrency);
+            LevelCompleteCurrencyAnimationParent[0]
+                .SetTempCurrencyText(
+                    GameManager.Instance.CurrentLevel.lifeCurrency,
+                    CurrencyType.LifeCurrency
+                );
         if (GameManager.Instance.CurrentLevel.hexCurrency > 0)
-            LevelCompleteCurrencyAnimationParent[1].SetTempCurrencyText(GameManager.Instance.CurrentLevel.hexCurrency, CurrencyType.HexCurrency);
+            LevelCompleteCurrencyAnimationParent[1]
+                .SetTempCurrencyText(
+                    GameManager.Instance.CurrentLevel.hexCurrency,
+                    CurrencyType.HexCurrency
+                );
         if (GameManager.Instance.CurrentLevel.goldCurrency > 0)
-            LevelCompleteCurrencyAnimationParent[2].SetTempCurrencyText(GameManager.Instance.CurrentLevel.goldCurrency, CurrencyType.GoldCurrency);
+            LevelCompleteCurrencyAnimationParent[2]
+                .SetTempCurrencyText(
+                    GameManager.Instance.CurrentLevel.goldCurrency,
+                    CurrencyType.GoldCurrency
+                );
 
         StartCoroutine(AnimationCoroutine.FadeCanvasGroup(0.3f, _levelCompleteCanvasGroup, 1));
         levelCompleteAnimationParent.anchoredPosition = new Vector2(0, -100);
-        StartCoroutine(AnimationCoroutine.SetPositionVec2Coroutine(levelCompleteAnimationParent, new Vector2(0,0), _levelCompleteCurve, 0.5f, 0.1f));
+        StartCoroutine(
+            AnimationCoroutine.SetAnchoredPositionVec2Coroutine(
+                levelCompleteAnimationParent,
+                new Vector2(0, 0),
+                _levelCompleteCurve,
+                0.5f,
+                0.1f
+            )
+        );
 
         yield return new WaitForSeconds(0.3f);
 
@@ -141,7 +171,27 @@ public class LevelDisplay : MonoBehaviour
         else
             LevelCompleteCurrencyAnimationParent[1].LocalRect.gameObject.SetActive(false);
 
-        StartCoroutine(WaitForNullCurrency());
+        _levelCompleteCanvasGroup.blocksRaycasts = true;
+        _levelCompleteCanvasGroup.interactable = true;
+        levelCompleteButton.onClick.AddListener(() =>
+        {
+            //TODO: spawn all the currency immediately in a circle and then animate them to the currency UI
+            StartCoroutine(AnimationCoroutine.FadeCanvasGroup(1, _levelCompleteCanvasGroup, 0, 0f));
+            StopCoroutine(waitForNullCurrencyCoroutine);
+            if (GameManager.Instance.UpgradesToAdd > 0)
+            {
+                GameManager.Instance.SetGamePhase(GamePhase.SelectUpgrade);
+            }
+            else
+            {
+                GameManager.Instance.SetGamePhase(GamePhase.HexPlacement);
+            }
+            levelCompleteButton.onClick.RemoveAllListeners();
+            _levelCompleteCanvasGroup.blocksRaycasts = false;
+            _levelCompleteCanvasGroup.interactable = false;
+        });
+
+        waitForNullCurrencyCoroutine = StartCoroutine(WaitForNullCurrency());
     }
 
     private IEnumerator WaitForNullCurrency()
@@ -152,15 +202,23 @@ public class LevelDisplay : MonoBehaviour
             allInactive = true;
             foreach (var parent in LevelCompleteCurrencyAnimationParent)
             {
-                if (parent.CurrentCurrencyAmount>0)
+                if (parent.CurrentCurrencyAmount > 0)
                 {
                     allInactive = false;
                     break;
                 }
             }
-            yield return null; 
+            yield return null;
         }
-        GameManager.Instance.SetGamePhase(GamePhase.SelectUpgrade);
+        if (GameManager.Instance.UpgradesToAdd > 0)
+        {
+            GameManager.Instance.SetGamePhase(GamePhase.SelectUpgrade);
+        }
+        else
+        {
+            GameManager.Instance.SetGamePhase(GamePhase.HexPlacement);
+        }
+
         StartCoroutine(AnimationCoroutine.FadeCanvasGroup(1, _levelCompleteCanvasGroup, 0, 1f));
     }
 
@@ -187,8 +245,8 @@ public class LevelDisplay : MonoBehaviour
     }
 
     public void StartGameIfPossible()
-    {   
-    if (GameManager.Instance.GamePhase == GamePhase.Build)
+    {
+        if (GameManager.Instance.GamePhase == GamePhase.Build)
         {
             GameManager.Instance.LoadLevelIfPossible();
             StartCoroutine(AnimationCoroutine.FadeCanvasGroup(1, _nextLevelButtonCanvasGroup, 0));

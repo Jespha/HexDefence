@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b541f6fa785b7b24aa27d09ac882175f, type: 3}
+  m_Name: Arrow
+  m_EditorClassIdentifier: 
+  HexBuildingType: 0
+  Name: Arrow
+  ProjectilePrefab: {fileID: 8420792880743980288, guid: 0a42719ba49de6a4c8b86f2c8de4e2c5,
+    type: 3}
+  LaunchVFXPrefab: {fileID: 311458382296458924, guid: 9a7e39442bf041947bec37333010c345,
+    type: 3}
+  ImpactVFXPrefab: {fileID: 1350798216526708452, guid: f27132b94cbf76049bc7d1eef32f8470,
+    type: 3}
+  AttackSpeed: 10
+  AttackDamage: 1

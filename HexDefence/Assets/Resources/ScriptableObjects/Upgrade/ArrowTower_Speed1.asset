@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8505236f0b3866c498c44544a82ee7f0, type: 3}
+  m_Name: ArrowTower_Speed1
+  m_EditorClassIdentifier: 
+  upgradeName: ' ArrowTower <br> Speed I'
+  upgradeDescription: '<color=green><b>Speed -0.1s</b></color> '
+  upgradeIcon: {fileID: 21300000, guid: 6b6517953738af443b638c990da145f8, type: 3}
+  IsUnlockedInProfile: 1
+  prerequisites: []
+  rarity: 0
+  upgradeType: 0
+  _building: {fileID: 11400000, guid: 7909dd1d8f3858f4d8b2a34f1bf20831, type: 2}
+  AttackSpeedUpgrade: 1
+  AttackRangeUpgrade: 0
+  AttackDamageUpgrade: 0
+  _hex: {fileID: 0}
+  _enemy: {fileID: 0}

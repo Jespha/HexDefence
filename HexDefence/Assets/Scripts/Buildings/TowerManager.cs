@@ -10,6 +10,20 @@ public class TowerManager : MonoBehaviour
     TowerData[] Towers = new TowerData[0]; 
     List<Collider> _colliders = new List<Collider>();
     public List<HexBuilding> HexBuildings = new List<HexBuilding>(); // Live copy of base HexBuilding
+    public static TowerManager Instance { get; private set; }
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Debug.LogWarning("Multiple instances of TowerManager detected. Deleting one.");
+            Destroy(this);
+        }
+    }
 
     private void Start ()
     {
@@ -73,12 +87,65 @@ public class TowerManager : MonoBehaviour
         // _colliders.Add(AddColliderToTower(towerPrefab, Towers[Towers.Length - 1]));
     }
 
-    public void UpgradeLocalTurret(int index, int upgradeIndex)
+    public void UpgradeLocalTower(int index, int upgradeIndex)
     {
         Towers[index].localUpgrades[upgradeIndex]++;
     }
+
+    public void ApplyUpgradeToTowerManagerHexBuildings(Upgrade upgrade)
+    {
+        HexBuilding _building = upgrade._building;
+        int _hexBuildingIndex;
+
+        for (int i = 0; i < HexBuildings.Count; i++)
+        {
+            if (HexBuildings[i] == _building)
+            {
+                _hexBuildingIndex = i;
+                HexBuildings[i].UpgradeStats(upgrade.AttackDamageUpgrade, upgrade.AttackSpeedUpgrade, upgrade.AttackRangeUpgrade);
+                ChangeTowerDataValues(HexBuildings[i], upgrade);
+            }
+        }
+        ApplyUpgradeToTowers(upgrade);
+    }
     
+    private void ApplyUpgradeToTowers(Upgrade upgrade)
+    {
+        HexBuilding _hexBuildingPrefab = null;
+        foreach (var hexBuilding in HexBuildings)
+        {
+            if (hexBuilding == upgrade._building)
+            {
+                _hexBuildingPrefab = hexBuilding;
+            }
+        }
+
+        for (int i = 0; i < Towers.Length; i++)
+        {
+            if (Towers[i].towerPrefab.name == upgrade._building.Name)
+            {
+                Towers[i].attackDamage = _hexBuildingPrefab.AttackDamage;
+                Towers[i].attackSpeed = _hexBuildingPrefab.AttackSpeed;
+                Towers[i].attackRange = _hexBuildingPrefab.AttackRange;
+            }
+        }
+    }
     
+    public void ChangeTowerDataValues(HexBuilding hexBuilding, Upgrade upgrade)
+    {
+        for (int i = 0; i < Towers.Length; i++)
+        {
+            TowerData towerData = Towers[i];
+            if (towerData.towerPrefab == hexBuilding.Prefab)
+            {
+                towerData.attackDamage = hexBuilding.AttackDamage;
+                towerData.attackSpeed = hexBuilding.AttackSpeed;
+                towerData.attackRange = hexBuilding.AttackRange;
+                Towers[i] = towerData;
+            }
+        }
+    }
+
 
     private Collider AddColliderToTower(GameObject towerPrefab, TowerData towerData)
     {

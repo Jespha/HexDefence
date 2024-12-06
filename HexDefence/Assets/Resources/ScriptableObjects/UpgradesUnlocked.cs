@@ -108,6 +108,6 @@ public class UpgradesUnlocked : ScriptableObject
         CurrentUpgrades.Add(upgrade);
         UpdateCurrentUpgradesUnlocked();
         GameManager.Instance.UpdateUpgradesToAdd(-1);
+        GameManager.Instance.TowerManager.ApplyUpgradeToTowerManagerHexBuildings(upgrade);
     }
-
 }

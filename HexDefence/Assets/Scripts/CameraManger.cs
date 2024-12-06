@@ -11,6 +11,9 @@ public class CameraManager : MonoBehaviour
     private PlayerInput _inputManager;
     [SerializeField] private CinemachineVirtualCamera _activeVirtualCamera;
     [SerializeField] private GameObject _preGameVCam;
+    [SerializeField] private GameObject _menuVCam;
+    public CameraState CurrentCameraState;
+
     private CinemachineTransposer _transposer;
     public float _minZoomRange;
     public float _maxZoomRange;
@@ -31,6 +34,11 @@ public class CameraManager : MonoBehaviour
     {
         _inputManager.onCameraMove -= MoveCamera;
         _inputManager.OnScrollWheel -= ZoomCamera;
+    }
+
+    private void Start()
+    {
+        _preGameVCam.SetActive(false);
     }
 
     private void OnDisable()
@@ -66,13 +74,20 @@ public class CameraManager : MonoBehaviour
 
     public void SetActiveVirtualCamera(CameraState cameraState)
     {
+        CurrentCameraState = cameraState;
+        
         switch (cameraState)
         {
             case CameraState.PreGame:
                 _preGameVCam.SetActive(true);
                 break;
+            case CameraState.Menu:
+                _preGameVCam.SetActive(false);
+             _menuVCam.SetActive(true);
+                break;
             case CameraState.InGame:
                 _preGameVCam.SetActive(false);
+             _menuVCam.SetActive(false);
                 break;
         }
     }
@@ -80,6 +95,7 @@ public class CameraManager : MonoBehaviour
     public enum CameraState
     {
         PreGame,
+        Menu,
         InGame
     }
 

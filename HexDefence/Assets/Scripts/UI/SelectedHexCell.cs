@@ -1,7 +1,10 @@
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
+using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.UI.Extensions;
 
 public class SelectedHexCell : MonoBehaviour
 {
@@ -21,13 +24,24 @@ public class SelectedHexCell : MonoBehaviour
     private TextMeshProUGUI _name;
 
     [SerializeField]
+    private List<TextMeshProUGUI> _stats;
+
+    [SerializeField]
     private CanvasGroup _canvasGroup;
 
     [SerializeField]
     private RectTransform _rectTransform;
 
     [SerializeField]
+    private UILineRenderer _lineRenderer;
+    [SerializeField] private AnimationCurve _lineCurve;
+
+    [Header("Animation")]
+    [SerializeField]
     private Vector2 baseOffset;
+
+    [SerializeField]
+    private Vector2 _rectOffset;
 
     [SerializeField]
     private AnimationCurve _clickCurve;
@@ -36,10 +50,17 @@ public class SelectedHexCell : MonoBehaviour
     private bool isZooming = false;
     private Vector2 offset;
     private Coroutine setPositionCoroutine;
+    private Coroutine setPositionCoroutineLine;
 
-    [SerializeField]private float targetOffset;
+    [SerializeField]
+    private float targetOffset;
+    private float targetOffsetx;
     private Vector2 hexCellScreenPos;
+    public Vector2 CurrentOffset;
+    [SerializeField] private Vector2 _lineRenderPos;
 
+    public Vector2 temp;
+    public Vector2 temp2;
     private void Start()
     {
         _canvasGroup.alpha = 0;
@@ -55,13 +76,22 @@ public class SelectedHexCell : MonoBehaviour
     {
         if (_selectedHexCell != null)
         {
-            _rectTransform.position = AnimationCoroutine.WorldToUISpace(canvas, (_selectedHexCell.transform.position + new Vector3(0, 0, targetOffset)));
+            hexCellScreenPos = AnimationCoroutine.WorldToUISpace(canvas, (_selectedHexCell.transform.position + new Vector3(0, 0, targetOffset)));
+            _rectTransform.position = hexCellScreenPos + _rectOffset + CurrentOffset;
+            _lineRenderer.Points[2] = _lineRenderPos - CurrentOffset;
+            _lineRenderer.SetAllDirty();
         }
+
+        targetOffset = math.remap(0,30,temp.x,temp.y,GameManager.Instance.FollowTarget.transform.position.y);
+        targetOffsetx = math.remap(0,30,temp2.x,temp2.y,GameManager.Instance.FollowTarget.transform.position.y);
+
     }
 
     private IEnumerator WaitForPlayerInput()
     {
-        yield return new WaitUntil(() => GameManager.Instance != null && GameManager.Instance.PlayerInput != null);
+        yield return new WaitUntil(
+            () => GameManager.Instance != null && GameManager.Instance.PlayerInput != null
+        );
         GameManager.Instance.PlayerInput.OnScrollWheel += ZoomCameraOffset;
     }
 
@@ -75,7 +105,7 @@ public class SelectedHexCell : MonoBehaviour
 
     private void ZoomCameraOffset(float level)
     {
-        UnSetSelectedHexCell();
+        // UnSetSelectedHexCell();
     }
 
     public void UnSetSelectedHexCell()
@@ -97,28 +127,45 @@ public class SelectedHexCell : MonoBehaviour
         if (hexCell != null)
         {
             hexCellScreenPos = AnimationCoroutine.WorldToUISpace(canvas, (hexCell.transform.position + new Vector3(0, 0, targetOffset)));
+            // hexCellScreenPos = AnimationCoroutine.WorldToUISpace(canvas,hexCell.transform.position);
             _selectedHexCell = hexCell;
             _hexIcon.sprite = _selectedHexCell.HexTerrain.Icon;
             _canvasGroup.alpha = 1;
             _canvasGroup.blocksRaycasts = true;
             // Vector2 _rectOffset = hexCellScreenPos + new Vector2(50, 50);
-            Vector2 _offset = AnimationCoroutine.WorldToUISpace(canvas, (hexCell.transform.position + (SetOffset(hexCell)*3)));;
-            _rectTransform.position = _offset;
-            
+            hexCellScreenPos = new Vector2(
+                hexCellScreenPos.x + SetOffset(hexCell).x,
+                hexCellScreenPos.y + SetOffset(hexCell).y
+            );
+
+            CurrentOffset = new Vector2(
+                SetOffset(hexCell).x,
+                SetOffset(hexCell).y
+            );
+
             if (setPositionCoroutine != null)
             {
                 StopCoroutine(setPositionCoroutine);
             }
-            
+
             setPositionCoroutine = StartCoroutine(
-                AnimationCoroutine.SetPositionVec2Coroutine(
-                    _rectTransform,
-                    hexCellScreenPos,
-                    _clickCurve,
+                AnimationCoroutine.AnimatedVector2ToZero(
+                    this,
+                    CurrentOffset,
+                    _curve: _clickCurve,
                     _duration: 0.5f
                 )
             );
 
+            if (setPositionCoroutineLine != null)
+            {
+                StopCoroutine(setPositionCoroutineLine);
+            
+                _lineRenderer.Points[1].y = _lineRenderer.Points[2].y/2;
+                _lineRenderer.Points[1].x = _lineRenderer.Points[2].x/2;
+            }
+
+            setPositionCoroutineLine = StartCoroutine(AnimatePointPerpendicular());
         }
 
         if (_selectedHexCell.HexBuilding.HexBuildingType != HexBuildingType.None)
@@ -126,6 +173,15 @@ public class SelectedHexCell : MonoBehaviour
             _towerIcon.sprite = _selectedHexCell.HexBuilding.Icon;
             _towerIcon.color = Color.white;
             _name.text = _selectedHexCell.HexBuilding.Name;
+            foreach (HexBuilding hexBuilding in GameManager.Instance.TowerManager.HexBuildings)
+            {
+                if (hexBuilding.Name == _selectedHexCell.HexBuilding.Name)
+                {
+                    _stats[0].text = hexBuilding.AttackDamage.ToString();
+                    _stats[1].text = hexBuilding.AttackSpeed.ToString();
+                    _stats[2].text = hexBuilding.AttackRange.ToString();
+                }
+            }
         }
         else
         {
@@ -135,12 +191,57 @@ public class SelectedHexCell : MonoBehaviour
         }
     }
 
+    public void SetTempSelectedHexCell(HexCell hexCell, Vector2 hexCellScreenPosition)
+    {
+
+        if (hexCell == null)
+        {
+            _canvasGroup.alpha = 0;
+            _canvasGroup.blocksRaycasts = false;
+            return;
+        }
+
+        if (hexCell != null)
+        {
+            _selectedHexCell = hexCell;
+            _hexIcon.sprite = _selectedHexCell.HexTerrain.Icon;
+            _lineRenderPos = AnimationCoroutine.WorldToUISpace(canvas, (hexCell.transform.position + new Vector3(0, 0, targetOffset)));
+        }
+
+    }
+
+    public IEnumerator AnimatePointPerpendicular()
+    {
+        Vector2 start = _lineRenderer.Points[1];
+        Vector2 direction = (_lineRenderer.Points[2] - _lineRenderer.Points[0]).normalized;
+        Vector2 perpendicular = new Vector2(-direction.y, direction.x); // 90 degrees rotation
+
+        float duration = 0.5f;
+        float distance = 10.0f; 
+
+        float elapsed = 0.0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
+
+            Vector2 lineAnimation= AnimationCoroutine.Vector2LerpUnClamped(start,start * distance, _lineCurve.Evaluate(t));
+            _lineRenderer.Points[1].y = lineAnimation.y;
+            _lineRenderer.Points[1].x = _lineRenderer.Points[2].x/2;
+            yield return null;
+        }
+
+            _lineRenderer.Points[1].y = _lineRenderer.Points[2].y/2;
+            _lineRenderer.Points[1].x = _lineRenderer.Points[2].x/2;
+    }
+
     Vector3 SetOffset(HexCell hexCell)
     {
         Vector3 _offset = Vector2.zero;
 
         if (Mathf.Round(hexCell.Position.x) % 2 == 0)
-        _offset.z =  baseOffset.y * 0.5f;
+            _offset.z = baseOffset.y * 0.5f;
         else
         {
             switch (hexCell.Position.z)
@@ -156,7 +257,7 @@ public class SelectedHexCell : MonoBehaviour
                     break;
                 default:
                     _offset.z = 0;
-                break;
+                    break;
             }
         }
 
@@ -173,11 +274,11 @@ public class SelectedHexCell : MonoBehaviour
                 default:
                     _offset.x = 0;
                     _offset.z = 1;
-                break;
+                    break;
             }
         }
         else
-        { 
+        {
             switch (hexCell.Position.x)
             {
                 case float n when Mathf.Round(n) % 2 == 0:
@@ -194,11 +295,10 @@ public class SelectedHexCell : MonoBehaviour
                     break;
                 default:
                     _offset.x = 0;
-                break;
+                    break;
             }
         }
-        
+
         return _offset;
-    
     }
 }

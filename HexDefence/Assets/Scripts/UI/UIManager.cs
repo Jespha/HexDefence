@@ -94,6 +94,14 @@ public class UIManager : MonoBehaviour
     {
         Vector2 hexCellScreenPosition = RaycastResultToCanvasPosition(hit, canvas);
         lastSelectedHexCell = hexCell;
+        if (!hexCell)
+        {
+            selectedHexCell.UnSetSelectedHexCell();
+            return;
+        }
+        if (hexCell.IsTemp)
+        selectedHexCell.SetTempSelectedHexCell(hexCell, hexCellScreenPosition);
+        else
         selectedHexCell.SetSelectedHexCell(hexCell, hexCellScreenPosition);
     }
 

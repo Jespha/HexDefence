@@ -170,7 +170,7 @@ public class GameManager : MonoBehaviour
     private IEnumerator StartProgam()
     {
         yield return new WaitUntil(() => GameManager.Instance != null);
-        CameraManager.SetActiveVirtualCamera(CameraManager.CameraState.PreGame);
+        CameraManager.SetActiveVirtualCamera(CameraManager.CameraState.Menu);
         yield return new WaitForSeconds(0.25f);
         HexGridManager.Instance.HideHexGridCells();
         RoadManager.Instance.HideRoads();

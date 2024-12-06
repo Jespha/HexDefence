@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using BBX.Dialogue.GUI;
+using Sirenix.OdinInspector;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -77,7 +78,7 @@ public class LevelDisplay : MonoBehaviour
         _levelTitleText.color = new Color(1, 1, 1, 1);
         UpdateGamePhaseUI(GameManager.Instance.GamePhase);
     }
-
+    [Button ("Level Complete Screen")]
     public void UpdateLevel(int level, bool complete = false)
     {
         if (complete)
@@ -119,7 +120,7 @@ public class LevelDisplay : MonoBehaviour
                 break;
         }
     }
-
+    
     private IEnumerator LevelCompleteScreen()
     {
         Coroutine waitForNullCurrencyCoroutine = null;

@@ -47,6 +47,7 @@ public static class AnimationCoroutine
             _time += Time.deltaTime;
             yield return null;
         }
+        rectTransform.position = targetPosition;
     }
 
     public static IEnumerator FadeCanvasGroup(
@@ -185,13 +186,45 @@ public static class AnimationCoroutine
             yield return null;
         }
     }
+    
+    public static IEnumerator AnimatedVector2ToZero(SelectedHexCell selectedHexCell , Vector2 _currentOffset, AnimationCurve _curve, float _duration, float _wait = 0)
+    {
+        Vector2 startValue = selectedHexCell.CurrentOffset;
+        float duration = 1.0f; // duration of the animation in seconds
+        float time = 0.0f;
+
+        if (_wait != 0)
+        {
+            yield return new WaitForSeconds(_wait);
+        }
+
+        while (time < duration)
+        {
+            time += Time.deltaTime;
+            float t = time / duration;
+
+            // Interpolate the current offset to zero
+            selectedHexCell.CurrentOffset = Vector2LerpUnClamped(startValue, Vector2.zero, _curve.Evaluate(time / _duration));
+
+            yield return null;
+        }
+
+        // Ensure the final value is exactly zero
+        selectedHexCell.CurrentOffset = Vector2.zero;
+    }
 
     public static Vector3 WorldToUISpace(Canvas parentCanvas, Vector3 worldPos)
     {
-        
         Vector3 screenPos = Camera.main.WorldToScreenPoint(worldPos);
         RectTransformUtility.ScreenPointToLocalPointInRectangle(parentCanvas.transform as RectTransform, screenPos, parentCanvas.worldCamera, out Vector2 movePos);
         return parentCanvas.transform.TransformPoint(movePos);
+    }
+
+    public static Vector3 WorldToLocalUISpace(Canvas parentCanvas, Vector3 worldPos, RectTransform rectTransform)
+    {
+        Vector3 screenPos = Camera.main.WorldToScreenPoint(worldPos);
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(rectTransform, screenPos, parentCanvas.worldCamera, out Vector2 movePos);
+        return rectTransform.transform.TransformPoint(movePos);
     }
 
     public static Vector2 Vector2LerpUnClamped( Vector2 a, Vector2 b, float t ){

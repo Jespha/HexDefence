@@ -46,7 +46,7 @@ public class RoadManager : MonoBehaviour
         Instance = this;
     }
 
-    public void CreateRoad(HexCell StartPoint, HexCell EndPoint, int roadIndex)
+    public void CreateRoad(HexCell _start, HexCell _end, int roadIndex)
     {
         if (roadIndex < 0 || roadIndex >= Roads.Length)
         {
@@ -59,12 +59,12 @@ public class RoadManager : MonoBehaviour
         road.TryGetComponent(out SplineMesh _splinMesh);
         _splineComputer.SetPoint(
             0,
-            new SplinePoint(StartPoint.transform.position + new Vector3(0, 0.35f, 0)),
+            new SplinePoint(_start.transform.position + new Vector3(0, 0.35f, 0)),
             SplineComputer.Space.World
         );
         _splineComputer.SetPoint(
             1,
-            new SplinePoint(EndPoint.transform.position + new Vector3(0, 0.35f, 0)),
+            new SplinePoint(_end.transform.position + new Vector3(0, 0.35f, 0)),
             SplineComputer.Space.World
         );
         _splinMesh.Rebuild();
@@ -72,13 +72,14 @@ public class RoadManager : MonoBehaviour
         {
             gameObject = road,
             splineComputer = _splineComputer,
-            splineMesh = _splinMesh
+            splineMesh = _splinMesh,
+            hexCells = new List<HexCell> { _start, _end }
         };
     }
 
-    public void AddRoad(HexCell end, HexCell start)
+    public void AddRoadSegment(HexCell _end, HexCell _start)
     {
-        int roadIndex = start.RoadIndex;
+        int roadIndex = _start.RoadIndex;
         if (roadIndex < 0 || roadIndex >= Roads.Length || Roads[roadIndex].gameObject == null)
         {
             Debug.LogError("Invalid road index or road does not exist!");
@@ -86,10 +87,11 @@ public class RoadManager : MonoBehaviour
         }
         string roadName = "Road" + roadIndex.ToString();
         int pointCount = Roads[roadIndex].splineComputer.pointCount;
+        Roads[roadIndex].hexCells.Add(_end);
         Roads[roadIndex]
             .splineComputer.SetPoint(
                 pointCount,
-                new SplinePoint(end.Position + new Vector3(0, 0.35f, 0)),
+                new SplinePoint(_end.Position + new Vector3(0, 0.35f, 0)),
                 SplineComputer.Space.World
             );
         Roads[roadIndex].splineMesh.GetChannel(0).count = pointCount + 1;
@@ -169,15 +171,15 @@ public class RoadManager : MonoBehaviour
     {
         float t = 0;
         Vector3 start = road.splineComputer.GetPointPosition(0, SplineComputer.Space.World);
-        Vector3 end = road.splineComputer.GetPointPosition(1, SplineComputer.Space.World);
-        road.splineComputer.SetPoint(1, new SplinePoint(end), SplineComputer.Space.World);
+        Vector3 _end = road.splineComputer.GetPointPosition(1, SplineComputer.Space.World);
+        road.splineComputer.SetPoint(1, new SplinePoint(_end), SplineComputer.Space.World);
         MeshRenderer _meshRender = road.gameObject.GetComponent<MeshRenderer>();
         _meshRender.enabled = true;
         while (t < 1)
         {
             t += Time.deltaTime;
             float curveValue = _roadIntroCurve.Evaluate(t);
-            Vector3 position = Vector3.Lerp(start, end, curveValue);
+            Vector3 position = Vector3.Lerp(start, _end, curveValue);
             road.splineComputer.SetPoint(1, new SplinePoint(position), SplineComputer.Space.World);
             road.splineMesh.Rebuild();
             yield return null;
@@ -203,4 +205,5 @@ public struct RoadParent
     public GameObject gameObject;
     public SplineComputer splineComputer;
     public SplineMesh splineMesh;
+    public List<HexCell> hexCells;
 }

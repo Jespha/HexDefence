@@ -5,9 +5,12 @@ using UnityEngine;
 
 public class TowerManager : MonoBehaviour
 {
-    [SerializeField]EnemyManager _enemyManager;
-    [SerializeField] private ProjectileManager _projectileManager;
-    TowerData[] Towers = new TowerData[0]; 
+    [SerializeField]
+    EnemyManager _enemyManager;
+
+    [SerializeField]
+    private ProjectileManager _projectileManager;
+    TowerData[] Towers = new TowerData[0];
     List<Collider> _colliders = new List<Collider>();
     public List<HexBuilding> HexBuildings = new List<HexBuilding>(); // Live copy of base HexBuilding
     public static TowerManager Instance { get; private set; }
@@ -25,7 +28,7 @@ public class TowerManager : MonoBehaviour
         }
     }
 
-    private void Start ()
+    private void Start()
     {
         if (_enemyManager == null)
         {
@@ -58,26 +61,27 @@ public class TowerManager : MonoBehaviour
         }
         temp[temp.Length - 1].hexCell = hexCell;
         temp[temp.Length - 1].towerPrefab = towerPrefab;
-        if(hexCell.HexBuilding.AimPart != null)
+        if (hexCell.HexBuilding.AimPart != null)
         {
-            GameObject aimPartInstance = Instantiate(hexCell.HexBuilding.AimPart, hexCell.Position, Quaternion.identity);
+            GameObject aimPartInstance = Instantiate(
+                hexCell.HexBuilding.AimPart,
+                hexCell.Position,
+                Quaternion.identity
+            );
             Vector3 originalScale = aimPartInstance.transform.localScale;
             aimPartInstance.transform.parent = towerPrefab.transform;
-            aimPartInstance.transform.localScale = originalScale; 
+            aimPartInstance.transform.localScale = originalScale;
             temp[temp.Length - 1].AimPart = aimPartInstance;
         }
         temp[temp.Length - 1].position = hexCell.Position;
         temp[temp.Length - 1].attackType = hexCell.HexBuilding.AttackType;
-        temp[temp.Length - 1].TypeCollider = hexCell.HexBuilding.TypeCollider;
-        temp[temp.Length - 1].colliderSize = hexCell.HexBuilding.ColliderSize;
-        temp[temp.Length - 1].colliderPosition = hexCell.HexBuilding.ColliderPosition;
         temp[temp.Length - 1].attackDamage = hexCell.HexBuilding.AttackDamage;
         temp[temp.Length - 1].attackSpeed = hexCell.HexBuilding.AttackSpeed;
         temp[temp.Length - 1].attackRange = hexCell.HexBuilding.AttackRange;
         temp[temp.Length - 1].attackPriority = hexCell.HexBuilding.TargetPriority;
         temp[temp.Length - 1].lastAttackTime = 0;
 
-        List<int> newUpgradeList = new List<int>(); // Local upgrads ( 0 Damage, 1 AttackSpeed, 2 Range) 
+        List<int> newUpgradeList = new List<int>(); // Local upgrads ( 0 Damage, 1 AttackSpeed, 2 Range)
         for (int i = 0; i < 3; i++)
         {
             newUpgradeList.Add(1);
@@ -102,13 +106,18 @@ public class TowerManager : MonoBehaviour
             if (HexBuildings[i] == _building)
             {
                 _hexBuildingIndex = i;
-                HexBuildings[i].UpgradeStats(upgrade.AttackDamageUpgrade, upgrade.AttackSpeedUpgrade, upgrade.AttackRangeUpgrade);
+                HexBuildings[i]
+                    .UpgradeStats(
+                        upgrade.AttackDamageUpgrade,
+                        upgrade.AttackSpeedUpgrade,
+                        upgrade.AttackRangeUpgrade
+                    );
                 ChangeTowerDataValues(HexBuildings[i], upgrade);
             }
         }
         ApplyUpgradeToTowers(upgrade);
     }
-    
+
     private void ApplyUpgradeToTowers(Upgrade upgrade)
     {
         HexBuilding _hexBuildingPrefab = null;
@@ -130,7 +139,7 @@ public class TowerManager : MonoBehaviour
             }
         }
     }
-    
+
     public void ChangeTowerDataValues(HexBuilding hexBuilding, Upgrade upgrade)
     {
         for (int i = 0; i < Towers.Length; i++)
@@ -146,38 +155,16 @@ public class TowerManager : MonoBehaviour
         }
     }
 
-
-    private Collider AddColliderToTower(GameObject towerPrefab, TowerData towerData)
-    {
-        SphereCollider sc = null;
-        BoxCollider bc = null;
-        var collider = towerData.TypeCollider;
-        switch (collider)
-        {
-            case TypeCollider.SphereCollider:
-                sc = towerPrefab.AddComponent<SphereCollider>();
-                sc.radius = towerData.colliderSize.x;
-                sc.center = towerData.colliderPosition;
-                sc.isTrigger = true;
-                return sc;
-
-            case TypeCollider.BoxCollider:
-                bc = towerPrefab.AddComponent<BoxCollider>();
-                bc.size = towerData.colliderSize;
-                bc.center = towerData.colliderPosition;
-                bc.isTrigger = true;
-                return bc;
-
-        }
-
-        return null;
-    }
-
     public void Update()
     {
         if (GameManager.Instance != null && _enemyManager != null)
         {
-            if (GameManager.Instance.GamePhase == GamePhase.Defend && _enemyManager != null && _enemyManager.activeEnemies != null && _enemyManager.activeEnemies.Count > 0)            
+            if (
+                GameManager.Instance.GamePhase == GamePhase.Defend
+                && _enemyManager != null
+                && _enemyManager.activeEnemies != null
+                && _enemyManager.activeEnemies.Count > 0
+            )
             {
                 for (int i = 0; i < Towers.Length; i++)
                 {
@@ -190,14 +177,22 @@ public class TowerManager : MonoBehaviour
                         if (!_enemyManager.activeEnemies.ContainsKey(enemy))
                             continue;
 
-                        if (Vector3.Distance(Towers[i].position, enemy.transform.position) <= Towers[i].attackRange)
+                        if (
+                            Vector3.Distance(Towers[i].position, enemy.transform.position)
+                            <= Towers[i].attackRange
+                        )
                         {
                             if (Towers[i].AimPart != null)
                                 Towers[i].AimPart.transform.LookAt(enemy.transform);
-                                //TODO: ADD GLOBAL SPEED UPGRADS TO ATTACK SPEED
-                                
-                            if (Towers[i].lastAttackTime + Towers[i].attackSpeed - (Towers[i].attackSpeed*(Towers[i].localUpgrades[1]/50)) > Time.time)
-                                continue; 
+                            //TODO: ADD GLOBAL SPEED UPGRADS TO ATTACK SPEED
+
+                            if (
+                                Towers[i].lastAttackTime
+                                    + Towers[i].attackSpeed
+                                    - (Towers[i].attackSpeed * (Towers[i].localUpgrades[1] / 50))
+                                > Time.time
+                            )
+                                continue;
                             Towers[i].lastAttackTime = Time.time;
                             switch (Towers[i].attackType)
                             {
@@ -206,9 +201,6 @@ public class TowerManager : MonoBehaviour
                                     break;
                                 case AttackType.Area:
                                     areaLogic(Towers[i].hexCell);
-                                    break;
-                                case AttackType.Beam:
-                                    hitScanLogic(Towers[i].hexCell);
                                     break;
                                 case AttackType.Economy:
                                     generateCurrencyLogic(Towers[i].hexCell);
@@ -221,14 +213,25 @@ public class TowerManager : MonoBehaviour
         }
     }
 
-
     private void projectileLogic(HexCell hexCell, GameObject enemy, GameObject aimPart)
     {
         _projectileManager.AddProjectile(hexCell, enemy);
         if (aimPart == null)
             return;
-        AnimationCurve _curve = new AnimationCurve(new Keyframe(0f, 0f), new Keyframe(0.5f, 1f), new Keyframe(1f, 0.5f));
-        StartCoroutine(AnimationCoroutine.SetScaleVec3Coroutine(aimPart.transform, new Vector3(1, 1, 0.5f), new Vector3(1, 1, 1), _curve, 0.3f));
+        AnimationCurve _curve = new AnimationCurve(
+            new Keyframe(0f, 0f),
+            new Keyframe(0.5f, 1f),
+            new Keyframe(1f, 0.5f)
+        );
+        StartCoroutine(
+            AnimationCoroutine.SetScaleVec3Coroutine(
+                aimPart.transform,
+                new Vector3(1, 1, 0.5f),
+                new Vector3(1, 1, 1),
+                _curve,
+                0.3f
+            )
+        );
     }
 
     private void areaLogic(HexCell hexCell)
@@ -245,7 +248,6 @@ public class TowerManager : MonoBehaviour
     {
         // GenerateCurrency logic
     }
-
 }
 
 struct TowerData
@@ -255,9 +257,6 @@ struct TowerData
     public GameObject AimPart;
     public Vector3 position;
     public AttackType attackType;
-    public TypeCollider TypeCollider;
-    public Vector3 colliderSize;
-    public Vector3 colliderPosition;
     public float attackDamage;
     public float attackSpeed;
     public float attackRange;

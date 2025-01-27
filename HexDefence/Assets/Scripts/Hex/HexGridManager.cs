@@ -154,7 +154,7 @@ public class HexGridManager : MonoBehaviour
         HexCells.Add(newHexCell);
         if (hexcellParent.RoadEntryPoint != null && hexcellParent.RoadEndPoint == null)
         {
-            RoadManager.Instance.AddRoad(newHexCell, hexcellParent);
+            RoadManager.Instance.AddRoadSegment(newHexCell, hexcellParent);
             hexcellParent.SetRoad(newHexCell, RoadType.Exit);
             newHexCell.SetRoad(hexcellParent, RoadType.Entry, hexcellParent.RoadIndex);
             // AddRoadToArray(newHexCell, hexcellParent.RoadIndex);
@@ -319,7 +319,7 @@ public class HexGridManager : MonoBehaviour
         HexCells.Add(newHexCell);
         if (hexcellParent.RoadEntryPoint != null && hexcellParent.RoadEndPoint == null)
         {
-            RoadManager.Instance.AddRoad(newHexCell, hexcellParent);
+            RoadManager.Instance.AddRoadSegment(newHexCell, hexcellParent);
             hexcellParent.SetRoad(newHexCell, RoadType.Exit);
             newHexCell.SetRoad(hexcellParent, RoadType.Entry, hexcellParent.RoadIndex);
             // AddRoadToArray(newHexCell, hexcellParent.RoadIndex);
@@ -378,7 +378,11 @@ public class HexGridManager : MonoBehaviour
                         _selected.Deselected();
                         ClearTempHexGrid();
                         _selected = newHexCell;
-                        Currency.Instance.UpdateCurrency(-1, CurrencyType.HexCurrency, hexCell.Position);
+                        Currency.Instance.UpdateCurrency(
+                            -1,
+                            CurrencyType.HexCurrency,
+                            hexCell.Position
+                        );
                     }
                     else
                     {
@@ -443,4 +447,14 @@ public class HexGridManager : MonoBehaviour
         }
     }
 
+    public void GetHexTileAtPosition(Vector3 position)
+    {
+        for (int i = 0; i < HexCells.Count; i++)
+        {
+            if (HexCells[i].Position == position)
+            {
+                HexCells[i].Selected();
+            }
+        }
+    }
 }

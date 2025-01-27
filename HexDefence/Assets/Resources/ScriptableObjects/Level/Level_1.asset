@@ -14,7 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemies:
   - enemy: {fileID: 11400000, guid: e46a862439f0d8749a20bf63455fe0db, type: 2}
-    amount: 3
+    amount: 1
   levelName: Fresh Start
   hexCurrency: 5
   goldCurrency: 100
+  lifeCurrency: 0
+  upgrades: 1

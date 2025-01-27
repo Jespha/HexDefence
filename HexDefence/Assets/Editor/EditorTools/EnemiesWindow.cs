@@ -17,7 +17,7 @@ public class EnemiesWindow : EditorWindow
     /// <summary>
     /// Initialize window state.
     /// </summary>
-    [MenuItem("Window/Enemies")]
+    [MenuItem("HexTower/Enemies")]
     internal static void Init()
     {
 

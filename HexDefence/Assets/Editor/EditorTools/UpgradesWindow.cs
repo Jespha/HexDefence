@@ -18,7 +18,7 @@ public class UpgradesWindow : EditorWindow
     /// <summary>
     /// Initialize window state.
     /// </summary>
-    [MenuItem("Window/Upgrades")]
+    [MenuItem("HexTower/Upgrades")]
     internal static void Init()
     {
 

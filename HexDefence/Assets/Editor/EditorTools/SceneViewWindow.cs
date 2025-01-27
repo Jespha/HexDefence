@@ -17,7 +17,7 @@ public class SceneViewWindow : EditorWindow
     /// <summary>
     /// Initialize window state.
     /// </summary>
-    [MenuItem("Window/Scenes In Build")]
+    [MenuItem("HexTower/Scenes In Build")]
     internal static void Init()
     {
 

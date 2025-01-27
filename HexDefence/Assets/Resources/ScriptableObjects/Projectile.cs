@@ -11,6 +11,4 @@ public class Projectile : ScriptableObject
     public PooledObject ProjectilePrefab;
     public PooledObject LaunchVFXPrefab;
     public PooledObject ImpactVFXPrefab;
-    public float AttackSpeed = 1.0f;
-    public float AttackDamage = 1.0f;
 }

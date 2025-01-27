@@ -10,10 +10,8 @@ public class HexBuilding : ScriptableObject
     public Projectile ProjectilePrefab;
     public Sprite Icon;
     public int Cost;
-    public TypeCollider TypeCollider;
-    public Vector3 ColliderSize = new Vector3(1, 1, 1);
-    public Vector3 ColliderPosition = new Vector3(0, 0, 0);
     public AttackType AttackType;
+    public OnHitEffectType OnHitEffectType;
     public float AttackDamage = 1.0f;
     public float AttackSpeed = 1.0f;
     public float AttackRange = 1.0f;
@@ -23,11 +21,16 @@ public class HexBuilding : ScriptableObject
     // Call when unlocked
     public HexBuilding Clone()
     {
-        HexBuilding clone = Instantiate(this); 
+        HexBuilding clone = Instantiate(this);
         return clone;
     }
 
-    public void UpgradeStats(float attackDamageIncrease, float attackSpeedIncrease, float attackRangeIncrease, bool overrideStats = false)
+    public void UpgradeStats(
+        float attackDamageIncrease,
+        float attackSpeedIncrease,
+        float attackRangeIncrease,
+        bool overrideStats = false
+    )
     {
         if (overrideStats)
         {
@@ -51,22 +54,10 @@ public class HexBuilding : ScriptableObject
 public enum AttackType
 {
     Projectile,
-    Splash,
     Area,
     Economy,
-    Beam,
     Buff,
-    Debuff,
-    Summon,
-    Trap,
-    Turret,
     None,
-}
-
-public enum TypeCollider
-{
-    SphereCollider,
-    BoxCollider,
 }
 
 public enum AttackPriority

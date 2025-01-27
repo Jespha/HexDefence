@@ -17,7 +17,7 @@ public class BuildingsWindow : EditorWindow
     /// <summary>
     /// Initialize window state.
     /// </summary>
-    [MenuItem("Window/Buildings")]
+    [MenuItem("HexTower/Buildings")]
     internal static void Init()
     {
 

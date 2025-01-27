@@ -17,7 +17,7 @@ public class LevelsWindow : EditorWindow
     /// <summary>
     /// Initialize window state.
     /// </summary>
-    [MenuItem("Window/Levels")]
+    [MenuItem("HexTower/Levels")]
     internal static void Init()
     {
 

@@ -48,8 +48,7 @@ public class EnemyManager : MonoBehaviour
             && activeEnemies.Count > 0
         )
             UpdateEnemies();
-        
-        
+
         // Update game phase Logic INCOME -> HEXPLACEMENT -> BUILD -> DEFEND
         // DEFEND -> INCOME
         if (GameManager.Instance.GamePhase == GamePhase.Defend && _defeatedEnemies >= maxEnemies)
@@ -82,7 +81,7 @@ public class EnemyManager : MonoBehaviour
         {
             for (int i = 0; i < enemy.amount; i++)
             {
-                SplineComputer _spline = RoadManager.Instance.GetRandomRoad().splineComputer;
+                RoadParent _road = RoadManager.Instance.GetRandomRoad();
                 enemies[currentIndex] = new EnemyData
                 {
                     Prefab = enemy.enemy.prefab,
@@ -95,9 +94,10 @@ public class EnemyManager : MonoBehaviour
                     DeathEffect = enemy.enemy.deathEffect,
                     EnemyDeathAnimation = enemy.enemy.enemyDeathAnimation,
                     SplinePercentage = 0f,
-                    Spline = _spline,
-                    SplineLength = _spline.CalculateLength(),
-                    SpawnOnDeath = enemy.enemy.spawnOnDeath
+                    Road = _road,
+                    SplineLength = _road.splineComputer.CalculateLength(),
+                    SpawnOnDeath = enemy.enemy.spawnOnDeath,
+                    CurrentHexCell = _road.hexCells[0]
                 };
                 currentIndex++;
             }
@@ -114,7 +114,8 @@ public class EnemyManager : MonoBehaviour
         {
             PooledObjectManager.Instance.AddToPool(
                 enemy.enemy.deathEffect,
-                Mathf.FloorToInt(enemy.amount / 3) + 1            );
+                Mathf.FloorToInt(enemy.amount / 3) + 1
+            );
         }
 
         StartCoroutine(SpawnEnemiesCoroutine());
@@ -139,6 +140,10 @@ public class EnemyManager : MonoBehaviour
                     }
                     if (enemies[index].SplinePercentage >= 1)
                     {
+                        EnemyData enemyData = enemies[index];
+                        Debug.Log(
+                            "Enemy " + index + " died at: " + enemyData.CurrentHexCell.Position
+                        );
                         HandleEnemyDeath(enemy, true);
                     }
                 }
@@ -153,7 +158,6 @@ public class EnemyManager : MonoBehaviour
         enemies[index].SplinePercentage +=
             enemies[index].Speed * Time.deltaTime / enemies[index].SplineLength;
 
-        // Clamp the SplinePercentage between 0 and 1
         enemies[index].SplinePercentage = Mathf.Clamp(enemies[index].SplinePercentage, 0, 1);
 
         if (enemies[index].SplinePercentage >= 1 || enemies[index].Health <= 0)
@@ -162,9 +166,11 @@ public class EnemyManager : MonoBehaviour
         }
 
         Vector3 position = enemies[index]
-            .Spline.EvaluatePosition(1 - enemies[index].SplinePercentage);
+            .Road.splineComputer.EvaluatePosition(1 - enemies[index].SplinePercentage);
         Vector3 nextPosition = enemies[index]
-            .Spline.EvaluatePosition(1 - Math.Max(0, enemies[index].SplinePercentage - 0.01f));
+            .Road.splineComputer.EvaluatePosition(
+                1 - Math.Max(0, enemies[index].SplinePercentage - 0.01f)
+            );
         Vector3 direction = (nextPosition - position).normalized;
 
         direction = -direction; // Reversing the direction of the model since we are traveling the spline backwards
@@ -173,7 +179,39 @@ public class EnemyManager : MonoBehaviour
         enemy.transform.position = position;
         enemy.transform.rotation = Quaternion.LookRotation(direction);
 
+        //TODO: Implement the logic to set the current hexcell
+        enemies[index].CurrentHexCell = UpdateCurrentHexCell(enemies[index]);
+
         return false;
+    }
+
+    public HexCell UpdateCurrentHexCell(EnemyData enemy)
+    {
+        int _splinePoints = enemy.Road.splineComputer.pointCount;
+        float _splinTraveled = enemy.SplinePercentage;
+        float _percentagePerPoint = 1.0f / _splinePoints;
+        float _hexCounts = _splinePoints - 1;
+        if (_splinTraveled >= _percentagePerPoint)
+            _hexCounts = _splinePoints - 1 - Mathf.Floor(_splinTraveled / _percentagePerPoint);
+        int _hexCellIndex = Mathf.FloorToInt(_hexCounts);
+        HexCell _currentHexCell = enemy.Road.hexCells[_hexCellIndex];
+        
+        // Debug.Log(
+        //     "Spline Points: "
+        //         + _splinePoints
+        //         + " SplineTraveled: "
+        //         + _splinTraveled
+        //         + " PercentagePerPoint: "
+        //         + _percentagePerPoint
+        //         + " HexCounts: "
+        //         + _hexCounts
+        //         + " HexCellIndex: "
+        //         + _hexCellIndex
+        //         + " CurrentHexCell: "
+        //         + _currentHexCell.Position
+        // );
+
+        return _currentHexCell;
     }
 
     public void ClearEnemies()
@@ -216,11 +254,11 @@ public class EnemyManager : MonoBehaviour
         EnemyData enemyData = enemies[index];
         GameObject enemy = enemyPool[index];
         enemy.SetActive(true);
-        enemy.transform.position = enemyData.Spline.EvaluatePosition(
+        enemy.transform.position = enemyData.Road.splineComputer.EvaluatePosition(
             1 - enemyData.SplinePercentage
         );
 
-        Vector3 nextPosition = enemyData.Spline.EvaluatePosition(
+        Vector3 nextPosition = enemyData.Road.splineComputer.EvaluatePosition(
             Math.Min(0, enemyData.SplinePercentage + 0.05f)
         );
         Vector3 direction = (nextPosition - enemy.transform.position).normalized;
@@ -231,6 +269,7 @@ public class EnemyManager : MonoBehaviour
             activeEnemies.Add(enemy, enemies[index]);
             EnemyAdded?.Invoke(enemy);
         }
+
         return enemy;
     }
 
@@ -260,24 +299,29 @@ public class EnemyManager : MonoBehaviour
                     );
                     if (enemyData.SpawnOnDeath != null)
                     {
-                        GameObject newEnemy = Instantiate(enemyData.SpawnOnDeath.prefab, this.transform);
+                        GameObject newEnemy = Instantiate(
+                            enemyData.SpawnOnDeath.prefab,
+                            this.transform
+                        );
                         newEnemy.SetActive(false);
                         enemyPool.Add(newEnemy);
-                        activeEnemies.Add(newEnemy, new EnemyData
-                        {
-                            Prefab = enemyData.SpawnOnDeath.prefab,
-                            Health = enemyData.SpawnOnDeath.health,
-                            MaxHealth = enemyData.SpawnOnDeath.health,
-                            Damage = enemyData.SpawnOnDeath.damage,
-                            Speed = enemyData.SpawnOnDeath.speed,
-                            Slow = enemyData.SpawnOnDeath.slow,
-                            GoldDrop = enemyData.SpawnOnDeath.goldDrop,
-                            DeathEffect = enemyData.SpawnOnDeath.deathEffect,
-                            EnemyDeathAnimation = enemyData.SpawnOnDeath.enemyDeathAnimation,
-                            SplinePercentage = 0f,
-                            Spline = enemyData.Spline,
-                            SplineLength = enemyData.SplineLength
-                        });
+                        activeEnemies.Add(
+                            newEnemy,
+                            new EnemyData
+                            {
+                                Prefab = enemyData.SpawnOnDeath.prefab,
+                                Health = enemyData.SpawnOnDeath.health,
+                                MaxHealth = enemyData.SpawnOnDeath.health,
+                                Damage = enemyData.SpawnOnDeath.damage,
+                                Speed = enemyData.SpawnOnDeath.speed,
+                                Slow = enemyData.SpawnOnDeath.slow,
+                                GoldDrop = enemyData.SpawnOnDeath.goldDrop,
+                                DeathEffect = enemyData.SpawnOnDeath.deathEffect,
+                                EnemyDeathAnimation = enemyData.SpawnOnDeath.enemyDeathAnimation,
+                                SplinePercentage = 0f,
+                                SplineLength = enemyData.SplineLength
+                            }
+                        );
                         StartCoroutine(SpawnEnemiesCoroutine());
                     }
                     break;
@@ -375,7 +419,9 @@ public struct EnemyData
     public EnemyAnimation EnemyDeathAnimation;
     public Enemy SpawnOnDeath;
 
+    public RoadParent Road;
     public float SplinePercentage;
-    public SplineComputer Spline;
     public float SplineLength;
+
+    public HexCell CurrentHexCell;
 }

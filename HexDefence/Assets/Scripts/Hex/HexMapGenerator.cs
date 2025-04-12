@@ -13,7 +13,7 @@
 //     [SerializeField, Range(0, 1)] private float _forestAmount = 0.3f;
 //     [SerializeField] private GridType _gridType;
 //     [SerializeField] private ScriptableGridConfig[] _configs;
-    
+
 //     private bool _requiresGeneration = true;
 //     private Camera _cam;
 //     private Grid _grid;
@@ -25,7 +25,7 @@
 
 //     private Vector2 _currentGap;
 //     private Vector2 _gapVel;
-    
+
 
 //     private  void Awake()
 //     {
@@ -33,9 +33,9 @@
 //         _cam = Camera.main;
 //         _currentGap = _gap;
 //     }
-    
+
 //     private void OnValidate() => _requiresGeneration = true;
-    
+
 //     private void LateUpdate()
 //     {
 //         if (Vector2.Distance(_currentGap, _gap) > 0.01f)
@@ -43,13 +43,13 @@
 //             _currentGap = Vector2.SmoothDamp(_currentGap, _gap,ref _gapVel, 0.1f);
 //             _requiresGeneration = true;
 //         }
-        
+
 //         if (_requiresGeneration) Generate();
 
 //         _cam.transform.position = Vector3.SmoothDamp(_cam.transform.position, _cameraPositionTarget, ref _moveVel, 0.5f);
 //         _cam.orthographicSize = Mathf.SmoothDamp(_cam.orthographicSize, _cameraSizeTarget, ref _cameraSizeVel, 0.5f);
 //     }
-    
+
 //     private void Generate()
 //     {
 //         foreach (Transform child in transform)
@@ -73,7 +73,7 @@
 //                 coordinates.Add(new Vector3Int(x, y));
 //             }
 //         }
-        
+
 //         var bounds = new Bounds();
 //         var skipCount = Mathf.FloorToInt(coordinates.Count * _skipAmount);
 //         var forestCount = Mathf.FloorToInt(coordinates.Count * _forestAmount);
@@ -89,7 +89,7 @@
 //             spawned.Init(coordinate);
 //             bounds.Encapsulate(position);
 //         }
- 
+
 //         SetCamera(bounds);
 
 //         _requiresGeneration = false;

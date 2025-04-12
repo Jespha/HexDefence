@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8505236f0b3866c498c44544a82ee7f0, type: 3}
+  m_Name: MotarTower_Dmg1
+  m_EditorClassIdentifier: 
+  upgradeName: MotarTower <br> DMG I
+  upgradeDescription: '<color=red><b>+1 Damage</b></color> '
+  upgradeIcon: {fileID: 21300000, guid: 01568e0dac459d842b670d1ca15ab02c, type: 3}
+  IsUnlockedInProfile: 1
+  prerequisites: []
+  rarity: 0
+  upgradeType: 0
+  _building: {fileID: 11400000, guid: 855a22f6e5f84e342bc5a23e08f6fefb, type: 2}
+  AttackSpeedUpgrade: 0
+  AttackRangeUpgrade: 0
+  AttackDamageUpgrade: 1
+  _hex: {fileID: 0}
+  _enemy: {fileID: 0}

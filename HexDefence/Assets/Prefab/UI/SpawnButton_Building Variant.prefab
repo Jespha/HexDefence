@@ -277,7 +277,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _image: {fileID: 4407901456553756949}
-  _name: {fileID: 1232800928068407863}
+  _hotkey: {fileID: 1232800928068407863}
   toggle: {fileID: 8412071822777570831}
 --- !u!114 &2253828225208486523
 MonoBehaviour:

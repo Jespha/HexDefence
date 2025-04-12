@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44585d49e0787f3468a6d494137a8760, type: 3}
   m_Name: Grass
   m_EditorClassIdentifier: 
-  HexTerrainType: 0
   Name: Grass
   Material: {fileID: 2100000, guid: 3061daf219b64e94ab04bf90401fad46, type: 2}
-  Icon: {fileID: 21300000, guid: 0ae0bf6ca12e6a541a6c6f2e79984b9b, type: 3}
+  Icon: {fileID: 21300000, guid: b4a6ce64f21478f459e88f883651c3e5, type: 3}
+  Sprite: {fileID: 21300000, guid: 0ae0bf6ca12e6a541a6c6f2e79984b9b, type: 3}

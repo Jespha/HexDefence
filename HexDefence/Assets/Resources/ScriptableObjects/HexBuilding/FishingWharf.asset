@@ -12,18 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f34fcaba9f449864fa0ea8328403a7a9, type: 3}
   m_Name: FishingWharf
   m_EditorClassIdentifier: Assembly-CSharp::HexBuilding
-  HexBuildingType: 2
   Name: Fishing Wharf
   Prefab: {fileID: 8451163983638390638, guid: 9905c216b54cebf498e51af4dbf6eb74, type: 3}
+  AimPart: {fileID: 0}
   ProjectilePrefab: {fileID: 0}
   Icon: {fileID: 21300000, guid: 1fa2b079e484f0449a228b77b2f70911, type: 3}
+  Sprite: {fileID: 0}
   Cost: 250
-  TypeCollider: 0
-  ColliderSize: {x: 1, y: 1, z: 1}
-  ColliderPosition: {x: 0, y: 0, z: 0}
+  Level: 1
+  HexBuildingType: 2
   AttackType: 3
+  OnHitEffectType: 0
+  SplashSize: 0
+  AttackDamage: 1
   AttackSpeed: 1
   AttackRange: 1
-  AttackDamage: 1
   TargetPriority: 0
-  Level: 0

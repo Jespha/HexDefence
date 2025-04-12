@@ -15,6 +15,6 @@ MonoBehaviour:
   enemies: []
   levelName: It Begins
   hexCurrency: 3
-  goldCurrency: 200
+  goldCurrency: 300
   lifeCurrency: 25
   upgrades: 0

@@ -12,19 +12,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f34fcaba9f449864fa0ea8328403a7a9, type: 3}
   m_Name: ArrowTower
   m_EditorClassIdentifier: Assembly-CSharp::HexBuilding
-  HexBuildingType: 2
   Name: Arrow Tower
   Prefab: {fileID: 2391710373294534784, guid: bef198e76f366c94aa7ad9e104876123, type: 3}
   AimPart: {fileID: 7276373702073195313, guid: 1bc52b55426f1eb499822f9101ece06d, type: 3}
   ProjectilePrefab: {fileID: 11400000, guid: 99f83c857a496824aa9f7da7b035352e, type: 2}
   Icon: {fileID: 21300000, guid: 80db20f6aec777740b521ab561a37c3a, type: 3}
+  Sprite: {fileID: 21300000, guid: cd3777e58deda8d44b62c7b71b6b01d9, type: 3}
   Cost: 100
-  TypeCollider: 0
-  ColliderSize: {x: 3, y: 3, z: 3}
-  ColliderPosition: {x: 0, y: 0, z: 0}
+  Level: 1
+  HexBuildingType: 2
   AttackType: 0
+  OnHitEffectType: 0
+  SplashSize: 0
   AttackDamage: 1
-  AttackSpeed: 1
+  AttackSpeed: 3
   AttackRange: 3
+  AttackCooldown: 1
   TargetPriority: 0
-  Level: 0

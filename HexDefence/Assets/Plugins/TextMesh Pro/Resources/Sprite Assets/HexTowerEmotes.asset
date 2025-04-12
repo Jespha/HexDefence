@@ -42,6 +42,7 @@ Material:
     - _ClipRect: {r: -32767, g: -32767, b: 32767, a: 32767}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
+  m_AllowLocking: 1
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -54,9 +55,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84a92b25f83d49b9bc132d206b370281, type: 3}
   m_Name: HexTowerEmotes
   m_EditorClassIdentifier: 
-  hashCode: -1836805472
-  material: {fileID: 2103686}
-  materialHashCode: 0
   m_Version: 1.1.0
   m_FaceInfo:
     m_FaceIndex: 0
@@ -80,6 +78,7 @@ MonoBehaviour:
     m_StrikethroughOffset: 0
     m_StrikethroughThickness: 0
     m_TabWidth: 0
+  m_Material: {fileID: 2103686}
   spriteSheet: {fileID: 2800000, guid: 78403c87d70f57e4f900fe5d77ced9b1, type: 3}
   m_SpriteCharacterTable:
   - m_ElementType: 2
@@ -87,98 +86,82 @@ MonoBehaviour:
     m_GlyphIndex: 0
     m_Scale: 1
     m_Name: Gold
-    m_HashCode: 2586304
   - m_ElementType: 2
     m_Unicode: 128523
     m_GlyphIndex: 1
     m_Scale: 1
     m_Name: Hex
-    m_HashCode: 77493
   - m_ElementType: 2
     m_Unicode: 128525
     m_GlyphIndex: 2
     m_Scale: 1
     m_Name: Life
-    m_HashCode: 2687718
   - m_ElementType: 2
     m_Unicode: 128526
     m_GlyphIndex: 3
     m_Scale: 1
     m_Name: Armor
-    m_HashCode: 74187683
   - m_ElementType: 2
     m_Unicode: 128512
     m_GlyphIndex: 4
     m_Scale: 1
-    m_Name: Projectile
-    m_HashCode: -93114763
+    m_Name: ProjectileDirect
   - m_ElementType: 2
     m_Unicode: 128513
     m_GlyphIndex: 5
     m_Scale: 1
-    m_Name: Splash
-    m_HashCode: -1026136203
+    m_Name: ProjectileInDirect
   - m_ElementType: 2
     m_Unicode: 128514
     m_GlyphIndex: 6
     m_Scale: 1
     m_Name: Area
-    m_HashCode: 2247863
   - m_ElementType: 2
     m_Unicode: 128515
     m_GlyphIndex: 7
     m_Scale: 1
     m_Name: Economy
-    m_HashCode: -541429540
   - m_ElementType: 2
     m_Unicode: 128516
     m_GlyphIndex: 8
     m_Scale: 1
     m_Name: 1f604
-    m_HashCode: 57188261
   - m_ElementType: 2
     m_Unicode: 128517
     m_GlyphIndex: 9
     m_Scale: 1
     m_Name: 1f605
-    m_HashCode: 57188260
   - m_ElementType: 2
     m_Unicode: 128518
     m_GlyphIndex: 10
     m_Scale: 1
     m_Name: 1f606
-    m_HashCode: 57188263
   - m_ElementType: 2
     m_Unicode: 128521
     m_GlyphIndex: 11
     m_Scale: 1
     m_Name: 1f609
-    m_HashCode: 57188264
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 12
     m_Scale: 1
     m_Name: .notdef
-    m_HashCode: -600915428
   - m_ElementType: 2
     m_Unicode: 129315
     m_GlyphIndex: 13
     m_Scale: 1
     m_Name: 1f923
-    m_HashCode: 57200239
   - m_ElementType: 2
     m_Unicode: 9786
     m_GlyphIndex: 14
     m_Scale: 1
     m_Name: 263a
-    m_HashCode: 1748406
   - m_ElementType: 2
     m_Unicode: 9785
     m_GlyphIndex: 15
     m_Scale: 1
     m_Name: Upgrade
-    m_HashCode: -1944326640
-  m_SpriteGlyphTable:
+  m_GlyphTable:
   - m_Index: 0
     m_Metrics:
       m_Width: 128
@@ -928,3 +911,4 @@ Material:
     m_Floats: []
     m_Colors: []
   m_BuildTextureStacks: []
+  m_AllowLocking: 1

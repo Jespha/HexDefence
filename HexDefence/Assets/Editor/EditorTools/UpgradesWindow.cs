@@ -32,7 +32,7 @@ public class UpgradesWindow : EditorWindow
         EditorGUILayout.BeginVertical();
         this.scrollPos = EditorGUILayout.BeginScrollView(this.scrollPos, false, false);
         Upgrade[] upgradeAsset = Resources.LoadAll<Upgrade>("ScriptableObjects/Upgrade");
-        UpgradeRarity upgradeRarity = Resources.Load<UpgradeRarity>("ScriptableObjects/Upgrade/UpgradeRarity");
+        UpgradeRarity upgradeRarity = Resources.Load<UpgradeRarity>("ScriptableObjects/Upgrade/_UpgradeRarity");
         upgradeRarity.InitializeRarityToColor();
         for (var i = 0; i < upgradeAsset.Length; i++)
         {

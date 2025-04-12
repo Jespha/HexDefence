@@ -54,7 +54,7 @@ public class UpgradeUI : MonoBehaviour
     [Button("Add Upgrades")]
     public async Task<bool> AddUpgradeAsync()
     {
-        if (GameManager.UpgradesUnlockedInstance.CurrentUpgradesPossibilities.Count == 0)
+        if (GameManager.UnlockedUpgradesInstance.CurrentUpgradesPossibilities.Count == 0)
         {
             return false;
         }
@@ -64,12 +64,12 @@ public class UpgradeUI : MonoBehaviour
         canvasGroup.blocksRaycasts = true;
         ClearUpgrades();
         upgradesToAdd = upgradeAmountToChooseFrom;
-        upgradesToChooseFrom = GameManager.UpgradesUnlockedInstance.CurrentUpgradesPossibilities;
+        upgradesToChooseFrom = GameManager.UnlockedUpgradesInstance.CurrentUpgradesPossibilities;
 
         for (int i = 0; i < upgradesToAdd; i++)
         {
             int randomUpgradeIndex = UnityEngine.Random.Range(0, upgradesToChooseFrom.Count);
-            Upgrade upgrade = GameManager.UpgradesUnlockedInstance.CurrentUpgradesPossibilities[
+            Upgrade upgrade = GameManager.UnlockedUpgradesInstance.CurrentUpgradesPossibilities[
                 randomUpgradeIndex
             ];
             upgradesToChooseFrom.RemoveAt(randomUpgradeIndex);
@@ -129,7 +129,7 @@ public class UpgradeUI : MonoBehaviour
     {
         if (selectedUpgrade != null)
         {
-            GameManager.UpgradesUnlockedInstance.AddUpgrade(selectedUpgrade);
+            GameManager.UnlockedUpgradesInstance.AddUpgrade(selectedUpgrade);
         }
         canvasGroup.blocksRaycasts = false;
         tcs?.SetResult(true);

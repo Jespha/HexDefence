@@ -12,18 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f34fcaba9f449864fa0ea8328403a7a9, type: 3}
   m_Name: MortarTower
   m_EditorClassIdentifier: Assembly-CSharp::HexBuilding
-  HexBuildingType: 2
   Name: MortarTower
-  Prefab: {fileID: 4489316970894143791, guid: fe9aa8ce1aa50ab49bd05795f6723de3, type: 3}
-  ProjectilePrefab: {fileID: 0}
-  Icon: {fileID: 21300000, guid: 01568e0dac459d842b670d1ca15ab02c, type: 3}
-  Cost: 0
-  TypeCollider: 0
-  ColliderSize: {x: 5, y: 5, z: 5}
-  ColliderPosition: {x: 0, y: 0, z: 0}
-  AttackType: 0
-  AttackSpeed: 1
-  AttackRange: 1
-  AttackDamage: 1
+  Prefab: {fileID: 4489316970894143791, guid: 7360c5006c5e03141ab0314def9a2416, type: 3}
+  AimPart: {fileID: 1540248428568090432, guid: fe9aa8ce1aa50ab49bd05795f6723de3, type: 3}
+  ProjectilePrefab: {fileID: 11400000, guid: 00b417411b29b8d43bb11c6d382e7942, type: 2}
+  Icon: {fileID: 21300000, guid: 02e60406d9daf7541afdc8f35a5273d9, type: 3}
+  Sprite: {fileID: 21300000, guid: 01568e0dac459d842b670d1ca15ab02c, type: 3}
+  Cost: 200
+  Level: 1
+  HexBuildingType: 2
+  AttackType: 1
+  ProjectileMovementType: 1
+  OnHitEffectType: 1
+  SplashSize: 2
+  AttackDamage: 3
+  AttackSpeed: 4
+  AttackRange: 5
+  AttackCooldown: 3
   TargetPriority: 0
-  Level: 0

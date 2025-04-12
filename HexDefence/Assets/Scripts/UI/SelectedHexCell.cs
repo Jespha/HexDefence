@@ -15,10 +15,10 @@ public class SelectedHexCell : MonoBehaviour
     private Canvas canvas;
 
     [SerializeField]
-    private UnityEngine.UI.Image _hexIcon;
+    private UnityEngine.UI.Image _hexSprite;
 
     [SerializeField]
-    private UnityEngine.UI.Image _towerIcon;
+    private UnityEngine.UI.Image _towerSprite;
 
     [SerializeField]
     private TextMeshProUGUI _name;
@@ -34,7 +34,9 @@ public class SelectedHexCell : MonoBehaviour
 
     [SerializeField]
     private UILineRenderer _lineRenderer;
-    [SerializeField] private AnimationCurve _lineCurve;
+
+    [SerializeField]
+    private AnimationCurve _lineCurve;
 
     [Header("Animation")]
     [SerializeField]
@@ -57,10 +59,13 @@ public class SelectedHexCell : MonoBehaviour
     private float targetOffsetx;
     private Vector2 hexCellScreenPos;
     public Vector2 CurrentOffset;
-    [SerializeField] private Vector2 _lineRenderPos;
+
+    [SerializeField]
+    private Vector2 _lineRenderPos;
 
     public Vector2 temp;
     public Vector2 temp2;
+
     private void Start()
     {
         _canvasGroup.alpha = 0;
@@ -76,15 +81,29 @@ public class SelectedHexCell : MonoBehaviour
     {
         if (_selectedHexCell != null)
         {
-            hexCellScreenPos = AnimationCoroutine.WorldToUISpace(canvas, (_selectedHexCell.transform.position + new Vector3(0, 0, targetOffset)));
+            hexCellScreenPos = AnimationCoroutine.WorldToUISpace(
+                canvas,
+                (_selectedHexCell.transform.position + new Vector3(0, 0, targetOffset))
+            );
             _rectTransform.position = hexCellScreenPos + _rectOffset + CurrentOffset;
             _lineRenderer.Points[2] = _lineRenderPos - CurrentOffset;
             _lineRenderer.SetAllDirty();
         }
 
-        targetOffset = math.remap(0,30,temp.x,temp.y,GameManager.Instance.FollowTarget.transform.position.y);
-        targetOffsetx = math.remap(0,30,temp2.x,temp2.y,GameManager.Instance.FollowTarget.transform.position.y);
-
+        targetOffset = math.remap(
+            0,
+            30,
+            temp.x,
+            temp.y,
+            GameManager.Instance.FollowTarget.transform.position.y
+        );
+        targetOffsetx = math.remap(
+            0,
+            30,
+            temp2.x,
+            temp2.y,
+            GameManager.Instance.FollowTarget.transform.position.y
+        );
     }
 
     private IEnumerator WaitForPlayerInput()
@@ -126,10 +145,13 @@ public class SelectedHexCell : MonoBehaviour
 
         if (hexCell != null)
         {
-            hexCellScreenPos = AnimationCoroutine.WorldToUISpace(canvas, (hexCell.transform.position + new Vector3(0, 0, targetOffset)));
+            hexCellScreenPos = AnimationCoroutine.WorldToUISpace(
+                canvas,
+                (hexCell.transform.position + new Vector3(0, 0, targetOffset))
+            );
             // hexCellScreenPos = AnimationCoroutine.WorldToUISpace(canvas,hexCell.transform.position);
             _selectedHexCell = hexCell;
-            _hexIcon.sprite = _selectedHexCell.HexTerrain.Icon;
+            _hexSprite.sprite = _selectedHexCell.HexTerrain.Sprite;
             _canvasGroup.alpha = 1;
             _canvasGroup.blocksRaycasts = true;
             // Vector2 _rectOffset = hexCellScreenPos + new Vector2(50, 50);
@@ -138,10 +160,7 @@ public class SelectedHexCell : MonoBehaviour
                 hexCellScreenPos.y + SetOffset(hexCell).y
             );
 
-            CurrentOffset = new Vector2(
-                SetOffset(hexCell).x,
-                SetOffset(hexCell).y
-            );
+            CurrentOffset = new Vector2(SetOffset(hexCell).x, SetOffset(hexCell).y);
 
             if (setPositionCoroutine != null)
             {
@@ -160,9 +179,9 @@ public class SelectedHexCell : MonoBehaviour
             if (setPositionCoroutineLine != null)
             {
                 StopCoroutine(setPositionCoroutineLine);
-            
-                _lineRenderer.Points[1].y = _lineRenderer.Points[2].y/2;
-                _lineRenderer.Points[1].x = _lineRenderer.Points[2].x/2;
+
+                _lineRenderer.Points[1].y = _lineRenderer.Points[2].y / 2;
+                _lineRenderer.Points[1].x = _lineRenderer.Points[2].x / 2;
             }
 
             setPositionCoroutineLine = StartCoroutine(AnimatePointPerpendicular());
@@ -170,8 +189,8 @@ public class SelectedHexCell : MonoBehaviour
 
         if (_selectedHexCell.HexBuilding.HexBuildingType != HexBuildingType.None)
         {
-            _towerIcon.sprite = _selectedHexCell.HexBuilding.Icon;
-            _towerIcon.color = Color.white;
+            _towerSprite.sprite = _selectedHexCell.HexBuilding.Sprite;
+            _towerSprite.color = Color.white;
             _name.text = _selectedHexCell.HexBuilding.Name;
             foreach (HexBuilding hexBuilding in GameManager.Instance.TowerManager.HexBuildings)
             {
@@ -185,15 +204,14 @@ public class SelectedHexCell : MonoBehaviour
         }
         else
         {
-            _towerIcon.sprite = null;
-            _towerIcon.color = Color.clear;
+            _towerSprite.sprite = null;
+            _towerSprite.color = Color.clear;
             _name.text = _selectedHexCell.HexTerrain.Name;
         }
     }
 
     public void SetTempSelectedHexCell(HexCell hexCell, Vector2 hexCellScreenPosition)
     {
-
         if (hexCell == null)
         {
             _canvasGroup.alpha = 0;
@@ -204,10 +222,12 @@ public class SelectedHexCell : MonoBehaviour
         if (hexCell != null)
         {
             _selectedHexCell = hexCell;
-            _hexIcon.sprite = _selectedHexCell.HexTerrain.Icon;
-            _lineRenderPos = AnimationCoroutine.WorldToUISpace(canvas, (hexCell.transform.position + new Vector3(0, 0, targetOffset)));
+            _hexSprite.sprite = _selectedHexCell.HexTerrain.Sprite;
+            _lineRenderPos = AnimationCoroutine.WorldToUISpace(
+                canvas,
+                (hexCell.transform.position + new Vector3(0, 0, targetOffset))
+            );
         }
-
     }
 
     public IEnumerator AnimatePointPerpendicular()
@@ -217,7 +237,7 @@ public class SelectedHexCell : MonoBehaviour
         Vector2 perpendicular = new Vector2(-direction.y, direction.x); // 90 degrees rotation
 
         float duration = 0.5f;
-        float distance = 10.0f; 
+        float distance = 10.0f;
 
         float elapsed = 0.0f;
 
@@ -226,14 +246,18 @@ public class SelectedHexCell : MonoBehaviour
             elapsed += Time.deltaTime;
             float t = elapsed / duration;
 
-            Vector2 lineAnimation= AnimationCoroutine.Vector2LerpUnClamped(start,start * distance, _lineCurve.Evaluate(t));
+            Vector2 lineAnimation = AnimationCoroutine.Vector2LerpUnClamped(
+                start,
+                start * distance,
+                _lineCurve.Evaluate(t)
+            );
             _lineRenderer.Points[1].y = lineAnimation.y;
-            _lineRenderer.Points[1].x = _lineRenderer.Points[2].x/2;
+            _lineRenderer.Points[1].x = _lineRenderer.Points[2].x / 2;
             yield return null;
         }
 
-            _lineRenderer.Points[1].y = _lineRenderer.Points[2].y/2;
-            _lineRenderer.Points[1].x = _lineRenderer.Points[2].x/2;
+        _lineRenderer.Points[1].y = _lineRenderer.Points[2].y / 2;
+        _lineRenderer.Points[1].x = _lineRenderer.Points[2].x / 2;
     }
 
     Vector3 SetOffset(HexCell hexCell)

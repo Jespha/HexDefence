@@ -6,90 +6,100 @@ using UnityEngine;
 // [ExecuteAlways]
 public class TMPTextAutoSize : MonoBehaviour
 {
-    [SerializeField] private List<TMP_Text> _labels = new List<TMP_Text>();
-    [SerializeField] private eResizePattern _pattern;
-    [SerializeField] private bool _executeOnUpdate;
-    private int _currentIndex;
+	[SerializeField]
+	private List<TMP_Text> _labels = new List<TMP_Text>();
 
-    private void Update()
-    {
-        if (_executeOnUpdate) Execute();
+	[SerializeField]
+	private eResizePattern _pattern;
 
-        OnUpdateCheck();
-    }
+	[SerializeField]
+	private bool _executeOnUpdate;
+	private int _currentIndex;
 
-    public void Execute()
-    {
-        if (_labels.Count == 0) return;
+	private void Update()
+	{
+		if (_executeOnUpdate)
+			Execute();
 
-        int count = _labels.Count;
+		OnUpdateCheck();
+	}
 
-        int index = 0;
-        float maxLength = 0;
+	public void Execute()
+	{
+		if (_labels.Count == 0)
+			return;
 
-        for (int i = 0; i < count; i++)
-        {
-            float length = 0;
+		int count = _labels.Count;
 
-            switch (_pattern)
-            {
-                case eResizePattern.IgnoreRichText:
-                    length = _labels[i].GetParsedText().Length;
+		int index = 0;
+		float maxLength = 0;
 
-                    break;
+		for (int i = 0; i < count; i++)
+		{
+			float length = 0;
 
-                case eResizePattern.AllCharacters:
-                    length = _labels[i].text.Length;
+			switch (_pattern)
+			{
+				case eResizePattern.IgnoreRichText:
+					length = _labels[i].GetParsedText().Length;
 
-                    break;
+					break;
 
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+				case eResizePattern.AllCharacters:
+					length = _labels[i].text.Length;
 
-            if (length > maxLength)
-            {
-                maxLength = length;
-                index = i;
-            }
-        }
+					break;
 
-        if (_currentIndex != index)
-        {
-            OnChanged(index);
-        }
-    }
-    private void OnChanged(int index)
-    {
-        // Disable auto size on previous
-        _labels[_currentIndex].enableAutoSizing = false;
+				default:
+					throw new ArgumentOutOfRangeException();
+			}
 
-        _currentIndex = index;
+			if (length > maxLength)
+			{
+				maxLength = length;
+				index = i;
+			}
+		}
 
-        // Force an update of the candidate text object so we can retrieve its optimum point size.
-        _labels[index].enableAutoSizing = true;
-        _labels[index].ForceMeshUpdate();
-    }
-    private void OnUpdateCheck()
-    {
-        float optimumPointSize = _labels[_currentIndex].fontSize;
+		if (_currentIndex != index)
+		{
+			OnChanged(index);
+		}
+	}
 
-        // Iterate over all other text objects to set the point size
-        int count = _labels.Count;
+	private void OnChanged(int index)
+	{
+		// Disable auto size on previous
+		_labels[_currentIndex].enableAutoSizing = false;
 
-        for (int i = 0; i < count; i++)
-        {
-            if (_currentIndex == i) continue;
+		_currentIndex = index;
 
-            _labels[i].enableAutoSizing = false;
+		// Force an update of the candidate text object so we can retrieve its optimum point size.
+		_labels[index].enableAutoSizing = true;
+		_labels[index].ForceMeshUpdate();
+	}
 
-            _labels[i].fontSize = optimumPointSize;
-        }
-    }
+	private void OnUpdateCheck()
+	{
+		float optimumPointSize = _labels[_currentIndex].fontSize;
+
+		// Iterate over all other text objects to set the point size
+		int count = _labels.Count;
+
+		for (int i = 0; i < count; i++)
+		{
+			if (_currentIndex == i)
+				continue;
+
+			_labels[i].enableAutoSizing = false;
+
+			_labels[i].fontSize = optimumPointSize;
+		}
+	}
 }
 
- public enum eResizePattern
-    {
-        IgnoreRichText,
-        AllCharacters,
-    }
+public enum eResizePattern
+{
+	IgnoreRichText,
+	AllCharacters,
+}

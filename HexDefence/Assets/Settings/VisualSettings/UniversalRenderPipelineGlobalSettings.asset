@@ -19,12 +19,12 @@ MonoBehaviour:
   m_DefaultVolumeProfile: {fileID: 11400000, guid: 2844f0d525ccb2c47948d2987f3f26b7,
     type: 2}
   m_RenderingLayerNames:
-  - Light Layer default
+  - Base
   - Tower
   - Selection
   - Opaque
   - Water
-  - Light Layer 5
+  - Land
   - Light Layer 6
   - Light Layer 7
   m_ValidRenderingLayers: 255

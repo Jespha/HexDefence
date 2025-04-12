@@ -19,16 +19,22 @@ public class PlayerInput : Singleton<PlayerInput>
     public Action OnLeftMouseClick;
     public Action OnRightMouseClick;
     public Action OnMiddleMouseClick;
-    public Action <float> OnScrollWheel;
-    public Action <Vector2> onCameraMove;
-    public Action <bool> MultiBuildMode;
-    public Action <bool> UpgradeBuildMode;
-    public Action <int> BuildMode;
-
+    public Action<float> OnScrollWheel;
+    public Action<Vector2> onCameraMove;
+    public Action<bool> MultiBuildMode;
+    public Action<bool> UpgradeBuildMode;
+    public Action<int> BuildMode;
 
     private void OnEnable()
     {
-        if(playerControls == null)
+
+        if (Mouse.current == null)
+        {
+            Debug.LogWarning("No mouse device found");
+            return;
+        }
+
+        if (playerControls == null)
         {
             playerControls = new PlayerControls();
             playerControls.CameraInGame.Move.performed += i => _input = i.ReadValue<Vector2>();
@@ -52,14 +58,11 @@ public class PlayerInput : Singleton<PlayerInput>
         }
 
         playerControls.Enable();
-
     }
 
-    
-    private void OnDisabled(){
-
+    private void OnDisabled()
+    {
         playerControls.Disable();
-
     }
 
     public void HandleAllInputs()
@@ -72,9 +75,8 @@ public class PlayerInput : Singleton<PlayerInput>
         verticaLInput = _input.y;
         horizontalInput = _input.x;
         if (_input != Vector2.zero)
-        onCameraMove?.Invoke(_input);
+            onCameraMove?.Invoke(_input);
         if (scrollInput != 0)
-        OnScrollWheel?.Invoke(scrollInput);
+            OnScrollWheel?.Invoke(scrollInput);
     }
-
 }

@@ -3,9 +3,11 @@
         "**/.git": true,
         "**/.svn": true,
         "**/.hg": true,
-        "**/CVS": true,
         "**/.DS_Store": true,
         "**/Thumbs.db": true,
+        "**/*.log": true,
+        "**/Plugins/*": true,
+        "**/CVS": true,
         "**/.vs": true,
         "**/.gitmodules": true,
         "**/.vsconfig": true,
@@ -61,5 +63,6 @@
         "Temp/": true
     },
     "dotnet.defaultSolution": "HexDefence.sln",
-    "hide-files.files": []
+    "hide-files.files": [],
+    "editor.formatOnSave": true
 }
